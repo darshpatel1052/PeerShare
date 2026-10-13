@@ -18,11 +18,14 @@ type Config struct {
 	TrackerURL          string
 	Environment         string
 	RegistrationEnabled bool
+	UploadsEnabled      bool
 	CookieName          string
 	SecureCookies       bool
 	SessionTTL          time.Duration
 	AuthLimit           int64
 	RatePrefix          string
+	UploadDir           string
+	MediaDir            string
 }
 
 func Load() (Config, error) {
@@ -30,7 +33,8 @@ func Load() (Config, error) {
 		ListenAddr: value("API_LISTEN_ADDR", "127.0.0.1:18080"), AppOrigin: value("APP_ORIGIN", "http://localhost:3000"),
 		MediaBaseURL: value("MEDIA_BASE_URL", "http://localhost:3000/media/"), TrackerURL: value("TRACKER_URL", "ws://localhost:8000"),
 		Environment: value("APP_ENV", "development"), SessionTTL: 7 * 24 * time.Hour, AuthLimit: 60,
-		RatePrefix: value("RATE_PREFIX", "peerscreen:auth"), CookieName: "peerscreen_session"}
+		RatePrefix: value("RATE_PREFIX", "peerscreen:auth"), CookieName: "peerscreen_session",
+		UploadDir: value("UPLOAD_DIR", ".local/uploads"), MediaDir: value("MEDIA_DIR", ".local/media")}
 	if cfg.DatabaseURL == "" || cfg.RedisURL == "" {
 		return cfg, errors.New("DATABASE_URL and REDIS_URL are required")
 	}
@@ -39,6 +43,7 @@ func Load() (Config, error) {
 	}
 	cfg.SecureCookies = cfg.Environment == "production"
 	cfg.RegistrationEnabled = !cfg.SecureCookies
+	cfg.UploadsEnabled = !cfg.SecureCookies
 	if raw := os.Getenv("REGISTRATION_ENABLED"); raw != "" {
 		enabled, err := strconv.ParseBool(raw)
 		if err != nil {

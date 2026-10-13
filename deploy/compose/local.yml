@@ -2,6 +2,8 @@ x-api-environment: &api-environment
   APP_ENV: development
   APP_ORIGIN: http://localhost:3000
   MEDIA_BASE_URL: http://localhost:3000/media/
+  UPLOAD_DIR: /app/.local/uploads
+  MEDIA_DIR: /app/.local/media
   TRACKER_URL: ws://localhost:8000
   API_LISTEN_ADDR: 0.0.0.0:8080
   DATABASE_URL: postgres://peerscreen_catalog:${CATALOG_DB_PASSWORD}@postgres:5432/peerscreen?sslmode=disable
@@ -80,6 +82,7 @@ services:
     environment: *api-environment
     depends_on:
       seed: { condition: service_completed_successfully }
+      storage-init: { condition: service_completed_successfully }
       redis: { condition: service_healthy }
     ports: ["127.0.0.1:18080:8080"]
     healthcheck:
@@ -88,6 +91,9 @@ services:
       timeout: 4s
       retries: 20
     read_only: true
+    volumes:
+      - upload-data:/app/.local/uploads
+      - media-data:/app/.local/media
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     mem_limit: 384m
@@ -106,7 +112,7 @@ services:
       api: { condition: service_healthy }
     ports: ["127.0.0.1:3000:3000", "127.0.0.1:3001:3001", "127.0.0.1:8000:8000"]
     volumes:
-      - ../../.local/media:/app/.local/media:ro
+      - media-data:/app/.local/media:ro
     healthcheck:
       test:
         [
@@ -123,6 +129,21 @@ services:
     security_opt: [no-new-privileges:true]
     mem_limit: 256m
     cpus: 1
+  storage-init:
+    profiles: [app]
+    image: peerscreen-api:local
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      [
+        "mkdir -p /app/.local/media/fixture && if [ ! -f /app/.local/media/fixture/integrity.json ]; then cp -a /fixture/. /app/.local/media/fixture/; fi && chown 10001:10001 /app/.local/uploads /app/.local/media",
+      ]
+    user: "0:0"
+    volumes:
+      - upload-data:/app/.local/uploads
+      - media-data:/app/.local/media
+      - ../../.local/media/fixture:/fixture:ro
 
 volumes:
   postgres-data:
+  upload-data:
+  media-data:

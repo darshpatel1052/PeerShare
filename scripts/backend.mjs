@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
-import { mkdir } from "node:fs/promises";
-import { resolve } from "node:path";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { resolve, join } from "node:path";
+import { tmpdir } from "node:os";
 import { compose } from "./dependencies.mjs";
 import { localEnvironment } from "./local-environment.mjs";
 import { runGo } from "./go.mjs";
@@ -20,6 +21,7 @@ export async function startBackend({
   trackerUrl,
   mediaBase,
   listen = "127.0.0.1:18080",
+  storageRoot,
 }) {
   if (process.env.API_TARGET)
     return { target: process.env.API_TARGET, close: async () => {} };
@@ -28,12 +30,19 @@ export async function startBackend({
     test,
     quiet: true,
   });
+  const storage =
+    storageRoot ||
+    (test
+      ? await mkdtemp(join(tmpdir(), "peerscreen-runtime-"))
+      : resolve(".local"));
   const env = {
     ...(await localEnvironment({ test })),
     APP_ORIGIN: origin,
     TRACKER_URL: trackerUrl,
     MEDIA_BASE_URL: process.env.MEDIA_BASE_URL || mediaBase,
     API_LISTEN_ADDR: listen,
+    UPLOAD_DIR: join(storage, "uploads"),
+    MEDIA_DIR: test ? join(storage, "media") : resolve(".local/media"),
   };
   // The API needs its own database/cache credentials, not the administrator's password.
   delete env.POSTGRES_PASSWORD;
@@ -95,6 +104,7 @@ export async function startBackend({
   };
   return {
     target,
+    storage,
     pid: child.pid,
     stopProcess,
     close: async () => {
@@ -102,6 +112,7 @@ export async function startBackend({
       if (test && !cleaned) {
         cleaned = true;
         await compose(["down", "--volumes"], { test: true, quiet: true });
+        await rm(storage, { recursive: true, force: true });
       }
     },
   };

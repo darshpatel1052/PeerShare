@@ -26,6 +26,7 @@ export type PlayerOptions = {
   mediaId: string;
   acceptedVersionId: string;
   peerSharing: boolean;
+  authenticatedPreview?: boolean;
   signal: AbortSignal;
   onStats: (stats: PlayerStats) => void;
   onReady: (qualities: number[], peerSupported: boolean) => void;
@@ -42,6 +43,7 @@ export async function createPlayer(
   const descriptor = await fetchDescriptor(
     options.integrityUrl,
     AbortSignal.any([options.signal, AbortSignal.timeout(10_000)]),
+    options.authenticatedPreview ? "same-origin" : "omit",
   );
   if (options.signal.aborted) throw new DOMException("Aborted", "AbortError");
   if (!Hls.isSupported()) {

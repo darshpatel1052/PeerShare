@@ -23,15 +23,24 @@ export function createStaticServer({
   apiTarget,
 }) {
   return createServer(async (request, response) => {
-    const pathname = new URL(request.url, "http://localhost").pathname;
-    if (
-      apiTarget &&
-      (pathname.startsWith("/api/v1/") || pathname.startsWith("/health/"))
-    ) {
-      proxyAPI(request, response, apiTarget);
+    let pathname;
+    try {
+      pathname = decodeURIComponent(
+        new URL(request.url, "http://localhost").pathname,
+      );
+    } catch {
+      response.writeHead(400);
+      response.end("Invalid path");
       return;
     }
-    response.setHeader("X-Content-Type-Options", "nosniff");
+    if (
+      pathname.includes("\\") ||
+      pathname.split("/").some((part) => part === ".." || part === ".")
+    ) {
+      response.writeHead(404);
+      response.end("Not found");
+      return;
+    }
     const origin = request.headers.origin;
     if (origin === allowedOrigin) {
       response.setHeader("Access-Control-Allow-Origin", allowedOrigin);
@@ -43,17 +52,45 @@ export function createStaticServer({
       response.end();
       return;
     }
+    if (
+      apiTarget &&
+      ((webRoot && pathname.startsWith("/media/videos/")) ||
+        (!webRoot && pathname.startsWith("/videos/")))
+    ) {
+      const prefix = webRoot ? "/media/" : "/";
+      const mediaPath = pathname.slice(prefix.length);
+      proxyAPI(request, response, apiTarget, `/api/v1/media/${mediaPath}`);
+      return;
+    }
+    if (
+      apiTarget &&
+      (pathname.startsWith("/api/v1/") || pathname.startsWith("/health/"))
+    ) {
+      proxyAPI(request, response, apiTarget);
+      return;
+    }
+    response.setHeader("X-Content-Type-Options", "nosniff");
     if (request.method !== "GET" && request.method !== "HEAD") {
       response.writeHead(405, { Allow: "GET, HEAD, OPTIONS" });
       response.end();
       return;
     }
     try {
-      const url = new URL(request.url, "http://localhost");
-      const path = decodeURIComponent(url.pathname);
+      const path = pathname;
       const isMedia =
         path.startsWith("/media/") ||
         (!webRoot && path.startsWith("/fixture/"));
+      // Media directories contain private drafts as well as public objects. Only the operator fixture bypasses API visibility.
+      if (
+        (isMedia || !webRoot) &&
+        !(webRoot
+          ? path.startsWith("/media/fixture/")
+          : path.startsWith("/fixture/"))
+      ) {
+        response.writeHead(404);
+        response.end("Not found");
+        return;
+      }
       const root = resolve(isMedia ? mediaRoot : (webRoot ?? mediaRoot));
       const relative =
         isMedia && webRoot ? path.slice("/media/".length) : path.slice(1);

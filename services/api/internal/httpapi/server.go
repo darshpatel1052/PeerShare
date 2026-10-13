@@ -9,6 +9,8 @@ import (
 	"mime"
 	"net"
 	"net/http"
+	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -29,6 +31,7 @@ type App struct {
 	Limiter   *ratelimit.Limiter
 	Logger    *slog.Logger
 	dummyHash string
+	partSlots chan struct{}
 }
 type requestIDKey struct{}
 type identityKey struct{}
@@ -39,12 +42,22 @@ type APIError struct {
 }
 
 func New(ctx context.Context, cfg config.Config, db *store.Store, cache *redis.Client, logger *slog.Logger) (*App, error) {
+	for _, dir := range []string{cfg.UploadDir, cfg.MediaDir} {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return nil, err
+		}
+	}
+	for _, tool := range []string{"ffmpeg", "ffprobe"} {
+		if _, err := exec.LookPath(tool); err != nil {
+			return nil, err
+		}
+	}
 	hasher := auth.NewHasher(2)
 	dummy, err := hasher.Hash(ctx, "dummy credential for nonexistent accounts")
 	if err != nil {
 		return nil, err
 	}
-	return &App{Config: cfg, Store: db, Redis: cache, Hasher: hasher, Logger: logger, dummyHash: dummy, Limiter: &ratelimit.Limiter{Client: cache, Prefix: cfg.RatePrefix, Limit: cfg.AuthLimit, Window: time.Minute}}, nil
+	return &App{Config: cfg, Store: db, Redis: cache, Hasher: hasher, Logger: logger, dummyHash: dummy, partSlots: make(chan struct{}, 12), Limiter: &ratelimit.Limiter{Client: cache, Prefix: cfg.RatePrefix, Limit: cfg.AuthLimit, Window: time.Minute}}, nil
 }
 
 func (a *App) Handler() http.Handler {
@@ -61,7 +74,9 @@ func (a *App) Handler() http.Handler {
 	mux.HandleFunc("GET /api/v1/channels/{id}", a.getChannel)
 	mux.HandleFunc("GET /api/v1/videos", a.listVideos)
 	mux.HandleFunc("GET /api/v1/videos/{id}", a.getVideo)
-	for path, allowed := range map[string]string{"/api/v1/auth/register": "POST", "/api/v1/auth/login": "POST", "/api/v1/auth/logout": "POST", "/api/v1/auth/logout-all": "POST", "/api/v1/me": "GET, HEAD", "/api/v1/channels": "POST", "/api/v1/channels/{id}": "GET, HEAD, PATCH", "/api/v1/videos": "GET, HEAD", "/api/v1/videos/{id}": "GET, HEAD"} {
+	mux.HandleFunc("GET /api/v1/media/{key...}", a.getProcessedMedia)
+	a.registerUploads(mux)
+	for path, allowed := range map[string]string{"/api/v1/auth/register": "POST", "/api/v1/auth/login": "POST", "/api/v1/auth/logout": "POST", "/api/v1/auth/logout-all": "POST", "/api/v1/me": "GET, HEAD", "/api/v1/channels": "POST", "/api/v1/channels/{id}": "GET, HEAD, PATCH", "/api/v1/videos": "GET, HEAD", "/api/v1/videos/{id}": "GET, HEAD, PATCH, DELETE"} {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Allow", allowed)
 			a.error(w, r, 405, "method_not_allowed", "This endpoint does not support that HTTP method.")
@@ -77,7 +92,11 @@ func (a *App) requestScope(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		started := time.Now()
 		id := uuid.NewString()
-		ctx, cancel := context.WithTimeout(context.WithValue(r.Context(), requestIDKey{}, id), 8*time.Second)
+		timeout := 8 * time.Second
+		if strings.Contains(r.URL.Path, "/parts/") || strings.HasSuffix(r.URL.Path, "/complete") {
+			timeout = 2 * time.Minute
+		}
+		ctx, cancel := context.WithTimeout(context.WithValue(r.Context(), requestIDKey{}, id), timeout)
 		defer cancel()
 		r = r.WithContext(ctx)
 		w.Header().Set("X-Request-ID", id)
@@ -142,7 +161,11 @@ func (a *App) storeError(w http.ResponseWriter, r *http.Request, err error) {
 	case errors.Is(err, store.ErrNotOwner):
 		a.error(w, r, 403, "not_owner", "You can only edit your own channel.")
 	case errors.Is(err, store.ErrRevisionConflict):
-		a.error(w, r, 409, "revision_conflict", "This channel changed since you opened it. Reload before editing.")
+		a.error(w, r, 409, "revision_conflict", "These details changed since you opened them. Reload before editing.")
+	case errors.Is(err, store.ErrUploadLimit):
+		a.error(w, r, 429, "upload_capacity", "Upload capacity is currently full. Finish or cancel an existing upload first.")
+	case errors.Is(err, store.ErrUploadConflict):
+		a.error(w, r, 409, "upload_conflict", "The upload state changed. Reload the upload before retrying.")
 	default:
 		a.error(w, r, 503, "dependency_unavailable", "The service is temporarily unavailable. Please retry.")
 	}

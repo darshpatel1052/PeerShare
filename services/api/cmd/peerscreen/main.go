@@ -122,9 +122,20 @@ func run() error {
 	if err != nil {
 		return errors.New("API initialization failed")
 	}
-	server := http.Server{Addr: cfg.ListenAddr, Handler: app.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 8 * 1024}
+	server := http.Server{Addr: cfg.ListenAddr, Handler: app.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 2 * time.Minute, WriteTimeout: 2 * time.Minute, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 8 * 1024}
 	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+	workerCtx, workerCancel := context.WithCancel(signalCtx)
+	defer workerCancel()
+	workerDone := make(chan struct{})
+	go func() { defer close(workerDone); app.RunMediaWorker(workerCtx) }()
+	defer func() {
+		workerCancel()
+		select {
+		case <-workerDone:
+		case <-time.After(5 * time.Second):
+		}
+	}()
 	stopped := make(chan error, 1)
 	go func() { stopped <- server.ListenAndServe() }()
 	logger.Info("api_started", "listen", cfg.ListenAddr)

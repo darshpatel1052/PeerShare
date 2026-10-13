@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -89,4 +90,9 @@ func (s *Store) Videos(ctx context.Context, limit int, channelID *string, cursor
 		page.NextCursor = &next
 	}
 	return page, nil
+}
+
+func (s *Store) PreviewVideo(ctx context.Context, ownerID, id string) (Video, error) {
+	columns := strings.Replace(videoColumns, "v.published_at", "COALESCE(v.published_at,v.created_at)", 1)
+	return scanVideo(s.Pool.QueryRow(ctx, "SELECT "+columns+" FROM catalog.videos v JOIN catalog.channels c ON c.id=v.channel_id WHERE v.id=$1 AND c.owner_id=$2 AND v.deleted_at IS NULL AND v.processing_state='ready'", id, ownerID))
 }

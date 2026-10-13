@@ -30,7 +30,11 @@ const web = createStaticServer({
   allowedOrigin,
   apiTarget: backend.target,
 });
-const media = createStaticServer({ mediaRoot, allowedOrigin });
+const media = createStaticServer({
+  mediaRoot,
+  allowedOrigin,
+  apiTarget: backend.target,
+});
 const tracker = createTracker();
 const listen = (server, listeningPort) =>
   new Promise((accept, reject) => {

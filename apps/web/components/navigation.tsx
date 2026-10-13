@@ -36,6 +36,17 @@ export default function Navigation() {
             <Icon name="channel" />
             {me?.channel ? "Your channel" : "Create a channel"}
           </Link>
+          {me?.channel && (
+            <Link
+              href="/studio"
+              className={
+                pathname.startsWith("/studio") ? "nav-link active" : "nav-link"
+              }
+            >
+              <Icon name="grid" />
+              Studio
+            </Link>
+          )}
         </nav>
         <div className="account-nav">
           <ThemeToggle />

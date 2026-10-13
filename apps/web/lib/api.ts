@@ -8,6 +8,10 @@ export type Registration = components["schemas"]["Registration"];
 export type Credentials = components["schemas"]["Credentials"];
 export type ChannelCreate = components["schemas"]["ChannelCreate"];
 export type ChannelEdit = components["schemas"]["ChannelEdit"];
+export type CreateUpload = components["schemas"]["CreateUpload"];
+export type PartGrants = components["schemas"]["PartGrants"];
+export type VideoEdit = components["schemas"]["VideoEdit"];
+export type Upload = components["schemas"]["Upload"];
 
 export class ApiError extends Error {
   constructor(
@@ -21,23 +25,37 @@ export class ApiError extends Error {
 }
 export async function api<T>(
   path: string,
-  options: { method?: string; body?: unknown; signal?: AbortSignal } = {},
+  options: {
+    method?: string;
+    body?: unknown;
+    rawBody?: BodyInit;
+    headers?: Record<string, string>;
+    timeoutMs?: number;
+    signal?: AbortSignal;
+  } = {},
 ): Promise<T> {
   const signal = options.signal
-    ? AbortSignal.any([options.signal, AbortSignal.timeout(10_000)])
-    : AbortSignal.timeout(10_000);
+    ? AbortSignal.any([
+        options.signal,
+        AbortSignal.timeout(options.timeoutMs ?? 10_000),
+      ])
+    : AbortSignal.timeout(options.timeoutMs ?? 10_000);
   let response: Response;
   try {
     response = await fetch(`/api/v1${path}`, {
       method: options.method || "GET",
       credentials: "same-origin",
       signal,
-      headers:
-        options.body === undefined
-          ? { Accept: "application/json" }
-          : { Accept: "application/json", "Content-Type": "application/json" },
+      headers: {
+        Accept: "application/json",
+        ...(options.body === undefined
+          ? {}
+          : { "Content-Type": "application/json" }),
+        ...options.headers,
+      },
       body:
-        options.body === undefined ? undefined : JSON.stringify(options.body),
+        options.rawBody ??
+        (options.body === undefined ? undefined : JSON.stringify(options.body)),
     });
   } catch (error) {
     if (options.signal?.aborted) throw error;

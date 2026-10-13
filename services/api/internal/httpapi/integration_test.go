@@ -12,6 +12,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -55,12 +56,17 @@ func setup(t *testing.T) *testApp {
 	}
 	cfg.RatePrefix = "peerscreen:test:" + uuid.NewString()
 	cfg.AuthLimit = 120
+	cfg.UploadDir = t.TempDir()
+	cfg.MediaDir = t.TempDir()
 	db, err := store.Open(context.Background(), cfg.DatabaseURL)
 	if err != nil {
 		t.Fatal("test PostgreSQL unavailable")
 	}
 	t.Cleanup(db.Pool.Close)
 	if err := db.Migrate(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Pool.Exec(context.Background(), "TRUNCATE catalog.users CASCADE"); err != nil {
 		t.Fatal(err)
 	}
 	options, err := redis.ParseURL(cfg.RedisURL)
@@ -204,6 +210,128 @@ func TestIntegrationIdentityStorageRevocationAndExpiry(t *testing.T) {
 		t.Fatal("logs leaked credentials")
 	}
 }
+
+func TestIntegrationUploadIdempotencyResumeOwnershipAndPublishGate(t *testing.T) {
+	f := setup(t)
+	creator := client()
+	me, _, _ := registerUser(t, f, creator)
+	channel := createChannel(t, f, creator, "upload-"+strings.ReplaceAll(uuid.NewString()[:8], "-", ""))
+	key := "upload-request-" + uuid.NewString()
+	body := map[string]any{"channel_id": channel.ID, "title": "My first upload", "description": "A private draft", "tags": []string{"learning"}, "size": 11}
+	status, data, _ := request(t, creator, f.Server.URL, "POST", "/api/v1/uploads", body, map[string]string{"Idempotency-Key": key})
+	if status != 201 {
+		t.Fatalf("create upload status %d: %s", status, data)
+	}
+	var upload store.Upload
+	if json.Unmarshal(data, &upload) != nil || upload.State != "open" || upload.ExpectedBytes != 11 || upload.PartBytes != 8*1024*1024 {
+		t.Fatal("upload session response did not include the durable chunk policy")
+	}
+	status, replay, _ := request(t, creator, f.Server.URL, "POST", "/api/v1/uploads", body, map[string]string{"Idempotency-Key": key})
+	var replayed store.Upload
+	if status != 200 || json.Unmarshal(replay, &replayed) != nil || replayed.ID != upload.ID {
+		t.Fatal("an equivalent retry must return the existing upload")
+	}
+	changed := map[string]any{"channel_id": channel.ID, "title": "Different request", "description": "A private draft", "tags": []string{"learning"}, "size": 11}
+	status, _, _ = request(t, creator, f.Server.URL, "POST", "/api/v1/uploads", changed, map[string]string{"Idempotency-Key": key})
+	if status != 409 {
+		t.Fatal("reusing the idempotency key for different content must conflict")
+	}
+	other := client()
+	registerUser(t, f, other)
+	status, _, _ = request(t, other, f.Server.URL, "GET", "/api/v1/uploads/"+upload.ID, nil, nil)
+	if status != 404 {
+		t.Fatal("upload sessions must not be visible to another creator")
+	}
+	partURL := f.Server.URL + "/api/v1/uploads/" + upload.ID + "/parts/1"
+	putPart := func(payload string) int {
+		req, _ := http.NewRequest("PUT", partURL, strings.NewReader(payload))
+		req.Header.Set("Origin", "http://localhost:3000")
+		req.Header.Set("Content-Type", "application/octet-stream")
+		status, data, _ := request(t, creator, f.Server.URL, "POST", "/api/v1/uploads/"+upload.ID+"/parts/presign", map[string]any{"numbers": []int{1}}, nil)
+		if status != 200 {
+			t.Fatalf("grant status %d: %s", status, data)
+		}
+		var grants struct {
+			Parts []struct {
+				Token string `json:"token"`
+			} `json:"parts"`
+		}
+		if err := json.Unmarshal(data, &grants); err != nil {
+			t.Fatal(err)
+		}
+		req.Header.Set("Upload-Token", grants.Parts[0].Token)
+		response, err := creator.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer response.Body.Close()
+		io.Copy(io.Discard, response.Body)
+		return response.StatusCode
+	}
+	if status = putPart("hello world"); status != 200 {
+		t.Fatalf("first chunk upload failed: %d", status)
+	}
+	if status = putPart("hello world"); status != 200 {
+		t.Fatalf("identical chunk retry should be idempotent: %d", status)
+	}
+	if status = putPart("other bytes"); status != 409 {
+		t.Fatalf("conflicting chunk retry should be rejected: %d", status)
+	}
+	status, _, _ = request(t, creator, f.Server.URL, "POST", "/api/v1/uploads/"+upload.ID+"/complete", map[string]any{}, nil)
+	if status != 202 {
+		t.Fatalf("completed upload should enqueue processing: %d", status)
+	}
+	status, _, _ = request(t, creator, f.Server.URL, "GET", "/api/v1/videos/"+upload.VideoID, nil, nil)
+	if status != 404 {
+		t.Fatal("a processing draft must not leak through the public video endpoint")
+	}
+	status, _, _ = request(t, creator, f.Server.URL, "POST", "/api/v1/videos/"+upload.VideoID+"/publish", map[string]any{}, nil)
+	if status != 409 {
+		t.Fatalf("processing draft publish: status=%d DB error=%v", status, f.DB.PublishVideo(context.Background(), me.User.ID, upload.VideoID, true))
+	}
+	generation, attempt := uuid.NewString(), uuid.NewString()
+	if _, err := f.DB.Pool.Exec(context.Background(), `UPDATE catalog.videos SET processing_state='ready',duration_seconds=2,accepted_generation_id=$1,accepted_attempt_id=$2,manifest_key='private/master.m3u8',integrity_key='private/integrity.json',thumbnail_key='private/thumbnail.jpg',qualities=ARRAY[360] WHERE id=$3`, generation, attempt, upload.VideoID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.DB.Pool.Exec(context.Background(), `UPDATE catalog.processing_jobs SET state='ready',stage='ready',progress=100 WHERE video_id=$1`, upload.VideoID); err != nil {
+		t.Fatal(err)
+	}
+	mediaKey := "videos/" + upload.VideoID + "/" + generation + "/" + attempt + "/master.m3u8"
+	mediaFile := filepath.Join(f.App.Config.MediaDir, filepath.FromSlash(mediaKey))
+	if err := os.MkdirAll(filepath.Dir(mediaFile), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(mediaFile, []byte("#EXTM3U\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	status, _, _ = request(t, creator, f.Server.URL, "GET", "/api/v1/media/"+mediaKey, nil, nil)
+	if status != 200 {
+		t.Fatal("the owner must be able to preview processed draft media")
+	}
+	status, _, _ = request(t, other, f.Server.URL, "GET", "/api/v1/media/"+mediaKey, nil, nil)
+	if status != 404 {
+		t.Fatal("unpublished media must remain private to its owner")
+	}
+	status, _, _ = request(t, other, f.Server.URL, "POST", "/api/v1/videos/"+upload.VideoID+"/publish", map[string]any{}, nil)
+	if status != 409 {
+		t.Fatal("another creator cannot publish this video")
+	}
+	status, _, _ = request(t, creator, f.Server.URL, "POST", "/api/v1/videos/"+upload.VideoID+"/publish", map[string]any{}, nil)
+	if status != 200 {
+		t.Fatalf("owner publish failed: %d", status)
+	}
+	status, _, _ = request(t, other, f.Server.URL, "GET", "/api/v1/videos/"+upload.VideoID, nil, nil)
+	if status != 200 {
+		t.Fatal("published video must become publicly visible")
+	}
+	status, _, _ = request(t, client(), f.Server.URL, "GET", "/api/v1/media/"+mediaKey, nil, nil)
+	if status != 200 {
+		t.Fatal("a published generation must expose its media to public viewers")
+	}
+	if me.User.ID == "" {
+		t.Fatal("registration must return creator identity")
+	}
+}
 func TestIntegrationOwnershipRevisionAndDuplicateCreation(t *testing.T) {
 	f := setup(t)
 	alice := client()
@@ -336,7 +464,7 @@ func TestIntegrationTransactionRollbackAndMigrationReplay(t *testing.T) {
 		}
 	}
 	f.DB.Pool.QueryRow(ctx, "SELECT count(*) FROM catalog.schema_migrations").Scan(&count)
-	if count != 1 {
+	if count != 3 {
 		t.Fatal("migration replay duplicated history")
 	}
 	_, err = f.DB.Pool.Exec(ctx, "CREATE TABLE public.must_not_be_allowed(id int)")

@@ -183,6 +183,248 @@ paths:
         "400": { $ref: "#/components/responses/Error" }
         "404": { $ref: "#/components/responses/Error" }
         "503": { $ref: "#/components/responses/Error" }
+    patch:
+      operationId: editVideo
+      security: [{ session: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/VideoEdit" }
+      responses:
+        "204":
+          {
+            description: Owner metadata updated with optimistic revision check.,
+          }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteVideo
+      security: [{ session: [] }]
+      responses:
+        "204":
+          {
+            description: Video hidden immediately; durable cleanup will release capacity.,
+          }
+        "404": { $ref: "#/components/responses/Error" }
+  /api/v1/uploads:
+    get:
+      operationId: listUploads
+      security: [{ session: [] }]
+      responses:
+        "200":
+          description: Recent upload and processing sessions owned by the signed-in creator.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UploadsPage" }
+        "401": { $ref: "#/components/responses/Error" }
+    post:
+      operationId: createUpload
+      security: [{ session: [] }]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: { type: string, minLength: 16, maxLength: 128 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateUpload" }
+      responses:
+        "201":
+          description: Private draft and durable chunk-upload session created.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Upload" }
+        "200": { description: Idempotent retry returned the existing session. }
+        "401": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+  /api/v1/uploads/{id}:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    get:
+      operationId: getUpload
+      security: [{ session: [] }]
+      description: Authoritative upload state and checksummed chunks for safe resume.
+      responses:
+        "200":
+          description: Upload session owned by the signed-in creator.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Upload" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: abortUpload
+      security: [{ session: [] }]
+      responses:
+        "204": { description: Open upload cancelled. }
+        "401": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/uploads/{id}/parts/presign:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    post:
+      operationId: grantUploadParts
+      security: [{ session: [] }]
+      description: Local transport permissions, scoped to the owner and each part for at most ten minutes. These are not S3 presigned URLs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [numbers]
+              properties:
+                numbers:
+                  {
+                    type: array,
+                    minItems: 1,
+                    maxItems: 3,
+                    uniqueItems: true,
+                    items: { type: integer, minimum: 1, maximum: 32 },
+                  }
+      responses:
+        "200":
+          description: Fresh chunk permissions; keep tokens in memory only.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PartGrants" }
+        "401": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/videos/{id}/preview:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    get:
+      operationId: previewVideo
+      security: [{ session: [] }]
+      responses:
+        "200":
+          {
+            description: Owner-only ready draft playback; peer sharing disabled.,
+          }
+        "404": { $ref: "#/components/responses/Error" }
+  /api/v1/videos/{id}/processing:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    get:
+      operationId: getProcessing
+      security: [{ session: [] }]
+      responses:
+        "200":
+          description: Private processing and publication state.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Upload" }
+        "404": { $ref: "#/components/responses/Error" }
+  /api/v1/videos/{id}/processing/retry:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    post:
+      operationId: retryProcessing
+      security: [{ session: [] }]
+      responses:
+        "204":
+          {
+            description: Failed or cancelled job requeued,
+            up to three total attempts. Equivalent queued/running retries are no-ops.,
+          }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/videos/{id}/processing/cancel:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    post:
+      operationId: cancelProcessing
+      security: [{ session: [] }]
+      responses:
+        "204":
+          {
+            description: Attempt invalidated; late completion cannot make the draft ready.,
+          }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/uploads/{id}/abort:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    post:
+      operationId: abortUploadPost
+      security: [{ session: [] }]
+      responses:
+        "204":
+          {
+            description: Idempotent upload abort; cleanup releases the reservation.,
+          }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/uploads/{id}/parts/{number}:
+    parameters:
+      - { $ref: "#/components/parameters/ResourceID" }
+      - name: Upload-Token
+        in: header
+        required: true
+        schema: { type: string }
+      - name: number
+        in: path
+        required: true
+        schema: { type: integer, minimum: 1, maximum: 32 }
+    put:
+      operationId: uploadPart
+      security: [{ session: [] }]
+      description: Streams one numbered 8 MiB maximum raw binary chunk to private local storage. Repeated identical chunks are safe.
+      requestBody:
+        required: true
+        content:
+          application/octet-stream: { schema: { type: string, format: binary } }
+      responses:
+        "200": { description: Chunk stored and SHA-256 recorded. }
+        "401": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/uploads/{id}/complete:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    post:
+      operationId: completeUpload
+      security: [{ session: [] }]
+      responses:
+        "202":
+          { description: Source assembled and durable processing job queued. }
+        "401": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/videos/{id}/publish:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    post:
+      operationId: publishVideo
+      security: [{ session: [] }]
+      description: Owner-only publication, accepted only after processing has produced a complete playable generation.
+      responses:
+        "200":
+          {
+            description: Video is now visible in public channel and catalogue queries.,
+          }
+        "401": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/videos/{id}/unpublish:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    post:
+      operationId: unpublishVideo
+      security: [{ session: [] }]
+      responses:
+        "200":
+          {
+            description: Video is no longer visible in public catalogue queries.,
+          }
+        "401": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/media/{key}:
+    get:
+      operationId: getProcessedMedia
+      description: Serves a ready immutable media generation publicly after publication, or privately to its owner.
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          {
+            description: HLS playlist,
+            MPEG-TS segment,
+            thumbnail or integrity descriptor.,
+          }
+        "404": { $ref: "#/components/responses/Error" }
   /health/live:
     get:
       operationId: liveness
@@ -366,3 +608,112 @@ components:
       properties:
         items: { type: array, items: { $ref: "#/components/schemas/Video" } }
         next_cursor: { type: [string, "null"] }
+    CreateUpload:
+      type: object
+      additionalProperties: false
+      required: [channel_id, title, description, tags, size]
+      properties:
+        channel_id: { type: string, format: uuid }
+        title: { type: string, minLength: 1, maxLength: 200 }
+        description: { type: string, maxLength: 5000 }
+        tags:
+          {
+            type: array,
+            maxItems: 10,
+            items: { type: string, minLength: 1, maxLength: 32 },
+          }
+        size: { type: integer, minimum: 1, maximum: 262144000 }
+        part_checksums:
+          type: array
+          maxItems: 32
+          description: Optional for legacy clients; the studio supplies all part hashes before admission to verify file identity on resume.
+          items: { type: string, pattern: "^[a-f0-9]{64}$" }
+    VideoEdit:
+      type: object
+      additionalProperties: false
+      required: [title, description, tags, revision]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 200 }
+        description: { type: string, maxLength: 5000 }
+        tags:
+          {
+            type: array,
+            maxItems: 10,
+            items: { type: string, minLength: 1, maxLength: 32 },
+          }
+        revision: { type: integer, minimum: 1 }
+    PartGrants:
+      type: object
+      required: [parts]
+      properties:
+        parts:
+          type: array
+          maxItems: 3
+          items:
+            type: object
+            required: [number, url, token, bytes, expires_at]
+            properties:
+              number: { type: integer }
+              url: { type: string }
+              token: { type: string }
+              bytes: { type: integer }
+              expires_at: { type: string, format: date-time }
+    Upload:
+      type: object
+      required:
+        [
+          id,
+          video_id,
+          title,
+          description,
+          tags,
+          revision,
+          part_checksums,
+          job_id,
+          expected_bytes,
+          part_bytes,
+          parts,
+          state,
+          processing_state,
+          processing_stage,
+          progress,
+          publication_state,
+          expires_at,
+        ]
+      properties:
+        id: { type: string, format: uuid }
+        video_id: { type: string, format: uuid }
+        title: { type: string }
+        description: { type: string }
+        tags: { type: array, items: { type: string } }
+        revision: { type: integer }
+        part_checksums: { type: array, items: { type: string } }
+        job_id: { type: [string, "null"], format: uuid }
+        expected_bytes: { type: integer }
+        part_bytes: { type: integer }
+        parts:
+          type: array
+          items:
+            type: object
+            required: [number, bytes, sha256]
+            properties:
+              number: { type: integer }
+              bytes: { type: integer }
+              sha256: { type: string }
+        state: { type: string, enum: [open, completed, aborted, expired] }
+        processing_state:
+          {
+            type: string,
+            enum: [pending, processing, ready, failed, cancelled],
+          }
+        processing_stage: { type: string }
+        progress: { type: integer, minimum: 0, maximum: 100 }
+        error_code: { type: [string, "null"] }
+        publication_state:
+          { type: string, enum: [draft, published, unpublished] }
+        expires_at: { type: string, format: date-time }
+    UploadsPage:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/Upload" } }

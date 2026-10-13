@@ -369,7 +369,9 @@ export default function Account() {
             </form>
             <p className="publishing-note">
               <Icon name="film" />
-              Video publishing is not available yet.
+              <Link href="/studio">
+                Open creator studio to upload and publish videos.
+              </Link>
             </p>
           </section>
           <section

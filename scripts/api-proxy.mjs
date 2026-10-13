@@ -1,5 +1,6 @@
 import { request as httpRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
+import { Transform } from "node:stream";
 import { randomUUID } from "node:crypto";
 
 const stripped = new Set([
@@ -17,7 +18,7 @@ const stripped = new Set([
   "x-forwarded-proto",
   "x-user-id",
 ]);
-export function proxyAPI(request, response, target) {
+export function proxyAPI(request, response, target, path = request.url) {
   const fail = (status, code, message) => {
     if (response.headersSent) {
       response.destroy();
@@ -35,8 +36,25 @@ export function proxyAPI(request, response, target) {
     fail(400, "invalid_target", "Use an application-relative request path.");
     return;
   }
-  if (Number(request.headers["content-length"] || 0) > 16 * 1024) {
-    fail(413, "body_too_large", "The request body exceeds 16 KiB.");
+  const uploadBody =
+    request.method === "PUT" &&
+    /^\/api\/v1\/uploads\/[a-f0-9-]{36}\/parts\/\d+$/.test(
+      new URL(request.url, "http://localhost").pathname,
+    );
+  const completion =
+    request.method === "POST" &&
+    /^\/api\/v1\/uploads\/[a-f0-9-]{36}\/complete$/.test(
+      new URL(request.url, "http://localhost").pathname,
+    );
+  const maxBody = uploadBody ? 8 * 1024 * 1024 : 16 * 1024;
+  if (Number(request.headers["content-length"] || 0) > maxBody) {
+    fail(
+      413,
+      "body_too_large",
+      uploadBody
+        ? "Upload chunks cannot exceed 8 MiB."
+        : "The request body exceeds 16 KiB.",
+    );
     request.resume();
     return;
   }
@@ -49,7 +67,7 @@ export function proxyAPI(request, response, target) {
     {
       hostname: origin.hostname,
       port: origin.port,
-      path: request.url,
+      path,
       method: request.method,
       headers,
     },
@@ -64,7 +82,7 @@ export function proxyAPI(request, response, target) {
       incoming.on("error", () => response.destroy());
     },
   );
-  upstream.setTimeout(10_000, () =>
+  upstream.setTimeout(uploadBody || completion ? 2 * 60_000 : 10_000, () =>
     upstream.destroy(new Error("upstream timeout")),
   );
   upstream.on("error", () =>
@@ -76,5 +94,28 @@ export function proxyAPI(request, response, target) {
   );
   request.on("aborted", () => upstream.destroy());
   request.on("error", () => upstream.destroy());
-  request.pipe(upstream);
+  response.on("close", () => {
+    if (!response.writableEnded) upstream.destroy();
+  });
+  let received = 0;
+  const bounded = new Transform({
+    transform(chunk, encoding, done) {
+      received += chunk.length;
+      if (received > maxBody) {
+        fail(
+          413,
+          "body_too_large",
+          uploadBody
+            ? "Upload chunks cannot exceed 8 MiB."
+            : "The request body exceeds 16 KiB.",
+        );
+        upstream.destroy();
+        done(new Error("request body limit"));
+        return;
+      }
+      done(null, chunk);
+    },
+  });
+  bounded.on("error", () => request.unpipe(bounded));
+  request.pipe(bounded).pipe(upstream);
 }

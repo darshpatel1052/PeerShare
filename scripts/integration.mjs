@@ -16,7 +16,7 @@ try {
     { json: true },
   );
   await mkdir(resolve(".local/evidence"), { recursive: true });
-  await writeFile(resolve(".local/evidence/phase-1-go-tests.jsonl"), output);
+  await writeFile(resolve(".local/evidence/phase-2-go-tests.jsonl"), output);
   const events = output
     .trim()
     .split("\n")
@@ -35,7 +35,7 @@ try {
   if (error.output) {
     await mkdir(resolve(".local/evidence"), { recursive: true });
     await writeFile(
-      resolve(".local/evidence/phase-1-go-tests.jsonl"),
+      resolve(".local/evidence/phase-2-go-tests.jsonl"),
       error.output,
     );
     for (const line of error.output.trim().split("\n")) {

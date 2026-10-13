@@ -76,7 +76,7 @@ try {
   assert.equal(channel.status, 201);
   const before = (await call("/api/v1/me")).data;
   await backend.stopProcess();
-  backend = await startBackend(options);
+  backend = await startBackend({ ...options, storageRoot: backend.storage });
   const secondPID = backend.pid;
   assert.notEqual(secondPID, firstPID);
   const afterProcessRestart = (await call("/api/v1/me")).data;

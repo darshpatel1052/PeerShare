@@ -11,15 +11,16 @@ try {
   console.error("Run npm run fixture first.");
   process.exit(1);
 }
-const media = createStaticServer({
-  mediaRoot: resolve(".local/media"),
-  allowedOrigin: "http://localhost:3000",
-});
 const tracker = createTracker();
 const backend = await startBackend({
   origin: "http://localhost:3000",
   trackerUrl: "ws://localhost:8000",
-  mediaBase: "http://localhost:3001/",
+  mediaBase: "http://localhost:3000/media/",
+});
+const media = createStaticServer({
+  mediaRoot: resolve(".local/media"),
+  allowedOrigin: "http://localhost:3000",
+  apiTarget: backend.target,
 });
 const listen = (server, port) =>
   new Promise((accept, reject) => {

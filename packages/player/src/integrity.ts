@@ -41,10 +41,14 @@ export function parseDescriptor(value: unknown): IntegrityDescriptor {
   return { schemaVersion: 1, mediaVersion: descriptor.mediaVersion, segments };
 }
 
-export async function fetchDescriptor(url: string, signal?: AbortSignal) {
+export async function fetchDescriptor(
+  url: string,
+  signal?: AbortSignal,
+  credentials: RequestCredentials = "omit",
+) {
   const response = await fetch(url, {
     signal,
-    credentials: "omit",
+    credentials,
     redirect: "error",
   });
   if (!response.ok || !response.body)

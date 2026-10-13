@@ -152,6 +152,244 @@ export interface paths {
     get: operations["getVideo"];
     put?: never;
     post?: never;
+    delete: operations["deleteVideo"];
+    options?: never;
+    head?: never;
+    patch: operations["editVideo"];
+    trace?: never;
+  };
+  "/api/v1/uploads": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["listUploads"];
+    put?: never;
+    post: operations["createUpload"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/uploads/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    /** @description Authoritative upload state and checksummed chunks for safe resume. */
+    get: operations["getUpload"];
+    put?: never;
+    post?: never;
+    delete: operations["abortUpload"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/uploads/{id}/parts/presign": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Local transport permissions, scoped to the owner and each part for at most ten minutes. These are not S3 presigned URLs. */
+    post: operations["grantUploadParts"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/videos/{id}/preview": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get: operations["previewVideo"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/videos/{id}/processing": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get: operations["getProcessing"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/videos/{id}/processing/retry": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["retryProcessing"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/videos/{id}/processing/cancel": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["cancelProcessing"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/uploads/{id}/abort": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["abortUploadPost"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/uploads/{id}/parts/{number}": {
+    parameters: {
+      query?: never;
+      header: {
+        "Upload-Token": string;
+      };
+      path: {
+        id: components["parameters"]["ResourceID"];
+        number: number;
+      };
+      cookie?: never;
+    };
+    get?: never;
+    /** @description Streams one numbered 8 MiB maximum raw binary chunk to private local storage. Repeated identical chunks are safe. */
+    put: operations["uploadPart"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/uploads/{id}/complete": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["completeUpload"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/videos/{id}/publish": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Owner-only publication, accepted only after processing has produced a complete playable generation. */
+    post: operations["publishVideo"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/videos/{id}/unpublish": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["unpublishVideo"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/media/{key}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Serves a ready immutable media generation publicly after publication, or privately to its owner. */
+    get: operations["getProcessedMedia"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -290,6 +528,67 @@ export interface components {
     VideosPage: {
       items: components["schemas"]["Video"][];
       next_cursor: string | null;
+    };
+    CreateUpload: {
+      /** Format: uuid */
+      channel_id: string;
+      title: string;
+      description: string;
+      tags: string[];
+      size: number;
+      /** @description Optional for legacy clients; the studio supplies all part hashes before admission to verify file identity on resume. */
+      part_checksums?: string[];
+    };
+    VideoEdit: {
+      title: string;
+      description: string;
+      tags: string[];
+      revision: number;
+    };
+    PartGrants: {
+      parts: {
+        number: number;
+        url: string;
+        token: string;
+        bytes: number;
+        /** Format: date-time */
+        expires_at: string;
+      }[];
+    };
+    Upload: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      video_id: string;
+      title: string;
+      description: string;
+      tags: string[];
+      revision: number;
+      part_checksums: string[];
+      /** Format: uuid */
+      job_id: string | null;
+      expected_bytes: number;
+      part_bytes: number;
+      parts: {
+        number: number;
+        bytes: number;
+        sha256: string;
+      }[];
+      /** @enum {string} */
+      state: "open" | "completed" | "aborted" | "expired";
+      /** @enum {string} */
+      processing_state:
+        "pending" | "processing" | "ready" | "failed" | "cancelled";
+      processing_stage: string;
+      progress: number;
+      error_code?: string | null;
+      /** @enum {string} */
+      publication_state: "draft" | "published" | "unpublished";
+      /** Format: date-time */
+      expires_at: string;
+    };
+    UploadsPage: {
+      items: components["schemas"]["Upload"][];
     };
   };
   responses: {
@@ -584,6 +883,409 @@ export interface operations {
       400: components["responses"]["Error"];
       404: components["responses"]["Error"];
       503: components["responses"]["Error"];
+    };
+  };
+  deleteVideo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Video hidden immediately; durable cleanup will release capacity. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      404: components["responses"]["Error"];
+    };
+  };
+  editVideo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["VideoEdit"];
+      };
+    };
+    responses: {
+      /** @description Owner metadata updated with optimistic revision check. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+    };
+  };
+  listUploads: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Recent upload and processing sessions owned by the signed-in creator. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UploadsPage"];
+        };
+      };
+      401: components["responses"]["Error"];
+    };
+  };
+  createUpload: {
+    parameters: {
+      query?: never;
+      header: {
+        "Idempotency-Key": string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateUpload"];
+      };
+    };
+    responses: {
+      /** @description Idempotent retry returned the existing session. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Private draft and durable chunk-upload session created. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Upload"];
+        };
+      };
+      401: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+    };
+  };
+  getUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Upload session owned by the signed-in creator. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Upload"];
+        };
+      };
+      401: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+    };
+  };
+  abortUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Open upload cancelled. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+    };
+  };
+  grantUploadParts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          numbers: number[];
+        };
+      };
+    };
+    responses: {
+      /** @description Fresh chunk permissions; keep tokens in memory only. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PartGrants"];
+        };
+      };
+      401: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+    };
+  };
+  previewVideo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Owner-only ready draft playback; peer sharing disabled. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      404: components["responses"]["Error"];
+    };
+  };
+  getProcessing: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Private processing and publication state. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Upload"];
+        };
+      };
+      404: components["responses"]["Error"];
+    };
+  };
+  retryProcessing: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Failed or cancelled job requeued */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      409: components["responses"]["Error"];
+    };
+  };
+  cancelProcessing: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Attempt invalidated; late completion cannot make the draft ready. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      409: components["responses"]["Error"];
+    };
+  };
+  abortUploadPost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Idempotent upload abort; cleanup releases the reservation. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      409: components["responses"]["Error"];
+    };
+  };
+  uploadPart: {
+    parameters: {
+      query?: never;
+      header: {
+        "Upload-Token": string;
+      };
+      path: {
+        id: components["parameters"]["ResourceID"];
+        number: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/octet-stream": string;
+      };
+    };
+    responses: {
+      /** @description Chunk stored and SHA-256 recorded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+    };
+  };
+  completeUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Source assembled and durable processing job queued. */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+    };
+  };
+  publishVideo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Video is now visible in public channel and catalogue queries. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+    };
+  };
+  unpublishVideo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Video is no longer visible in public catalogue queries. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+    };
+  };
+  getProcessedMedia: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description HLS playlist */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      404: components["responses"]["Error"];
     };
   };
   liveness: {
