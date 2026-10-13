@@ -18,6 +18,7 @@ func (a *App) reconcileMedia(ctx context.Context) {
 		}
 		return
 	}
+	a.reconcileCreatorImages()
 	a.measureLegacyOutputs(ctx)
 	candidates, err := a.Store.CleanupCandidates(ctx)
 	if err != nil {

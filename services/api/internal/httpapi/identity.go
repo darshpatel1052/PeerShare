@@ -119,6 +119,9 @@ func (a *App) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	a.setCookie(w, token, expiry)
+	if me.Channel != nil {
+		a.decorateChannel(me.Channel)
+	}
 	writeJSON(w, 200, me)
 }
 func (a *App) logout(w http.ResponseWriter, r *http.Request) {
@@ -152,6 +155,9 @@ func (a *App) me(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		a.storeError(w, r, err)
 		return
+	}
+	if me.Channel != nil {
+		a.decorateChannel(me.Channel)
 	}
 	writeJSON(w, 200, me)
 }

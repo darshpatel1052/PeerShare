@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Avatar, Icon, LoadingState } from "./ui";
 import WatchSidebar from "./watch-sidebar";
+import VideoPlayer from "./video-player";
 import { resourceID, duration, type VideoDetail } from "../lib/api";
 import { useResource } from "../lib/use-resource";
 import {
@@ -134,16 +135,18 @@ export default function Watch() {
       </div>
       <div className="watch-layout">
         <section>
-          <div className="player-frame">
-            <video
-              ref={video}
-              controls
-              playsInline
-              preload="metadata"
-              poster={item.thumbnail_url}
-              aria-label={`${item.title} video player`}
-            />
-          </div>
+          <VideoPlayer
+            videoRef={video}
+            title={item.title}
+            poster={item.thumbnail_url}
+            ready={ready}
+            qualities={qualities}
+            quality={quality}
+            onQuality={(height) => {
+              setQuality(height);
+              handle.current?.setQuality(height);
+            }}
+          />
           <div className="controls">
             <span
               role="status"
@@ -153,25 +156,6 @@ export default function Watch() {
               <span className={ready ? "status-dot ready" : "status-dot"} />
               {ready ? "Ready to play" : "Preparing video…"}
             </span>
-            <label>
-              Quality{" "}
-              <select
-                aria-label="Video quality"
-                value={quality}
-                onChange={(event) => {
-                  const height = Number(event.target.value);
-                  setQuality(height);
-                  handle.current?.setQuality(height);
-                }}
-              >
-                <option value={0}>Auto</option>
-                {qualities.map((height) => (
-                  <option key={height} value={height}>
-                    {height}p
-                  </option>
-                ))}
-              </select>
-            </label>
           </div>
           {error && (
             <div role="alert" className="error" data-testid="playback-error">

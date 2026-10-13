@@ -12,6 +12,25 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
   test.setTimeout(120_000);
   const directory = await mkdtemp(join(tmpdir(), "peerscreen-upload-"));
   const mp4 = join(directory, "small.mp4");
+  const artwork = join(directory, "artwork.jpg");
+  const imageMade = spawnSync(
+    "ffmpeg",
+    [
+      "-v",
+      "error",
+      "-f",
+      "lavfi",
+      "-i",
+      "color=c=0x415333:s=1280x720",
+      "-frames:v",
+      "1",
+      "-threads",
+      "1",
+      artwork,
+    ],
+    { timeout: 10_000 },
+  );
+  expect(imageMade.status).toBe(0);
   const generated = spawnSync(
     "ffmpeg",
     [
@@ -79,6 +98,22 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
     await page
       .getByRole("button", { name: "Create channel", exact: true })
       .click();
+    await page
+      .getByLabel("Channel banner", { exact: true })
+      .setInputFiles(artwork);
+    await page
+      .getByRole("button", { name: "Save banner", exact: true })
+      .click();
+    await expect(
+      page.getByText("Banner saved.", { exact: true }),
+    ).toBeVisible();
+    const meWithBanner = await (await page.request.get("/api/v1/me")).json();
+    expect(meWithBanner.channel.banner_url).toContain("/api/v1/images/");
+    await page.goto(`/channel/?id=${meWithBanner.channel.id}`);
+    await expect(page.locator(".channel-cover img")).toHaveAttribute(
+      "src",
+      meWithBanner.channel.banner_url,
+    );
     await page.goto("/studio/");
     await page.getByLabel("Video title").fill("My first published video");
     await page
@@ -90,9 +125,25 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
       buffer: await readFile(mp4),
     });
     await page.getByRole("button", { name: "Start upload" }).click();
-    await expect(page.getByText("Ready · draft")).toBeVisible({
+    await expect(page.getByText("Ready to publish")).toBeVisible({
       timeout: 90_000,
     });
+    await page.getByRole("button", { name: /^Drafts/ }).click();
+    await page
+      .getByRole("button", { name: "Edit details", exact: true })
+      .click();
+    await page
+      .getByLabel("Video thumbnail", { exact: true })
+      .setInputFiles(artwork);
+    await page
+      .getByRole("button", { name: "Save thumbnail", exact: true })
+      .click();
+    await expect(
+      page.getByText("Thumbnail saved.", { exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Discard changes", exact: true })
+      .click();
     await page
       .getByRole("button", { name: "Preview video", exact: true })
       .click();
@@ -111,6 +162,8 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
       .toBeGreaterThan(1);
     const owned = await (await page.request.get("/api/v1/uploads")).json();
     const videoID = owned.items[0].video_id;
+    const thumbnailURL = owned.items[0].thumbnail_url;
+    expect(owned.items[0].has_custom_thumbnail).toBe(true);
     const anonymous = await browser.newContext({
       baseURL: testInfo.project.use.baseURL,
     });
@@ -118,6 +171,7 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
       expect(
         (await anonymous.request.get(`/api/v1/videos/${videoID}`)).status(),
       ).toBe(404);
+      expect((await anonymous.request.get(thumbnailURL)).status()).toBe(404);
       await page.setViewportSize({ width: 1365, height: 900 });
       await page.evaluate(() => window.scrollTo(0, 0));
       const desktop = testInfo.outputPath("studio-desktop.png");
@@ -141,7 +195,12 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
       await page
         .getByRole("button", { name: "Publish video", exact: true })
         .click();
-      await expect(page.getByText("Ready · published")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "No drafts", exact: true }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: /^Published/ }).click();
+      await expect(page.getByText("Live on your channel")).toBeVisible();
+      expect((await anonymous.request.get(thumbnailURL)).status()).toBe(200);
       const publicPage = await anonymous.newPage();
       await publicPage.goto(`/watch/?v=${videoID}`);
       await expect(publicPage.getByTestId("player-status")).toHaveText(
@@ -168,6 +227,18 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
       await page
         .getByRole("button", { name: "Unpublish", exact: true })
         .click();
+      await expect(
+        page.getByRole("heading", { name: "No published videos", exact: true }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: /^Drafts/ }).click();
+      await expect(
+        page.getByRole("heading", { name: "No drafts", exact: true }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: /^Unpublished/ }).click();
+      await expect(
+        page.getByText("Hidden from your channel", { exact: true }),
+      ).toBeVisible();
+      expect((await anonymous.request.get(thumbnailURL)).status()).toBe(404);
       expect(
         (await anonymous.request.get(`/api/v1/videos/${videoID}`)).status(),
       ).toBe(404);
@@ -200,6 +271,7 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
       await page
         .getByRole("button", { name: "Publish video", exact: true })
         .click();
+      await page.getByRole("button", { name: /^Published/ }).click();
       await page.getByRole("link", { name: "Watch video" }).click();
       await expect(page.getByTestId("player-status")).toHaveText(
         "Ready to play",
@@ -299,7 +371,9 @@ test("resume a multi-chunk MP4 after a lost connection and reload; reject a diff
     const interrupted = "**/uploads/*/parts/2";
     await page.route(interrupted, (route) => route.abort("connectionfailed"));
     await page.getByRole("button", { name: "Start upload" }).click();
-    await expect(page.getByText("1 of 2 chunks stored")).toBeVisible();
+    await expect(
+      page.getByText(/^Upload [1-9][0-9]?% complete$/),
+    ).toBeVisible();
     const before = await (await page.request.get("/api/v1/uploads")).json();
     expect(
       before.items[0].parts.map((p: { number: number }) => p.number),
@@ -331,7 +405,7 @@ test("resume a multi-chunk MP4 after a lost connection and reload; reject a diff
     await page
       .getByRole("button", { name: "Resume with selected file" })
       .click();
-    await expect(page.getByText("Ready · draft")).toBeVisible({
+    await expect(page.getByText("Ready to publish")).toBeVisible({
       timeout: 60_000,
     });
     expect(partRequests).toEqual([2]);
@@ -384,14 +458,23 @@ test("failed source stays private and studio metadata edits and deletion work", 
   await expect(
     page.getByRole("heading", { name: "A corrected title" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Delete video", exact: true }).click();
+  await page
+    .getByRole("button", { name: /Delete (draft|video)/, exact: true })
+    .click();
   await page.getByRole("button", { name: "Keep video", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "A corrected title" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Delete video", exact: true }).click();
+  await page
+    .getByRole("button", { name: /Delete (draft|video)/, exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Confirm delete", exact: true })
     .click();
-  await expect(page.getByText("NO UPLOADS YET", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Your next video starts here",
+      exact: true,
+    }),
+  ).toBeVisible();
 });

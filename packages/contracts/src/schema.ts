@@ -4,6 +4,67 @@
  */
 
 export interface paths {
+  "/api/v1/channels/{id}/banner": {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Current channel or video revision. */
+        "If-Match": number;
+      };
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    /** @description Owner-only JPG/PNG upload. At most 5 MiB and 6 million pixels; re-encoded as JPEG. Artwork does not change playback generations. */
+    put: operations["setBanner"];
+    post?: never;
+    delete: operations["resetBanner"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/videos/{id}/thumbnail": {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Current channel or video revision. */
+        "If-Match": number;
+      };
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    /** @description Owner-only JPG/PNG upload. At most 5 MiB and 6 million pixels; re-encoded as JPEG. Artwork does not change playback generations. */
+    put: operations["setThumbnail"];
+    post?: never;
+    delete: operations["resetThumbnail"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/images/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Only currently selected images are readable. Banners are public; video thumbnails require publication or the owning session. Retired/deleted/unpublished images return 404 to visitors. */
+    get: operations["creatorImage"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/auth/register": {
     parameters: {
       query?: never;
@@ -432,6 +493,12 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    ThumbnailUpdate: {
+      revision: number;
+      /** @description Empty after resetting to the generated frame. */
+      thumbnail_url: string;
+      has_custom_thumbnail: boolean;
+    };
     APIError: {
       code: string;
       message: string;
@@ -480,6 +547,8 @@ export interface components {
       title: string;
       description: string;
       owner_display_name: string;
+      /** @description Empty when using the default banner. */
+      banner_url: string;
       revision: number;
       /** Format: date-time */
       created_at: string;
@@ -579,6 +648,8 @@ export interface components {
       part_checksums: string[];
       /** Format: uuid */
       job_id: string | null;
+      thumbnail_url: string;
+      has_custom_thumbnail: boolean;
       expected_bytes: number;
       part_bytes: number;
       parts: {
@@ -629,6 +700,164 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  setBanner: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Current channel or video revision. */
+        "If-Match": number;
+      };
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "image/jpeg": string;
+        "image/png": string;
+      };
+    };
+    responses: {
+      /** @description Image saved and revision incremented. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Channel"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      413: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      429: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  resetBanner: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Current channel or video revision. */
+        "If-Match": number;
+      };
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: components["requestBodies"]["Empty"];
+    responses: {
+      /** @description Default restored and revision incremented. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Channel"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+    };
+  };
+  setThumbnail: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Current channel or video revision. */
+        "If-Match": number;
+      };
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "image/jpeg": string;
+        "image/png": string;
+      };
+    };
+    responses: {
+      /** @description Image saved and revision incremented. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ThumbnailUpdate"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      413: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      429: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  resetThumbnail: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Current channel or video revision. */
+        "If-Match": number;
+      };
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: components["requestBodies"]["Empty"];
+    responses: {
+      /** @description Default restored and revision incremented. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ThumbnailUpdate"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+    };
+  };
+  creatorImage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Normalized JPEG image; no-store to respect later unpublishing. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "image/jpeg": string;
+        };
+      };
+      404: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
   register: {
     parameters: {
       query?: never;

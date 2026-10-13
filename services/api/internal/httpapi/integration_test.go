@@ -450,6 +450,8 @@ func TestIntegrationTransactionRollbackAndMigrationReplay(t *testing.T) {
 	if count != 0 {
 		t.Fatal("failed session creation left a partial user")
 	}
+	var migrationsBefore int
+	f.DB.Pool.QueryRow(ctx, "SELECT count(*) FROM catalog.schema_migrations").Scan(&migrationsBefore)
 	var wg sync.WaitGroup
 	failures := make(chan error, 2)
 	for i := 0; i < 2; i++ {
@@ -464,7 +466,7 @@ func TestIntegrationTransactionRollbackAndMigrationReplay(t *testing.T) {
 		}
 	}
 	f.DB.Pool.QueryRow(ctx, "SELECT count(*) FROM catalog.schema_migrations").Scan(&count)
-	if count != 3 {
+	if count != migrationsBefore {
 		t.Fatal("migration replay duplicated history")
 	}
 	_, err = f.DB.Pool.Exec(ctx, "CREATE TABLE public.must_not_be_allowed(id int)")

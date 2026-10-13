@@ -109,6 +109,7 @@ func (a *App) createUpload(w http.ResponseWriter, r *http.Request) {
 		status = 200
 	}
 	w.Header().Set("Location", "/api/v1/uploads/"+u.ID)
+	a.decorateUpload(&u)
 	writeJSON(w, status, u)
 }
 func validUploadID(raw string) (string, bool) { return canonicalID(raw) }
@@ -139,6 +140,7 @@ func (a *App) getUpload(w http.ResponseWriter, r *http.Request) {
 		}
 		u.Parts = valid
 	}
+	a.decorateUpload(&u)
 	writeJSON(w, 200, u)
 }
 func (a *App) listOwnedUploads(w http.ResponseWriter, r *http.Request) {
@@ -146,6 +148,9 @@ func (a *App) listOwnedUploads(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		a.storeError(w, r, err)
 		return
+	}
+	for i := range items {
+		a.decorateUpload(&items[i])
 	}
 	writeJSON(w, 200, map[string]any{"items": items})
 }
@@ -526,6 +531,7 @@ func (a *App) processingVideo(w http.ResponseWriter, r *http.Request) {
 		a.storeError(w, r, err)
 		return
 	}
+	a.decorateUpload(&u)
 	writeJSON(w, 200, u)
 }
 func (a *App) retryVideo(w http.ResponseWriter, r *http.Request)  { a.mutateJob(w, r, true) }

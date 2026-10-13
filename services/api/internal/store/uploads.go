@@ -23,24 +23,28 @@ var ErrUploadConflict = errors.New("upload state conflict")
 var ErrUploadLimit = errors.New("upload policy limit")
 
 type Upload struct {
-	ID               string       `json:"id"`
-	VideoID          string       `json:"video_id"`
-	Title            string       `json:"title"`
-	Description      string       `json:"description"`
-	Tags             []string     `json:"tags"`
-	Revision         int64        `json:"revision"`
-	ExpectedBytes    int64        `json:"expected_bytes"`
-	PartBytes        int          `json:"part_bytes"`
-	Parts            []UploadPart `json:"parts"`
-	PartChecksums    []string     `json:"part_checksums"`
-	State            string       `json:"state"`
-	ProcessingState  string       `json:"processing_state"`
-	ProcessingStage  string       `json:"processing_stage"`
-	Progress         int          `json:"progress"`
-	ErrorCode        *string      `json:"error_code"`
-	PublicationState string       `json:"publication_state"`
-	ExpiresAt        time.Time    `json:"expires_at"`
-	JobID            *string      `json:"job_id"`
+	ThumbnailURL       string       `json:"thumbnail_url"`
+	HasCustomThumbnail bool         `json:"has_custom_thumbnail"`
+	ThumbnailImageID   string       `json:"-"`
+	ThumbnailKey       string       `json:"-"`
+	ID                 string       `json:"id"`
+	VideoID            string       `json:"video_id"`
+	Title              string       `json:"title"`
+	Description        string       `json:"description"`
+	Tags               []string     `json:"tags"`
+	Revision           int64        `json:"revision"`
+	ExpectedBytes      int64        `json:"expected_bytes"`
+	PartBytes          int          `json:"part_bytes"`
+	Parts              []UploadPart `json:"parts"`
+	PartChecksums      []string     `json:"part_checksums"`
+	State              string       `json:"state"`
+	ProcessingState    string       `json:"processing_state"`
+	ProcessingStage    string       `json:"processing_stage"`
+	Progress           int          `json:"progress"`
+	ErrorCode          *string      `json:"error_code"`
+	PublicationState   string       `json:"publication_state"`
+	ExpiresAt          time.Time    `json:"expires_at"`
+	JobID              *string      `json:"job_id"`
 }
 type UploadPart struct {
 	Number     int    `json:"number"`
@@ -49,11 +53,11 @@ type UploadPart struct {
 	StorageKey string `json:"-"`
 }
 
-const uploadSelect = `SELECT u.id,u.video_id,v.title,v.description,v.tags,v.revision,u.expected_bytes,u.part_bytes,u.part_checksums,u.state,v.processing_state,COALESCE(j.stage,'queued'),COALESCE(j.progress,0),j.error_code,v.publication_state,u.expires_at,j.id FROM catalog.upload_sessions u JOIN catalog.videos v ON v.id=u.video_id LEFT JOIN catalog.processing_jobs j ON j.video_id=v.id `
+const uploadSelect = `SELECT u.id,u.video_id,v.title,v.description,v.tags,v.revision,u.expected_bytes,u.part_bytes,u.part_checksums,u.state,v.processing_state,COALESCE(j.stage,'queued'),COALESCE(j.progress,0),j.error_code,v.publication_state,u.expires_at,j.id,COALESCE(v.thumbnail_image_id::text,''),COALESCE(v.thumbnail_key,'') FROM catalog.upload_sessions u JOIN catalog.videos v ON v.id=u.video_id LEFT JOIN catalog.processing_jobs j ON j.video_id=v.id `
 
 func scanUpload(row pgx.Row) (Upload, error) {
 	var u Upload
-	err := row.Scan(&u.ID, &u.VideoID, &u.Title, &u.Description, &u.Tags, &u.Revision, &u.ExpectedBytes, &u.PartBytes, &u.PartChecksums, &u.State, &u.ProcessingState, &u.ProcessingStage, &u.Progress, &u.ErrorCode, &u.PublicationState, &u.ExpiresAt, &u.JobID)
+	err := row.Scan(&u.ID, &u.VideoID, &u.Title, &u.Description, &u.Tags, &u.Revision, &u.ExpectedBytes, &u.PartBytes, &u.PartChecksums, &u.State, &u.ProcessingState, &u.ProcessingStage, &u.Progress, &u.ErrorCode, &u.PublicationState, &u.ExpiresAt, &u.JobID, &u.ThumbnailImageID, &u.ThumbnailKey)
 	u.Parts = []UploadPart{}
 	if u.PartChecksums == nil {
 		u.PartChecksums = []string{}

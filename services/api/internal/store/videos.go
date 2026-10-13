@@ -50,12 +50,12 @@ func DecodeCursor(raw string) (*Cursor, error) {
 	return &cursor, nil
 }
 
-const videoColumns = `v.id,v.channel_id,c.title,c.handle,v.title,v.description,v.tags,v.source_kind,v.duration_seconds,v.accepted_generation_id,v.accepted_attempt_id,v.qualities,v.published_at,v.manifest_key,v.integrity_key,v.thumbnail_key`
+const videoColumns = `v.id,v.channel_id,c.title,c.handle,v.title,v.description,v.tags,v.source_kind,v.duration_seconds,v.accepted_generation_id,v.accepted_attempt_id,v.qualities,v.published_at,v.manifest_key,v.integrity_key,v.thumbnail_key,COALESCE(v.thumbnail_image_id::text,'')`
 const visibleVideo = `v.publication_state='published' AND v.deleted_at IS NULL`
 
 func scanVideo(row interface{ Scan(...any) error }) (Video, error) {
 	var v Video
-	err := row.Scan(&v.ID, &v.ChannelID, &v.ChannelTitle, &v.ChannelHandle, &v.Title, &v.Description, &v.Tags, &v.SourceKind, &v.DurationSeconds, &v.GenerationID, &v.AttemptID, &v.Qualities, &v.PublishedAt, &v.ManifestKey, &v.IntegrityKey, &v.ThumbnailKey)
+	err := row.Scan(&v.ID, &v.ChannelID, &v.ChannelTitle, &v.ChannelHandle, &v.Title, &v.Description, &v.Tags, &v.SourceKind, &v.DurationSeconds, &v.GenerationID, &v.AttemptID, &v.Qualities, &v.PublishedAt, &v.ManifestKey, &v.IntegrityKey, &v.ThumbnailKey, &v.ThumbnailImageID)
 	return v, translate(err)
 }
 func (s *Store) Video(ctx context.Context, id string) (Video, error) {

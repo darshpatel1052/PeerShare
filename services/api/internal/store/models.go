@@ -11,6 +11,8 @@ type User struct {
 }
 
 type Channel struct {
+	BannerURL        string    `json:"banner_url"`
+	BannerImageID    string    `json:"-"`
 	ID               string    `json:"id"`
 	OwnerID          string    `json:"-"`
 	Handle           string    `json:"handle"`
@@ -23,24 +25,25 @@ type Channel struct {
 }
 
 type Video struct {
-	ID              string    `json:"id"`
-	ChannelID       string    `json:"channel_id"`
-	ChannelTitle    string    `json:"channel_title"`
-	ChannelHandle   string    `json:"channel_handle"`
-	Title           string    `json:"title"`
-	Description     string    `json:"description"`
-	Tags            []string  `json:"tags"`
-	SourceKind      string    `json:"source_kind"`
-	DurationSeconds int       `json:"duration_seconds"`
-	GenerationID    string    `json:"accepted_generation_id"`
-	AttemptID       string    `json:"accepted_attempt_id"`
-	Qualities       []int     `json:"qualities"`
-	PublishedAt     time.Time `json:"published_at"`
-	ThumbnailURL    string    `json:"thumbnail_url"`
-	Playback        *Playback `json:"playback,omitempty"`
-	ManifestKey     string    `json:"-"`
-	IntegrityKey    string    `json:"-"`
-	ThumbnailKey    string    `json:"-"`
+	ThumbnailImageID string    `json:"-"`
+	ID               string    `json:"id"`
+	ChannelID        string    `json:"channel_id"`
+	ChannelTitle     string    `json:"channel_title"`
+	ChannelHandle    string    `json:"channel_handle"`
+	Title            string    `json:"title"`
+	Description      string    `json:"description"`
+	Tags             []string  `json:"tags"`
+	SourceKind       string    `json:"source_kind"`
+	DurationSeconds  int       `json:"duration_seconds"`
+	GenerationID     string    `json:"accepted_generation_id"`
+	AttemptID        string    `json:"accepted_attempt_id"`
+	Qualities        []int     `json:"qualities"`
+	PublishedAt      time.Time `json:"published_at"`
+	ThumbnailURL     string    `json:"thumbnail_url"`
+	Playback         *Playback `json:"playback,omitempty"`
+	ManifestKey      string    `json:"-"`
+	IntegrityKey     string    `json:"-"`
+	ThumbnailKey     string    `json:"-"`
 }
 
 type Playback struct {

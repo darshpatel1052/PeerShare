@@ -13,6 +13,7 @@ import {
   type ChannelEdit,
 } from "../lib/api";
 import { useAuth } from "./auth-provider";
+import CreatorImagePicker from "./creator-image-picker";
 export default function Account() {
   const auth = useAuth();
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -32,7 +33,12 @@ export default function Account() {
     setHandle(channel?.handle || "");
     setTitle(channel?.title || "");
     setDescription(channel?.description || "");
-  }, [auth.me?.channel]);
+  }, [
+    auth.me?.channel?.id,
+    auth.me?.channel?.handle,
+    auth.me?.channel?.title,
+    auth.me?.channel?.description,
+  ]);
   const report = (cause: unknown) => {
     setError(
       cause instanceof Error
@@ -271,7 +277,7 @@ export default function Account() {
         <div>
           <span className="eyebrow">Creator workspace</span>
           <h1>Your workspace</h1>
-          <p className="muted">Your profile, your channel, your settings.</p>
+          <p className="muted">Manage your channel and account.</p>
         </div>
         {channel && (
           <Link className="secondary-button" href={`/channel?id=${channel.id}`}>
@@ -290,6 +296,10 @@ export default function Account() {
               <Icon name="channel" />
               Channel settings
             </a>
+            <Link href="/settings">
+              <Icon name="sun" />
+              Appearance & settings
+            </Link>
             <a href="#account-sessions">
               <Icon name="settings" />
               Account & sessions
@@ -313,7 +323,10 @@ export default function Account() {
               <Icon name="channel" />
             </div>
             <div className="channel-preview">
-              <ChannelCover compact />
+              <ChannelCover
+                compact
+                imageURL={auth.me?.channel?.banner_url || ""}
+              />
               <div>
                 <Avatar name={title || auth.me.user.display_name} />
                 <span>
@@ -367,11 +380,19 @@ export default function Account() {
                 {busy ? "Saving…" : channel ? "Save channel" : "Create channel"}
               </button>
             </form>
+            {channel && (
+              <CreatorImagePicker
+                kind="banner"
+                path={`/channels/${channel.id}/banner`}
+                revision={channel.revision}
+                currentURL={channel.banner_url || ""}
+                custom={!!channel.banner_url}
+                onSaved={async () => auth.accept(await api<Me>("/me"))}
+              />
+            )}
             <p className="publishing-note">
               <Icon name="film" />
-              <Link href="/studio">
-                Open creator studio to upload and publish videos.
-              </Link>
+              <Link href="/studio">Manage videos in Studio</Link>
             </p>
           </section>
           <section

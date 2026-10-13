@@ -1,0 +1,56 @@
+{
+  "recorded_at": "2026-10-13T19:00:46.087800+00:00",
+  "scope": "Production static export with isolated Go/PostgreSQL/Redis and real FFmpeg uploads; disposable creators only",
+  "final_affected_rerun": [
+    {
+      "title": "product theme, catalogue search, channel tools and phone layouts work",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 8661
+        }
+      ]
+    },
+    {
+      "title": "upload a real MP4, preview privately, publish, play and revoke public access",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 12957
+        }
+      ]
+    },
+    {
+      "title": "resume a multi-chunk MP4 after a lost connection and reload; reject a different same-size file",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 9357
+        }
+      ]
+    },
+    {
+      "title": "failed source stays private and studio metadata edits and deletion work",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 4093
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-13T18:59:10.258Z",
+    "duration": 46101.03,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "earlier_full_run": "15 passed, 2 failed; banner feedback disappeared after a successful save, and deletion assertion expected retired empty-state wording. Both corrected; affected design/upload journeys rerun successfully. Existing 5 peer tests, 4 HTTP tests, 3 identity tests and custom-control test passed in that full run.",
+  "secrets_excluded": true
+}

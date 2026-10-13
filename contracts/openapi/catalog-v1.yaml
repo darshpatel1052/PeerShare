@@ -6,6 +6,113 @@ info:
 servers:
   - url: /
 paths:
+  /api/v1/channels/{id}/banner:
+    parameters:
+      - { $ref: "#/components/parameters/ResourceID" }
+      - name: If-Match
+        in: header
+        required: true
+        schema: { type: integer, minimum: 1 }
+        description: Current channel or video revision.
+    put:
+      operationId: setBanner
+      security: [{ session: [] }]
+      description: Owner-only JPG/PNG upload. At most 5 MiB and 6 million pixels; re-encoded as JPEG. Artwork does not change playback generations.
+      requestBody:
+        required: true
+        content:
+          image/jpeg:
+            schema: { type: string, format: binary }
+          image/png:
+            schema: { type: string, format: binary }
+      responses:
+        "200":
+          description: Image saved and revision incremented.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Channel" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "413": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: resetBanner
+      security: [{ session: [] }]
+      requestBody: { $ref: "#/components/requestBodies/Empty" }
+      responses:
+        "200":
+          description: Default restored and revision incremented.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Channel" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/videos/{id}/thumbnail:
+    parameters:
+      - { $ref: "#/components/parameters/ResourceID" }
+      - name: If-Match
+        in: header
+        required: true
+        schema: { type: integer, minimum: 1 }
+        description: Current channel or video revision.
+    put:
+      operationId: setThumbnail
+      security: [{ session: [] }]
+      description: Owner-only JPG/PNG upload. At most 5 MiB and 6 million pixels; re-encoded as JPEG. Artwork does not change playback generations.
+      requestBody:
+        required: true
+        content:
+          image/jpeg:
+            schema: { type: string, format: binary }
+          image/png:
+            schema: { type: string, format: binary }
+      responses:
+        "200":
+          description: Image saved and revision incremented.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ThumbnailUpdate" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "413": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: resetThumbnail
+      security: [{ session: [] }]
+      requestBody: { $ref: "#/components/requestBodies/Empty" }
+      responses:
+        "200":
+          description: Default restored and revision incremented.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ThumbnailUpdate" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+  /api/v1/images/{id}:
+    get:
+      operationId: creatorImage
+      parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+      description: Only currently selected images are readable. Banners are public; video thumbnails require publication or the owning session. Retired/deleted/unpublished images return 404 to visitors.
+      responses:
+        "200":
+          description: Normalized JPEG image; no-store to respect later unpublishing.
+          content:
+            image/jpeg:
+              schema: { type: string, format: binary }
+        "404": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
   /api/v1/auth/register:
     post:
       operationId: register
@@ -463,6 +570,17 @@ components:
         application/json:
           schema: { $ref: "#/components/schemas/APIError" }
   schemas:
+    ThumbnailUpdate:
+      type: object
+      required: [revision, thumbnail_url, has_custom_thumbnail]
+      properties:
+        revision: { type: integer }
+        thumbnail_url:
+          {
+            type: string,
+            description: Empty after resetting to the generated frame.,
+          }
+        has_custom_thumbnail: { type: boolean }
     APIError:
       type: object
       required: [code, message, request_id]
@@ -531,6 +649,7 @@ components:
           title,
           description,
           owner_display_name,
+          banner_url,
           revision,
           created_at,
           updated_at,
@@ -541,6 +660,8 @@ components:
         title: { type: string }
         description: { type: string }
         owner_display_name: { type: string }
+        banner_url:
+          { type: string, description: Empty when using the default banner. }
         revision: { type: integer }
         created_at: { type: string, format: date-time }
         updated_at: { type: string, format: date-time }
@@ -689,6 +810,8 @@ components:
           revision,
           part_checksums,
           job_id,
+          thumbnail_url,
+          has_custom_thumbnail,
           expected_bytes,
           part_bytes,
           parts,
@@ -708,6 +831,8 @@ components:
         revision: { type: integer }
         part_checksums: { type: array, items: { type: string } }
         job_id: { type: [string, "null"], format: uuid }
+        thumbnail_url: { type: string }
+        has_custom_thumbnail: { type: boolean }
         expected_bytes: { type: integer }
         part_bytes: { type: integer }
         parts:

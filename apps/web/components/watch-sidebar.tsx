@@ -9,7 +9,10 @@ export default function WatchSidebar({ video }: { video: VideoDetail }) {
   return (
     <aside className="watch-sidebar">
       <section className="creator-panel">
-        <ChannelCover compact />
+        <ChannelCover
+          compact
+          imageURL={state.status === "ready" ? state.value.banner_url : ""}
+        />
         <div className="creator-panel-body">
           <span className="eyebrow">The channel</span>
           <Link className="creator" href={`/channel?id=${video.channel_id}`}>
@@ -37,9 +40,9 @@ export default function WatchSidebar({ video }: { video: VideoDetail }) {
         <div className="peer-panel-icon">
           <Icon name="signal" />
         </div>
-        <h2>Video, shared.</h2>
+        <h2>Watch together</h2>
         <p className="muted">
-          Help another viewer by sharing a little bandwidth while you watch.
+          You can help other viewers load this video by enabling peer sharing.
         </p>
         <a href="#peer-sharing">
           Choose how you share

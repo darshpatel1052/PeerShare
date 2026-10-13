@@ -12,8 +12,34 @@ export type IconName =
   | "logout"
   | "signal"
   | "search"
-  | "close";
+  | "close"
+  | "pause"
+  | "volume"
+  | "muted"
+  | "fullscreen"
+  | "minimize"
+  | "chevron";
 const paths: Record<IconName, React.ReactNode> = {
+  pause: (
+    <>
+      <path d="M8 5v14M16 5v14" strokeWidth="4" />
+    </>
+  ),
+  volume: (
+    <>
+      <path d="M11 4 5 9H2v6h3l6 5V4Z" />
+      <path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" />
+    </>
+  ),
+  muted: (
+    <>
+      <path d="M11 4 5 9H2v6h3l6 5V4Z" />
+      <path d="m16 9 6 6m-6 0 6-6" />
+    </>
+  ),
+  fullscreen: <path d="M8 3H3v5m13-5h5v5M3 16v5h5m8 0h5v-5" />,
+  minimize: <path d="M3 8h5V3m8 0v5h5M8 21v-5H3m18 0h-5v5" />,
+  chevron: <path d="m6 9 6 6 6-6" />,
   play: <path d="m9 5 11 7-11 7Z" />,
   arrow: (
     <>
@@ -142,34 +168,27 @@ export function Avatar({
     </span>
   );
 }
-export function ChannelCover({ compact = false }: { compact?: boolean }) {
+export function ChannelCover({
+  compact = false,
+  imageURL = "",
+}: {
+  compact?: boolean;
+  imageURL?: string;
+}) {
   return (
     <div
-      className={`channel-cover${compact ? " cover-compact" : ""}`}
+      className={`channel-cover${compact ? " cover-compact" : ""}${imageURL ? " custom-cover" : " default-cover"}`}
       aria-hidden="true"
     >
-      <div className="cover-type">
-        PEER
-        <br />
-        SCREEN
-      </div>
-      <svg viewBox="0 0 960 260" preserveAspectRatio="xMidYMid slice">
-        <g fill="none" stroke="currentColor" strokeWidth="1.1">
-          {Array.from({ length: 22 }, (_, i) => (
-            <path
-              key={i}
-              d={`M ${230 + i * 16} -30 C ${90 + i * 19} 120, ${560 + i * 10} 70, ${530 + i * 18} 310`}
-            />
-          ))}
-        </g>
-        <path
-          d="M815 40v180m-90-90h180"
-          stroke="currentColor"
-          strokeWidth="1"
-          opacity=".45"
-        />
-      </svg>
-      <span className="cover-caption">VIDEO, SHARED.</span>
+      {imageURL ? (
+        <img src={imageURL} alt="" />
+      ) : (
+        <>
+          <span className="cover-orbit orbit-one" />
+          <span className="cover-orbit orbit-two" />
+          <span className="cover-orbit orbit-three" />
+        </>
+      )}
     </div>
   );
 }

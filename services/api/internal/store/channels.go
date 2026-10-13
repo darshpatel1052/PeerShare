@@ -2,11 +2,11 @@ package store
 
 import "context"
 
-const channelColumns = `c.id,c.owner_id,c.handle,c.title,c.description,u.display_name,c.revision,c.created_at,c.updated_at`
+const channelColumns = `c.id,c.owner_id,c.handle,c.title,c.description,u.display_name,c.revision,c.created_at,c.updated_at,COALESCE(c.banner_image_id::text,'')`
 
 func scanChannel(row interface{ Scan(...any) error }) (Channel, error) {
 	var c Channel
-	err := row.Scan(&c.ID, &c.OwnerID, &c.Handle, &c.Title, &c.Description, &c.OwnerDisplayName, &c.Revision, &c.CreatedAt, &c.UpdatedAt)
+	err := row.Scan(&c.ID, &c.OwnerID, &c.Handle, &c.Title, &c.Description, &c.OwnerDisplayName, &c.Revision, &c.CreatedAt, &c.UpdatedAt, &c.BannerImageID)
 	return c, translate(err)
 }
 

@@ -43,6 +43,7 @@ func (a *App) createChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Location", "/api/v1/channels/"+channel.ID)
+	a.decorateChannel(&channel)
 	writeJSON(w, 201, channel)
 }
 func (a *App) editChannel(w http.ResponseWriter, r *http.Request) {
@@ -65,6 +66,7 @@ func (a *App) editChannel(w http.ResponseWriter, r *http.Request) {
 		a.storeError(w, r, err)
 		return
 	}
+	a.decorateChannel(&channel)
 	writeJSON(w, 200, channel)
 }
 func (a *App) getChannel(w http.ResponseWriter, r *http.Request) {
@@ -78,6 +80,7 @@ func (a *App) getChannel(w http.ResponseWriter, r *http.Request) {
 		a.storeError(w, r, err)
 		return
 	}
+	a.decorateChannel(&channel)
 	writeJSON(w, 200, channel)
 }
 func canonicalID(raw string) (string, bool) {
@@ -136,6 +139,9 @@ func (a *App) decorateVideo(video *store.Video, playback bool) {
 	base, _ := url.Parse(a.Config.MediaBaseURL)
 	objectURL := func(key string) string { target, _ := url.Parse(key); return base.ResolveReference(target).String() }
 	video.ThumbnailURL = objectURL(video.ThumbnailKey)
+	if video.ThumbnailImageID != "" {
+		video.ThumbnailURL = a.creatorImageURL(video.ThumbnailImageID)
+	}
 	if playback {
 		video.Playback = &store.Playback{ManifestURL: objectURL(video.ManifestKey), IntegrityURL: objectURL(video.IntegrityKey), TrackerURL: a.Config.TrackerURL, PeerSharingAvailable: true}
 	}

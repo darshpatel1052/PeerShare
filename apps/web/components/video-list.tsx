@@ -110,11 +110,10 @@ export default function VideoList({
       {featured && (
         <div className="explore-heading">
           <div>
-            <span className="eyebrow">Independent video</span>
             <h1>
               Explore<span className="accent-dot">.</span>
             </h1>
-            <p className="muted">Find something worth your time.</p>
+            <p className="muted">Discover the latest from creators.</p>
           </div>
           <Link
             className="secondary-button"
@@ -184,13 +183,10 @@ export default function VideoList({
               : "There are no published videos to explore yet."}
           </p>
           {owner && (
-            <p className="empty-hint">
-              Video publishing isn't available yet. You can still make this
-              channel your own.
-            </p>
+            <p className="empty-hint">Publish your first video from Studio.</p>
           )}
-          <Link className="secondary-button" href={owner ? "/account" : "/"}>
-            {owner ? "Edit your channel" : "Back to explore"}
+          <Link className="secondary-button" href={owner ? "/studio" : "/"}>
+            {owner ? "Upload a video" : "Back to explore"}
             <Icon name="arrow" />
           </Link>
         </div>

@@ -44,17 +44,21 @@ test("product theme, catalogue search, channel tools and phone layouts work", as
   await expect(
     page.getByRole("heading", { name: "Signal garden", exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await page.goto("/settings/");
+  await page.getByRole("button", { name: "Light", exact: true }).click();
+  await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await page.reload();
   await expect(
-    page.getByRole("button", { name: "Switch to dark theme" }),
+    page.getByRole("heading", { name: "Explore.", exact: true }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Signal garden", exact: true }),
   ).toBeVisible();
   await capture("explore-light");
-  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await page.goto("/settings/");
+  await page.getByRole("button", { name: "Dark", exact: true }).click();
+  await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.setViewportSize({ width: 390, height: 844 });
   await capture("explore-mobile");
@@ -125,9 +129,17 @@ test("product theme, catalogue search, channel tools and phone layouts work", as
   expect(new URL(copied).searchParams.get("id")).toBe(channel.id);
   expect(new URL(copied).origin).toBe(origin);
   await page.getByRole("tab", { name: "Videos", exact: true }).click();
-  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await page.getByRole("button", { name: "Workspace", exact: true }).click();
+  await page
+    .getByRole("navigation", { name: "Workspace menu" })
+    .getByRole("link", { name: "Settings", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Light", exact: true }).click();
+  await page.goto(`/channel/?id=${channel.id}`);
   await capture("channel-light");
-  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await page.goto("/settings/");
+  await page.getByRole("button", { name: "Dark", exact: true }).click();
+  await page.goto(`/channel/?id=${channel.id}`);
   await page.setViewportSize({ width: 390, height: 844 });
   await capture("channel-mobile");
   await page.setViewportSize({ width: 320, height: 700 });

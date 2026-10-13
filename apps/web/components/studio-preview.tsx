@@ -3,16 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { createPlayer } from "@peerscreen/player";
 import { api, type VideoPreview } from "../lib/api";
+import VideoPlayer from "./video-player";
 
 export default function StudioPreview({ videoID }: { videoID: string }) {
   const video = useRef<HTMLVideoElement>(null);
   const [status, setStatus] = useState("Loading preview…");
   const [error, setError] = useState("");
+  const [ready, setReady] = useState(false);
   const [retry, setRetry] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
     setError("");
     setStatus("Loading preview…");
+    setReady(false);
     let destroy: (() => void) | undefined;
     const load = async () => {
       const detail = await api<VideoPreview>(`/videos/${videoID}/preview`, {
@@ -31,7 +34,10 @@ export default function StudioPreview({ videoID }: { videoID: string }) {
         authenticatedPreview: true,
         signal: controller.signal,
         onReady: () => {
-          if (!controller.signal.aborted) setStatus("Preview ready");
+          if (!controller.signal.aborted) {
+            setStatus("Preview ready");
+            setReady(true);
+          }
         },
         onError: (message) => {
           if (!controller.signal.aborted) setError(message);
@@ -54,14 +60,20 @@ export default function StudioPreview({ videoID }: { videoID: string }) {
   }, [videoID, retry]);
   return (
     <div className="studio-preview">
-      <video
-        ref={video}
-        controls
-        playsInline
-        preload="metadata"
-        aria-label="Private video preview"
+      <VideoPlayer
+        videoRef={video}
+        title="Private video preview"
+        ready={ready}
       />
       <p role={error ? "alert" : "status"}>{error || status}</p>
+      {error && (
+        <button
+          className="secondary-button"
+          onClick={() => setRetry((value) => value + 1)}
+        >
+          Retry preview
+        </button>
+      )}
     </div>
   );
 }

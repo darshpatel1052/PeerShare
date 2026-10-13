@@ -64,7 +64,7 @@ export default function ChannelPage() {
   const isOwner = me?.channel?.id === channel.id;
   return (
     <main id="main" className="channel-page">
-      <ChannelCover />
+      <ChannelCover imageURL={channel.banner_url} />
       <div className="channel-identity">
         <Avatar name={channel.title} large />
         <div className="channel-heading">

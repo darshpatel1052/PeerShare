@@ -46,14 +46,25 @@ export function proxyAPI(request, response, target, path = request.url) {
     /^\/api\/v1\/uploads\/[a-f0-9-]{36}\/complete$/.test(
       new URL(request.url, "http://localhost").pathname,
     );
-  const maxBody = uploadBody ? 8 * 1024 * 1024 : 16 * 1024;
+  const imageBody =
+    request.method === "PUT" &&
+    /^\/api\/v1\/(channels\/[a-f0-9-]{36}\/banner|videos\/[a-f0-9-]{36}\/thumbnail)$/.test(
+      new URL(request.url, "http://localhost").pathname,
+    );
+  const maxBody = uploadBody
+    ? 8 * 1024 * 1024
+    : imageBody
+      ? 5 * 1024 * 1024
+      : 16 * 1024;
   if (Number(request.headers["content-length"] || 0) > maxBody) {
     fail(
       413,
       "body_too_large",
       uploadBody
         ? "Upload chunks cannot exceed 8 MiB."
-        : "The request body exceeds 16 KiB.",
+        : imageBody
+          ? "Choose an image under 5 MiB."
+          : "The request body exceeds 16 KiB.",
     );
     request.resume();
     return;
@@ -107,7 +118,9 @@ export function proxyAPI(request, response, target, path = request.url) {
           "body_too_large",
           uploadBody
             ? "Upload chunks cannot exceed 8 MiB."
-            : "The request body exceeds 16 KiB.",
+            : imageBody
+              ? "Choose an image under 5 MiB."
+              : "The request body exceeds 16 KiB.",
         );
         upstream.destroy();
         done(new Error("request body limit"));
