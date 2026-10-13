@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:18-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c
+    environment:
+      POSTGRES_DB: peerscreen
+      POSTGRES_USER: peerscreen_admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run the local setup command first}
+      CATALOG_DB_PASSWORD: ${CATALOG_DB_PASSWORD:?Run the local setup command first}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-55432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ../postgres/init-catalog.sh:/docker-entrypoint-initdb.d/10-catalog.sh:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'pg_isready -U peerscreen_admin -d peerscreen && psql -U peerscreen_admin -d peerscreen -tAc "SELECT 1 FROM pg_roles WHERE rolname=''peerscreen_catalog''" | grep -qx 1',
+        ]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    mem_limit: 512m
+    cpus: 2
+  redis:
+    image: redis:8-bookworm@sha256:47670742d7924adbcdb404d1288b6327815b23141969c0939b8e5d61f78c2634
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Run the local setup command first}
+    command:
+      [
+        "sh",
+        "-c",
+        'exec redis-server --requirepass "$$REDIS_PASSWORD" --maxmemory 64mb --maxmemory-policy noeviction --save '''' --appendonly no',
+      ]
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-56379}:6379"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'REDISCLI_AUTH="$$REDIS_PASSWORD" redis-cli ping | grep -qx PONG',
+        ]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    mem_limit: 128m
+    cpus: 1
+
+volumes:
+  postgres-data:

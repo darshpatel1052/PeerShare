@@ -1,0 +1,368 @@
+openapi: 3.1.1
+info:
+  title: PeerScreen catalogue API
+  version: 1.0.0
+  description: Phase 1 identity and public catalogue contract. Mutations require the exact configured Origin header. Cookie sessions are stored as hashes and checked against PostgreSQL on each authenticated request.
+servers:
+  - url: /
+paths:
+  /api/v1/auth/register:
+    post:
+      operationId: register
+      description: Development registration creates a user and initial session in one transaction. Disabled in production until an admission policy is implemented.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/Registration" }
+      responses:
+        "201":
+          description: Account and session created; HttpOnly session cookie set.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Me" }
+        "400": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "413": { $ref: "#/components/responses/Error" }
+        "415": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/auth/login:
+    post:
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/Credentials" }
+      responses:
+        "200":
+          description: Signed in; HttpOnly session cookie set.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Me" }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "413": { $ref: "#/components/responses/Error" }
+        "415": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/auth/logout:
+    post:
+      operationId: logout
+      description: Idempotently revoke the presented session and clear its cookie. Does not require an active session.
+      requestBody: { $ref: "#/components/requestBodies/Empty" }
+      responses:
+        "204": { description: Session revoked and cookie cleared. }
+        "400": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/auth/logout-all:
+    post:
+      operationId: logoutAll
+      security: [{ session: [] }]
+      requestBody: { $ref: "#/components/requestBodies/Empty" }
+      responses:
+        "204":
+          {
+            description: All current user's sessions revoked,
+            including the current session.,
+          }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/me:
+    get:
+      operationId: me
+      security: [{ session: [] }]
+      responses:
+        "200":
+          description: Authenticated user and optional owned channel.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Me" }
+        "401": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/channels:
+    post:
+      operationId: createChannel
+      security: [{ session: [] }]
+      description: Create the authenticated user's sole channel. Owner ID is assigned from the session and is not accepted in JSON.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ChannelCreate" }
+      responses:
+        "201":
+          description: Channel created; Location identifies its API resource.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Channel" }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/channels/{id}:
+    parameters:
+      - { $ref: "#/components/parameters/ResourceID" }
+    get:
+      operationId: getChannel
+      responses:
+        "200":
+          description: Public channel metadata without owner email or private account data.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Channel" }
+        "400": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+    patch:
+      operationId: editChannel
+      security: [{ session: [] }]
+      description: Owner-only edit, serialized with a row lock and guarded by the expected revision.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ChannelEdit" }
+      responses:
+        "200":
+          description: Updated metadata and incremented revision.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Channel" }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/videos:
+    get:
+      operationId: listVideos
+      description: Only published, nondeleted videos. Cursor order is published_at DESC, id DESC; UUID breaks timestamp ties.
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 30, default: 12 }
+        - name: cursor
+          in: query
+          schema: { type: string, maxLength: 512 }
+        - name: channel_id
+          in: query
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Bounded page with a nullable cursor for the next page.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/VideosPage" }
+        "400": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/videos/{id}:
+    parameters:
+      - { $ref: "#/components/parameters/ResourceID" }
+    get:
+      operationId: getVideo
+      description: Playback configuration for an accepted published generation. Draft, unpublished, deleted and unknown IDs return 404.
+      responses:
+        "200":
+          description: Video metadata and accepted playback URLs.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/VideoDetail" }
+        "400": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /health/live:
+    get:
+      operationId: liveness
+      responses:
+        "200": { description: Process is serving requests. }
+  /health/ready:
+    get:
+      operationId: readiness
+      responses:
+        "200": { description: PostgreSQL and Redis are reachable. }
+        "503": { description: A required dependency is unavailable. }
+components:
+  securitySchemes:
+    session:
+      type: apiKey
+      in: cookie
+      name: peerscreen_session
+      description: Development cookie name; production uses __Host-peerscreen_session with Secure and no Domain attribute.
+  parameters:
+    ResourceID:
+      name: id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+  requestBodies:
+    Empty:
+      required: true
+      content:
+        application/json:
+          schema: { type: object, additionalProperties: false }
+  responses:
+    Error:
+      description: Structured error with stable code, readable message, and server-generated request ID. Rate-limited responses also provide Retry-After seconds.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/APIError" }
+  schemas:
+    APIError:
+      type: object
+      required: [code, message, request_id]
+      properties:
+        code: { type: string }
+        message: { type: string }
+        request_id: { type: string, format: uuid }
+    Credentials:
+      type: object
+      additionalProperties: false
+      required: [email, password]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        password:
+          {
+            type: string,
+            minLength: 1,
+            maxLength: 128,
+            description: Maximum 128 UTF-8 bytes is enforced by the server.,
+          }
+    Registration:
+      type: object
+      additionalProperties: false
+      required: [email, password, display_name]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        password:
+          {
+            type: string,
+            minLength: 12,
+            maxLength: 128,
+            description: At least 12 Unicode characters and at most 128 UTF-8 bytes; never trimmed.,
+          }
+        display_name: { type: string, minLength: 1, maxLength: 80 }
+    User:
+      type: object
+      required: [id, email, display_name, role, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        display_name: { type: string }
+        role: { type: string, enum: [member, operator, system] }
+        created_at: { type: string, format: date-time }
+    ChannelCreate:
+      type: object
+      additionalProperties: false
+      required: [handle, title]
+      properties:
+        handle: { type: string, pattern: "^[a-z][a-z0-9-]{1,28}[a-z0-9]$" }
+        title: { type: string, minLength: 1, maxLength: 100 }
+        description: { type: string, maxLength: 1000, default: "" }
+    ChannelEdit:
+      type: object
+      additionalProperties: false
+      required: [title, description, revision]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 100 }
+        description: { type: string, maxLength: 1000 }
+        revision: { type: integer, minimum: 1 }
+    Channel:
+      type: object
+      required:
+        [
+          id,
+          handle,
+          title,
+          description,
+          owner_display_name,
+          revision,
+          created_at,
+          updated_at,
+        ]
+      properties:
+        id: { type: string, format: uuid }
+        handle: { type: string }
+        title: { type: string }
+        description: { type: string }
+        owner_display_name: { type: string }
+        revision: { type: integer }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    Me:
+      type: object
+      required: [user, channel]
+      properties:
+        user: { $ref: "#/components/schemas/User" }
+        channel:
+          oneOf:
+            - { $ref: "#/components/schemas/Channel" }
+            - { type: "null" }
+    Video:
+      type: object
+      required:
+        [
+          id,
+          channel_id,
+          channel_title,
+          channel_handle,
+          title,
+          description,
+          tags,
+          source_kind,
+          duration_seconds,
+          accepted_generation_id,
+          accepted_attempt_id,
+          qualities,
+          published_at,
+          thumbnail_url,
+        ]
+      properties:
+        id: { type: string, format: uuid }
+        channel_id: { type: string, format: uuid }
+        channel_title: { type: string }
+        channel_handle: { type: string }
+        title: { type: string }
+        description: { type: string }
+        tags: { type: array, items: { type: string } }
+        source_kind: { type: string, enum: [fixture, upload] }
+        duration_seconds: { type: integer }
+        accepted_generation_id: { type: string, format: uuid }
+        accepted_attempt_id: { type: string, format: uuid }
+        qualities: { type: array, items: { type: integer } }
+        published_at: { type: string, format: date-time }
+        thumbnail_url: { type: string, format: uri }
+    Playback:
+      type: object
+      required:
+        [manifest_url, integrity_url, tracker_url, peer_sharing_available]
+      properties:
+        manifest_url: { type: string, format: uri }
+        integrity_url: { type: string, format: uri }
+        tracker_url: { type: string, format: uri }
+        peer_sharing_available: { type: boolean }
+    VideoDetail:
+      allOf:
+        - { $ref: "#/components/schemas/Video" }
+        - type: object
+          required: [playback]
+          properties:
+            playback: { $ref: "#/components/schemas/Playback" }
+    VideosPage:
+      type: object
+      required: [items, next_cursor]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/Video" } }
+        next_cursor: { type: [string, "null"] }

@@ -30,6 +30,15 @@ The implementation follows [the supplied brief](project-brief.md). This file rec
 
 Foundation checkpoint pushed as `c34da4c`. The compatibility checkpoint contains the player integration, CI and raw evidence; use `git log` for its exact revision. Initial milestone completion refers to local feasibility; cross-network/public delivery and other browsers remain explicit later checks.
 
-## Next phase
+## In progress: milestone 1 — identity and persistent catalogue
 
-Milestone 1 adds the Go catalogue API, PostgreSQL migrations, real sessions/ownership, channels and persisted catalogue metadata. Explain its implementation before building it.
+The pre-build explanation covered component responsibilities, relationships, sessions, ownership, transactions, revisions and API contracts. Detailed learning chapters are in [the Phase 1 guide](learning/phase-1/README.md).
+
+- Go API with real PostgreSQL persistence, Argon2id passwords, hashed opaque sessions, owner-only channel edits, revisions, public catalogue and cursor pagination.
+- Checksummed transactional migrations, owned catalogue schema and pinned PostgreSQL/Redis Compose dependencies.
+- Redis atomic authentication limits; conservative TCP-address descriptor policy documented for the local proxy.
+- OpenAPI contract and generated TypeScript schemas; generator isolated with its supported TypeScript 5 compiler while the frontend stays on TypeScript 7.
+- Backend checkpoint validated: seven unit cases and eight real integration cases passed with the Go race detector.
+- Frontend integration, process/database recovery experiments and final evidence: pending.
+
+See [Phase 1 evidence](evidence/milestone-1.md) for the scenario-by-scenario record. Commits continue at the validated backend and connected-product checkpoints.

@@ -21,6 +21,16 @@
     "demo": "node scripts/demo.mjs",
     "test": "node --experimental-strip-types --test tests/unit/*.test.ts",
     "test:browser": "playwright test",
+    "contracts:generate": "node packages/contracts/generate.mjs",
+    "contracts:check": "node packages/contracts/generate.mjs --check",
+    "deps": "node scripts/dependencies.mjs up",
+    "stop": "node scripts/dependencies.mjs stop",
+    "api:build": "node scripts/go.mjs build",
+    "api:test": "node scripts/go.mjs test",
+    "api:vet": "node scripts/go.mjs vet",
+    "migrate": "node scripts/go.mjs migrate",
+    "seed": "node scripts/go.mjs seed-fixture",
+    "test:integration": "node scripts/integration.mjs",
     "check": "npm run format:check && npm run typecheck && npm test"
   },
   "devDependencies": {

@@ -1,0 +1,24 @@
+package config
+
+import "testing"
+
+func TestProductionRejectsUnsafeBrowserDefaults(t *testing.T) {
+	t.Setenv("DATABASE_URL", "postgres://example")
+	t.Setenv("REDIS_URL", "redis://localhost:6379")
+	t.Setenv("APP_ENV", "production")
+	t.Setenv("REGISTRATION_ENABLED", "false")
+	if _, err := Load(); err == nil {
+		t.Fatal("HTTP/WSS defaults must not be accepted in production")
+	}
+	t.Setenv("APP_ORIGIN", "https://peerscreen.example")
+	t.Setenv("MEDIA_BASE_URL", "https://media.peerscreen.example/")
+	t.Setenv("TRACKER_URL", "wss://peerscreen.example/tracker")
+	cfg, err := Load()
+	if err != nil || !cfg.SecureCookies || cfg.CookieName != "__Host-peerscreen_session" || cfg.RegistrationEnabled {
+		t.Fatal("production cookie/admission configuration invalid")
+	}
+	t.Setenv("REGISTRATION_ENABLED", "true")
+	if _, err := Load(); err == nil {
+		t.Fatal("production signup must stay disabled until an admission policy exists")
+	}
+}
