@@ -3,6 +3,7 @@ import { access } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createStaticServer } from "./static-server.mjs";
 import { createTracker } from "../services/tracker/server.mjs";
+import { startBackend } from "./backend.mjs";
 
 try {
   await access(resolve(".local/media/fixture/integrity.json"));
@@ -15,6 +16,11 @@ const media = createStaticServer({
   allowedOrigin: "http://localhost:3000",
 });
 const tracker = createTracker();
+const backend = await startBackend({
+  origin: "http://localhost:3000",
+  trackerUrl: "ws://localhost:8000",
+  mediaBase: "http://localhost:3001/",
+});
 const listen = (server, port) =>
   new Promise((accept, reject) => {
     server.once("error", reject);
@@ -30,6 +36,7 @@ try {
   console.error(error.message);
   media.close();
   tracker.close();
+  await backend.close();
   process.exit(1);
 }
 const web = spawn(
@@ -47,21 +54,24 @@ const web = spawn(
     stdio: "inherit",
     env: {
       ...process.env,
-      NEXT_PUBLIC_MEDIA_BASE_URL:
-        process.env.NEXT_PUBLIC_MEDIA_BASE_URL ||
-        "http://localhost:3001/fixture/",
+      PEERSCREEN_DEV_PROXY: "true",
+      API_TARGET: backend.target,
     },
   },
 );
 let closing = false;
-function close(code = 0) {
+async function close(code = 0) {
   if (closing) return;
   closing = true;
   web.kill("SIGTERM");
   media.close();
   media.closeAllConnections();
-  tracker.close(() => process.exit(code));
-  setTimeout(() => process.exit(code), 3000).unref();
+  for (const client of tracker.ws?.clients || []) client.terminate();
+  tracker.close();
+  tracker.http?.closeAllConnections();
+  setTimeout(() => process.exit(1), 15_000).unref();
+  await backend.close();
+  process.exit(code);
 }
 web.on("error", (error) => {
   console.error(error.message);

@@ -30,7 +30,7 @@ The implementation follows [the supplied brief](project-brief.md). This file rec
 
 Foundation checkpoint pushed as `c34da4c`. The compatibility checkpoint contains the player integration, CI and raw evidence; use `git log` for its exact revision. Initial milestone completion refers to local feasibility; cross-network/public delivery and other browsers remain explicit later checks.
 
-## In progress: milestone 1 — identity and persistent catalogue
+## Completed locally: milestone 1 — identity and persistent catalogue
 
 The pre-build explanation covered component responsibilities, relationships, sessions, ownership, transactions, revisions and API contracts. Detailed learning chapters are in [the Phase 1 guide](learning/phase-1/README.md).
 
@@ -39,6 +39,16 @@ The pre-build explanation covered component responsibilities, relationships, ses
 - Redis atomic authentication limits; conservative TCP-address descriptor policy documented for the local proxy.
 - OpenAPI contract and generated TypeScript schemas; generator isolated with its supported TypeScript 5 compiler while the frontend stays on TypeScript 7.
 - Backend checkpoint validated: seven unit cases and eight real integration cases passed with the Go race detector.
-- Frontend integration, process/database recovery experiments and final evidence: pending.
+- Connected production frontend: registration/login/logout, owner channel management, public catalogue/channel/watch data, explicit conflicts and retries.
+- All 12 production Chromium cases passed, including existing real peer-delivery/corruption/recovery cases and three account/ownership/form-recovery journeys.
+- Real Go process replacement restored the original session/channel. PostgreSQL stop/start preserved metadata; Redis stop/start exercised fail-closed authentication while public/session reads continued.
+- Native development and complete container app smoke checks include real API requests, verified HTTP playback and mobile layout inspection.
+- [Detailed learning guide](learning/phase-1/README.md), [final evidence](evidence/milestone-1.md), raw records and source fingerprints explain the implementation and its limits.
 
 See [Phase 1 evidence](evidence/milestone-1.md) for the scenario-by-scenario record. Commits continue at the validated backend and connected-product checkpoints.
+
+Backend foundation checkpoint: `7809eb3c8ebb04bf54a2012ea0fde58d1f837f97`, pushed to `main`. The connected-product checkpoint includes browser integration, container images, the recovery runner and expanded teaching/evidence material; its exact revision is in Git history. Remote CI is reported independently of local runs.
+
+## Next: milestone 2 — durable upload admission
+
+Explain the upload model and request lifecycle before implementation: ownership, admission/quota reservations, immutable object keys, idempotency, multipart completion, authoritative database transitions, generation/attempt identity and failure recovery. Introduce storage/processing incrementally with concrete local evidence before provisioning cloud resources. Phase 1's fixture importer is an operator tool, not an uploader workflow.

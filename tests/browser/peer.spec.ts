@@ -79,7 +79,7 @@ test("three independent viewers transfer verified peer bytes and recover after p
     );
     const trackerConnections: WebSocketRoute[] = [];
     let trackerLost = false;
-    await first.routeWebSocket("ws://localhost:8000/", (socket) => {
+    await first.routeWebSocket("ws://localhost:8100/", (socket) => {
       if (trackerLost) {
         socket.close({ code: 1001 });
         return;
@@ -308,7 +308,7 @@ test("an unavailable tracker leaves verified HTTP playback working", async ({
   page,
 }) => {
   let blockedConnections = 0;
-  await page.routeWebSocket("ws://localhost:8000/", (socket) => {
+  await page.routeWebSocket("ws://localhost:8100/", (socket) => {
     blockedConnections += 1;
     socket.close({ code: 1001, reason: "controlled tracker loss" });
   });

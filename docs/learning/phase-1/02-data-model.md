@@ -54,7 +54,7 @@ The browser has the original random token; the table has its SHA-256 digest as a
 
 `user_id` is a foreign key. A session cannot refer to an absent user. `ON DELETE CASCADE` is appropriate for a session because it has no independent value after its user is removed. This does not mean the application currently exposes account deletion.
 
-`timestamptz` represents an instant. We use UTC in the service and database connection; display-time formatting can happen in the browser. Session validity uses PostgreSQL's time through `expires_at > now()`, so an API process's local clock does not decide that query. The cookie also has a client expiry, but the database check is authoritative.
+`timestamptz` represents an instant. Database connections and structured service logs use UTC. The driver's decoded Go times can serialize with the host's explicit offset: the local evidence includes `+05:30`, which describes the same instant rather than changing database time. Compare parsed instants, not their formatted text; display-time formatting can happen in the browser. Session validity uses PostgreSQL's time through `expires_at > now()`, so an API process's local clock does not decide that query. The cookie also has a client expiry, but the database check is authoritative.
 
 Expiry/revocation are different facts: expiry is the normal lifetime boundary; revocation is an explicit logout or session-cap decision. Login removes that user's already expired/revoked records and retains the current session plus at most nineteen other active sessions. There is no global background session sweeper yet; unused expired rows can remain until later cleanup work.
 

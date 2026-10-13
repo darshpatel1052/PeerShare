@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { resourceID, type VideoDetail } from "../lib/api";
+import { useResource } from "../lib/use-resource";
 import {
   createPlayer,
   emptyStats,
@@ -10,7 +12,11 @@ import {
 } from "@peerscreen/player";
 
 export default function Watch() {
-  const id = useSearchParams().get("v");
+  const id = resourceID(useSearchParams().get("v"), "video");
+  const resource = useResource<VideoDetail>(id ? `/videos/${id}` : null);
+  const metadata =
+    resource.state.status === "ready" ? resource.state.value : undefined;
+  const activeID = useRef("");
   const video = useRef<HTMLVideoElement>(null);
   const handle = useRef<PlayerHandle | null>(null);
   const resume = useRef({ time: 0, playing: false });
@@ -24,7 +30,12 @@ export default function Watch() {
   const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    if (id !== "signal-garden" || !video.current) return;
+    if (!metadata || !video.current) return;
+    if (activeID.current !== metadata.id) {
+      activeID.current = metadata.id;
+      resume.current = { time: 0, playing: false };
+      setSharing(false);
+    }
     const controller = new AbortController();
     const element = video.current;
     const resumeAt = resume.current.time;
@@ -33,19 +44,13 @@ export default function Watch() {
     setError("");
     setStats(emptyStats());
     setQuality(0);
-    const mediaBase =
-      process.env.NEXT_PUBLIC_MEDIA_BASE_URL ||
-      `${window.location.origin}/media/fixture/`;
-    const trackerUrl =
-      process.env.NEXT_PUBLIC_TRACKER_URL ||
-      `ws://${window.location.hostname}:8000`;
     createPlayer({
       video: element,
-      manifestUrl: new URL("master.m3u8", mediaBase).href,
-      integrityUrl: new URL("integrity.json", mediaBase).href,
-      trackerUrl,
-      mediaId: id,
-      acceptedVersionId: "fixture-v1",
+      manifestUrl: metadata.playback.manifest_url,
+      integrityUrl: metadata.playback.integrity_url,
+      trackerUrl: metadata.playback.tracker_url,
+      mediaId: metadata.id,
+      acceptedVersionId: `${metadata.accepted_generation_id}:${metadata.accepted_attempt_id}`,
       peerSharing: sharing,
       signal: controller.signal,
       onStats: (value) => {
@@ -84,9 +89,12 @@ export default function Watch() {
       handle.current?.destroy();
       handle.current = null;
     };
-  }, [id, sharing, retry]);
+  }, [metadata, sharing, retry]);
 
-  if (id !== "signal-garden")
+  if (
+    !id ||
+    (resource.state.status === "error" && resource.state.error.status === 404)
+  )
     return (
       <main id="main">
         <h1>Video not found</h1>
@@ -96,6 +104,23 @@ export default function Watch() {
         </Link>
       </main>
     );
+  if (resource.state.status === "loading")
+    return (
+      <main id="main">
+        <p role="status">Loading video…</p>
+      </main>
+    );
+  if (resource.state.status === "error")
+    return (
+      <main id="main">
+        <h1>Video unavailable</h1>
+        <div className="error" role="alert">
+          <p>{resource.state.error.message}</p>
+          <button onClick={resource.retry}>Retry video</button>
+        </div>
+      </main>
+    );
+  const item = resource.state.value;
   return (
     <main id="main">
       <div className="watch-layout">
@@ -106,8 +131,8 @@ export default function Watch() {
               controls
               playsInline
               preload="metadata"
-              poster="/media/fixture/thumbnail.jpg"
-              aria-label="Signal garden video player"
+              poster={item.thumbnail_url}
+              aria-label={`${item.title} video player`}
             />
           </div>
           <div className="controls">
@@ -142,27 +167,30 @@ export default function Watch() {
               </button>
             </div>
           )}
-          <h1 className="watch-title">Signal garden</h1>
-          <Link className="creator" href="/channel?id=peerscreen-lab">
+          <h1 className="watch-title">{item.title}</h1>
+          <Link className="creator" href={`/channel?id=${item.channel_id}`}>
             <span className="avatar">PS</span>
             <span>
-              <strong>PeerScreen Lab</strong>
+              <strong>{item.channel_title}</strong>
               <br />
-              <span className="muted">Generated video · 1 minute</span>
+              <span className="muted">
+                {item.source_kind === "fixture" ? "Generated video · " : ""}
+                {Math.round(item.duration_seconds / 60)} minute
+              </span>
             </span>
           </Link>
-          <p className="muted">
-            A moving test pattern and a quiet tone, generated to check video
-            quality, seeking, and delivery. Every frame and audio sample is
-            generated locally.
-          </p>
+          <p className="muted">{item.description}</p>
           <div className="sharing">
             <label>
               <input
                 type="checkbox"
                 checked={sharing}
                 onChange={(event) => setSharing(event.target.checked)}
-                disabled={!ready || !peerSupported}
+                disabled={
+                  !ready ||
+                  !peerSupported ||
+                  !item.playback.peer_sharing_available
+                }
                 aria-describedby="sharing-description"
               />
               Help share this video
@@ -213,8 +241,8 @@ export default function Watch() {
           <span className="eyebrow">About this preview</span>
           <h2>A real delivery test</h2>
           <p className="muted">
-            This is the first implementation phase. Video playback is real;
-            accounts, uploads, and publishing arrive in later phases.
+            Accounts and channels now use persisted data. This video is a
+            generated delivery fixture; uploads and publishing arrive next.
           </p>
           <Link href="/">← Explore the lab</Link>
         </aside>

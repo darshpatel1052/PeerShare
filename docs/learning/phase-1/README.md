@@ -6,7 +6,9 @@ This guide explains the implemented code, including tradeoffs and limits. Read t
 2. [Data modelling and SQL](02-data-model.md): entities, keys, relationships, normalization, constraints, indexes, migrations, transactions and pagination.
 3. [Go through the actual API](03-go.md): modules, packages, structs, methods, pointers, interfaces, errors, contexts, goroutines, channels and shutdown.
 4. [API and authentication](04-api-and-auth.md): HTTP contracts, validation, password hashing, cookie sessions, CSRF/origin checks, ownership, revisions and typed frontend requests.
-5. [Verification and evidence](../../evidence/milestone-1.md): what each test protects, the actual procedure, observed results and the limits of those results. This report is completed after the implementation is verified.
+5. [Browser components](05-frontend.md): static routes, effects, refs, context, typed requests and error-state preservation.
+6. [Practical lab](06-practical-lab.md): run the app, make HTTP requests, inspect safe SQL facts and reproduce failure checks.
+7. [Verification and evidence](../../evidence/milestone-1.md): what each test protects, the actual procedure, observed results and the limits of those results.
 
 ## What changes in this phase
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Navigation from "../components/navigation";
+import { AuthProvider } from "../components/auth-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,17 +20,10 @@ export default function RootLayout({
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <header className="site-header">
-          <Link href="/" className="brand" aria-label="PeerScreen home">
-            <span className="brand-icon">▶</span> PeerScreen
-          </Link>
-          <nav aria-label="Main navigation">
-            <Link href="/">Explore</Link>
-            <Link href="/channel?id=peerscreen-lab">The lab</Link>
-          </nav>
-          <span className="phase-badge">LOCAL PREVIEW</span>
-        </header>
-        {children}
+        <AuthProvider>
+          <Navigation />
+          {children}
+        </AuthProvider>
         <footer>
           PeerScreen{" "}
           <span>Video, shared. Built one verified step at a time.</span>

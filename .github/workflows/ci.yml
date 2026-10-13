@@ -24,12 +24,20 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: "1.27.2"
+          cache-dependency-path: services/api/go.sum
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: npx playwright install --with-deps chromium --only-shell
       - run: npm run fixture
       - run: npm run web-build
       - run: npm run check
+      - run: npm run contracts:check
+      - run: npm run api:vet
+      - run: npm run test:integration
       - run: npm run test:browser
+      - run: npm run test:recovery
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         if: always()
         with:
@@ -38,5 +46,6 @@ jobs:
             playwright-report/
             test-results/
             .local/browser-results.json
+            .local/evidence/
           include-hidden-files: true
           retention-days: 7

@@ -1,39 +1,48 @@
 "use client";
-
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-
-export default function Channel() {
-  const id = useSearchParams().get("id");
-  if (id !== "peerscreen-lab")
+import { resourceID, type Channel } from "../lib/api";
+import { useResource } from "../lib/use-resource";
+import VideoList from "./video-list";
+export default function ChannelPage() {
+  const id = resourceID(useSearchParams().get("id"), "channel");
+  const { state, retry } = useResource<Channel>(id ? `/channels/${id}` : null);
+  if (!id || (state.status === "error" && state.error.status === 404))
     return (
       <main id="main">
         <h1>Channel not found</h1>
         <Link href="/">Back to explore</Link>
       </main>
     );
+  if (state.status === "loading")
+    return (
+      <main id="main">
+        <p role="status">Loading channel…</p>
+      </main>
+    );
+  if (state.status === "error")
+    return (
+      <main id="main">
+        <h1>Channel unavailable</h1>
+        <div role="alert" className="error">
+          <p>{state.error.message}</p>
+          <button onClick={retry}>Retry channel</button>
+        </div>
+      </main>
+    );
+  const channel = state.value;
   return (
     <main id="main">
-      <span className="eyebrow">The testing ground</span>
-      <h1>PeerScreen Lab</h1>
+      <span className="eyebrow">@{channel.handle}</span>
+      <h1>{channel.title}</h1>
       <p className="muted">
-        Small, generated videos that help us build and verify the delivery
-        experience.
+        {channel.description ||
+          `A video space by ${channel.owner_display_name}.`}
       </p>
       <div className="section-title">
         <h2>Videos</h2>
       </div>
-      <Link className="video-card" href="/watch?v=signal-garden">
-        <div className="poster">
-          <img
-            src="/media/fixture/thumbnail.jpg"
-            alt="Colourful generated test pattern"
-          />
-          <span className="duration">1:00</span>
-        </div>
-        <h3>Signal garden</h3>
-        <p className="muted">Generated compatibility fixture</p>
-      </Link>
+      <VideoList key={id} channelID={id} />
     </main>
   );
 }

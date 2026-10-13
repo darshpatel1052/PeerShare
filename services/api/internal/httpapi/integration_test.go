@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"strings"
 	"sync"
@@ -194,6 +195,10 @@ func TestIntegrationIdentityStorageRevocationAndExpiry(t *testing.T) {
 	status, _, _ = request(t, c, f.Server.URL, "GET", "/api/v1/me", nil, nil)
 	if status != 401 {
 		t.Fatal("expired session must fail")
+	}
+	status, _, _ = request(t, c, f.Server.URL, "GET", "/api/v1/videos/"+token+"?accidental_secret="+url.QueryEscape(password), nil, nil)
+	if status != 400 {
+		t.Fatal("malformed resource identifier must fail")
 	}
 	if strings.Contains(f.Logs.text(), password) || strings.Contains(f.Logs.text(), token) || strings.Contains(f.Logs.text(), passwordHash) {
 		t.Fatal("logs leaked credentials")

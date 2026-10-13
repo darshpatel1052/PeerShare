@@ -1,3 +1,12 @@
+x-api-environment: &api-environment
+  APP_ENV: development
+  APP_ORIGIN: http://localhost:3000
+  MEDIA_BASE_URL: http://localhost:3000/media/
+  TRACKER_URL: ws://localhost:8000
+  API_LISTEN_ADDR: 0.0.0.0:8080
+  DATABASE_URL: postgres://peerscreen_catalog:${CATALOG_DB_PASSWORD}@postgres:5432/peerscreen?sslmode=disable
+  REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+
 services:
   postgres:
     image: postgres:18-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c
@@ -44,6 +53,75 @@ services:
       timeout: 3s
       retries: 30
     mem_limit: 128m
+    cpus: 1
+  migrate:
+    profiles: [app]
+    image: peerscreen-api:local
+    build:
+      context: ../..
+      dockerfile: services/api/Dockerfile
+      network: ${PEERSCREEN_BUILD_NETWORK:-default}
+    command: [migrate]
+    environment: *api-environment
+    depends_on:
+      postgres: { condition: service_healthy }
+  seed:
+    profiles: [app]
+    image: peerscreen-api:local
+    command: [seed-fixture, /fixture/fixture.json]
+    environment: *api-environment
+    volumes:
+      - ../../.local/media/fixture:/fixture:ro
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+  api:
+    profiles: [app]
+    image: peerscreen-api:local
+    environment: *api-environment
+    depends_on:
+      seed: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    ports: ["127.0.0.1:18080:8080"]
+    healthcheck:
+      test: [CMD, /peerscreen, healthcheck]
+      interval: 3s
+      timeout: 4s
+      retries: 20
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 384m
+    cpus: 2
+  web:
+    profiles: [app]
+    image: peerscreen-web:local
+    build:
+      context: ../..
+      dockerfile: apps/web/Dockerfile
+      network: ${PEERSCREEN_BUILD_NETWORK:-default}
+    environment:
+      API_TARGET: http://api:8080
+      DEMO_BIND_HOST: 0.0.0.0
+    depends_on:
+      api: { condition: service_healthy }
+    ports: ["127.0.0.1:3000:3000", "127.0.0.1:3001:3001", "127.0.0.1:8000:8000"]
+    volumes:
+      - ../../.local/media:/app/.local/media:ro
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://127.0.0.1:3000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 3s
+      timeout: 4s
+      retries: 20
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
     cpus: 1
 
 volumes:

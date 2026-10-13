@@ -89,7 +89,7 @@ func (a *App) requestScope(next http.Handler) http.Handler {
 				a.error(tracked, r, 500, "internal_error", "The request could not be completed.")
 				a.Logger.Error("handler_panic", "request_id", id)
 			}
-			a.Logger.Info("http_request", "request_id", id, "method", r.Method, "path", r.URL.Path, "status", tracked.status, "duration_ms", time.Since(started).Milliseconds())
+			a.Logger.Info("http_request", "request_id", id, "method", r.Method, "route", r.Pattern, "status", tracked.status, "duration_ms", time.Since(started).Milliseconds())
 		}()
 		if r.Method != "GET" && r.Method != "HEAD" && r.Method != "OPTIONS" && r.Header.Get("Origin") != a.Config.AppOrigin {
 			a.error(tracked, r, 403, "origin_not_allowed", "The request must come from the configured application origin.")

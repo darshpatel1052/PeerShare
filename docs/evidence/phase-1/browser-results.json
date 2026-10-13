@@ -1,0 +1,588 @@
+{
+  "config": {
+    "argv": [
+      "/usr/bin/node",
+      "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/node_modules/.bin/playwright",
+      "test"
+    ],
+    "configFile": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/playwright.config.ts",
+    "rootDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/tests/browser",
+        "testIgnore": [],
+        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/tests/browser",
+        "snapshotDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 60000,
+        "use": {
+          "baseURL": "http://localhost:3100",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "browserName": "chromium",
+          "launchOptions": {
+            "args": ["--autoplay-policy=no-user-gesture-required"]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      ["list", null],
+      [
+        "html",
+        {
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": ".local/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run demo",
+      "env": {
+        "PEERSCREEN_TEST_RUNTIME": "true",
+        "DEMO_PORT": "3100",
+        "MEDIA_PORT": "3101",
+        "TRACKER_PORT": "8100",
+        "API_LISTEN_ADDR": "127.0.0.1:8081"
+      },
+      "url": "http://localhost:3100",
+      "reuseExistingServer": false,
+      "gracefulShutdown": {
+        "signal": "SIGTERM",
+        "timeout": 20000
+      },
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "http.spec.ts",
+      "file": "http.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "production export supports direct watch/channel links and reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1300,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:56:44.198Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ffeaca9d3d6709ce9344-2fa7ecf527e1277879db",
+          "file": "http.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "HTTP playback, seek and quality selection work with no tracker requests",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4180,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:56:45.587Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ffeaca9d3d6709ce9344-103b9509737c727b8601",
+          "file": "http.spec.ts",
+          "line": 20,
+          "column": 1
+        },
+        {
+          "title": "media origin supplies correct MIME and explicit cross-origin permission",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 514,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:56:49.796Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ffeaca9d3d6709ce9344-02cd2fcd8e1b0a838fb0",
+          "file": "http.spec.ts",
+          "line": 57,
+          "column": 1
+        },
+        {
+          "title": "missing videos and integrity failures show useful states",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1163,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:56:50.334Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ffeaca9d3d6709ce9344-b7d4d33ff76e132e3d9a",
+          "file": "http.spec.ts",
+          "line": 84,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "identity.spec.ts",
+      "file": "identity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "register, create, reload, edit, sign out and sign in through the production UI",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1878,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:56:51.542Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "identity-journey",
+                      "contentType": "application/json",
+                      "body": "ewogICJpbml0aWFsQWNjb3VudCI6IHsKICAgICJ1c2VyIjogewogICAgICAiaWQiOiAiYThhZjJhOGMtNDVlYS00NTFhLThhZWUtMGIzMGQ0Zjg4NTYwIiwKICAgICAgImVtYWlsIjogIjNlOWIzMWM5LTdlMzItNDNiNi1hMjkxLWU3YTIzYjA2ODk4N0BleGFtcGxlLnRlc3QiLAogICAgICAiZGlzcGxheV9uYW1lIjogIkxlYXJuaW5nIGNyZWF0b3IiLAogICAgICAicm9sZSI6ICJtZW1iZXIiLAogICAgICAiY3JlYXRlZF9hdCI6ICIyMDI2LTEwLTEzVDE2OjI2OjUyLjEwODM2NCswNTozMCIKICAgIH0sCiAgICAiY2hhbm5lbCI6IHsKICAgICAgImlkIjogImM4ZDg4NTM2LTNhOWMtNGIyNi04ZjIyLWM1Y2VmNzA3M2YyMSIsCiAgICAgICJoYW5kbGUiOiAibGVhcm5pbmctMzZlNTdkMGQiLAogICAgICAidGl0bGUiOiAiTXkgbGVhcm5pbmcgY2hhbm5lbCIsCiAgICAgICJkZXNjcmlwdGlvbiI6ICJSZWFsIHBlcnNpc3RlZCBjaGFubmVsIG1ldGFkYXRhLiIsCiAgICAgICJvd25lcl9kaXNwbGF5X25hbWUiOiAiTGVhcm5pbmcgY3JlYXRvciIsCiAgICAgICJyZXZpc2lvbiI6IDEsCiAgICAgICJjcmVhdGVkX2F0IjogIjIwMjYtMTAtMTNUMTY6MjY6NTIuMjg0NzA4KzA1OjMwIiwKICAgICAgInVwZGF0ZWRfYXQiOiAiMjAyNi0xMC0xM1QxNjoyNjo1Mi4yODQ3MDgrMDU6MzAiCiAgICB9CiAgfSwKICAiYWZ0ZXJFZGl0IjogewogICAgInVzZXIiOiB7CiAgICAgICJpZCI6ICJhOGFmMmE4Yy00NWVhLTQ1MWEtOGFlZS0wYjMwZDRmODg1NjAiLAogICAgICAiZW1haWwiOiAiM2U5YjMxYzktN2UzMi00M2I2LWEyOTEtZTdhMjNiMDY4OTg3QGV4YW1wbGUudGVzdCIsCiAgICAgICJkaXNwbGF5X25hbWUiOiAiTGVhcm5pbmcgY3JlYXRvciIsCiAgICAgICJyb2xlIjogIm1lbWJlciIsCiAgICAgICJjcmVhdGVkX2F0IjogIjIwMjYtMTAtMTNUMTY6MjY6NTIuMTA4MzY0KzA1OjMwIgogICAgfSwKICAgICJjaGFubmVsIjogewogICAgICAiaWQiOiAiYzhkODg1MzYtM2E5Yy00YjI2LThmMjItYzVjZWY3MDczZjIxIiwKICAgICAgImhhbmRsZSI6ICJsZWFybmluZy0zNmU1N2QwZCIsCiAgICAgICJ0aXRsZSI6ICJVcGRhdGVkIGxlYXJuaW5nIGNoYW5uZWwiLAogICAgICAiZGVzY3JpcHRpb24iOiAiUmVhbCBwZXJzaXN0ZWQgY2hhbm5lbCBtZXRhZGF0YS4iLAogICAgICAib3duZXJfZGlzcGxheV9uYW1lIjogIkxlYXJuaW5nIGNyZWF0b3IiLAogICAgICAicmV2aXNpb24iOiAyLAogICAgICAiY3JlYXRlZF9hdCI6ICIyMDI2LTEwLTEzVDE2OjI2OjUyLjI4NDcwOCswNTozMCIsCiAgICAgICJ1cGRhdGVkX2F0IjogIjIwMjYtMTAtMTNUMTY6MjY6NTIuNzgzOTM2KzA1OjMwIgogICAgfQogIH0sCiAgImJyb3dzZXJSZWxvYWRQcmVzZXJ2ZWRDaGFubmVsIjogdHJ1ZSwKICAibG9nZ2VkT3V0TWVTdGF0dXMiOiA0MDEsCiAgImxvZ2luUmVzdG9yZWRDaGFubmVsIjogdHJ1ZSwKICAiY29va2llIjogewogICAgImh0dHBPbmx5IjogdHJ1ZSwKICAgICJzYW1lU2l0ZSI6ICJMYXgiLAogICAgInNlY3VyZSI6IGZhbHNlLAogICAgInBhdGgiOiAiLyIKICB9LAogICJzY29wZSI6ICJwcm9kdWN0aW9uIGV4cG9ydCwgcmVhbCBHbyBBUEkgYW5kIGlzb2xhdGVkIFBvc3RncmVTUUwvUmVkaXM7IG9yaWdpbmFsIGNvb2tpZSB2YWx1ZXMvcGFzc3dvcmRzIGV4Y2x1ZGVkIgp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-c15e4c0a2d279ee3e0e6",
+          "file": "identity.spec.ts",
+          "line": 43,
+          "column": 1
+        },
+        {
+          "title": "a second owner is denied and a stale form preserves its unsaved edit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1957,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:56:53.440Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-dcea921ea28ae18d4fa0",
+          "file": "identity.spec.ts",
+          "line": 121,
+          "column": 1
+        },
+        {
+          "title": "controlled failed requests preserve channel fields and catalogue retry recovers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1300,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:56:55.414Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bc384e94f5cb1e491b4d-0a0c37c424fe8fd06168",
+          "file": "identity.spec.ts",
+          "line": 196,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "peer.spec.ts",
+      "file": "peer.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "three independent viewers transfer verified peer bytes and recover after peers leave",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15240,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "buffer": ""
+                    },
+                    {
+                      "buffer": ""
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:56:56.744Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "peer-delivery-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJzb3VyY2UiOiB7CiAgICAiYmFzZUNvbW1pdCI6ICI3ODA5ZWIzYzhlYmIwNGJmNTRhMjAxMmVhMGZkZTU4ZDFmODM3Zjk3IiwKICAgICJ3b3JraW5nVHJlZUNoYW5nZWQiOiB0cnVlLAogICAgInNvdXJjZUhhc2hlcyI6IHsKICAgICAgInBhY2thZ2VzL3BsYXllci9zcmMvaW5kZXgudHMiOiAiZTU5ZGIyZmRkNDQzYjRmOTlhZWJkZGQyYmVkZWEyNzc3YmQ0NWQ1MTBiZWQ0MzFjY2JlMmJhNTAzMjIyZTY0YSIsCiAgICAgICJwYWNrYWdlcy9wbGF5ZXIvc3JjL2h0dHAtbG9hZGVyLnRzIjogImM1ZmE5MDcxOTUxZTNmMTIwODQ1OWFjNWFkY2Y3MGI3ZjdkYTEzZDliZDJhNzBhMzA0YjZhN2M1OWQ5M2Y1ZjMiLAogICAgICAicGFja2FnZXMvcGxheWVyL3NyYy9pbnRlZ3JpdHkudHMiOiAiY2Y3NjFiN2Q2ZTBkOWVjMmYxMDk5ZDgyMTg5YWI4Yzg1MmNjNTdhODIzZGUwOTI2NGFlOGJiMzNlY2VjYjU3YSIsCiAgICAgICJhcHBzL3dlYi9jb21wb25lbnRzL3dhdGNoLnRzeCI6ICI2OTcwMDA2YzVkYzhlOWFiY2M4YjE2MTBhODRkNWRmNTdkZDY1MjFlZDJkMmZmZjhmZGNiYzNjZDQzNWEzZGUxIiwKICAgICAgInRlc3RzL2Jyb3dzZXIvcGVlci5zcGVjLnRzIjogIjIxNjAwMWFiM2Y4MzA1ODRmNDE0MTVjMTU0NWE2Zjc1ZjllNzA3YzUxNjc1NjUyMzQ3OThmYjcwOTViMWMwZTAiLAogICAgICAicGFja2FnZS1sb2NrLmpzb24iOiAiZDBlMWZhY2E3YTY1OTVhNTlhNGFkYWM0OTlkYjVlZGQxMzIxNzdkMzNjZTkxYWZjZDAxNzI0NjVkM2U2YmJkOSIKICAgIH0sCiAgICAiaG9zdCI6IHsKICAgICAgInBsYXRmb3JtIjogImxpbnV4IiwKICAgICAgImNwdSI6ICIxM3RoIEdlbiBJbnRlbChSKSBDb3JlKFRNKSBpNy0xMzcwMEhYIiwKICAgICAgImxvZ2ljYWxDUFVzIjogMjQsCiAgICAgICJyYW1CeXRlcyI6IDE2NDY2MDk2MTI4CiAgICB9CiAgfSwKICAidGVzdGVkQXQiOiAiMjAyNi0xMC0xM1QxMDo1NzoxMC4yOTVaIiwKICAiYnJvd3NlciI6ICIxNTYuMC44MDc4LjQiLAogICJzY29wZSI6ICIzIGlzb2xhdGVkIENocm9taXVtIGNvbnRleHRzIG9uIG9uZSBMaW51eCBob3N0LCBsb29wYmFjayBuZXR3b3JrLCBubyBleHRlcm5hbCBTVFVOIiwKICAiZml4dHVyZSI6ICI2MHMgbGF2ZmkgSC4yNjQvQUFDLCAzNjBwIHBlZXJzIHRoZW4gNDgwcCBzZWVrLCA0cyBzZWdtZW50cyIsCiAgImJlZm9yZVBlZXJEZXBhcnR1cmUiOiBbCiAgICB7CiAgICAgICJodHRwQnl0ZXMiOiAyMTA5MTcyLAogICAgICAicGVlckJ5dGVzIjogMCwKICAgICAgInVwbG9hZGVkQnl0ZXMiOiAzMTkwMTcyLAogICAgICAidmVyaWZpZWRTZWdtZW50cyI6IDQsCiAgICAgICJyZWplY3RlZFNlZ21lbnRzIjogMCwKICAgICAgInBlZXJzIjogMgogICAgfSwKICAgIHsKICAgICAgImh0dHBCeXRlcyI6IDAsCiAgICAgICJwZWVyQnl0ZXMiOiAyMTA5MTcyLAogICAgICAidXBsb2FkZWRCeXRlcyI6IDEwMjgxNzIsCiAgICAgICJ2ZXJpZmllZFNlZ21lbnRzIjogNCwKICAgICAgInJlamVjdGVkU2VnbWVudHMiOiAwLAogICAgICAicGVlcnMiOiAyCiAgICB9LAogICAgewogICAgICAiaHR0cEJ5dGVzIjogMCwKICAgICAgInBlZXJCeXRlcyI6IDIxMDkxNzIsCiAgICAgICJ1cGxvYWRlZEJ5dGVzIjogMCwKICAgICAgInZlcmlmaWVkU2VnbWVudHMiOiA0LAogICAgICAicmVqZWN0ZWRTZWdtZW50cyI6IDAsCiAgICAgICJwZWVycyI6IDIKICAgIH0KICBdLAogICJhZnRlclBlZXJEZXBhcnR1cmUiOiB7CiAgICAiaHR0cEJ5dGVzIjogNjMzODc5NiwKICAgICJwZWVyQnl0ZXMiOiAyMTA5MTcyLAogICAgInVwbG9hZGVkQnl0ZXMiOiAxMDI4MTcyLAogICAgInZlcmlmaWVkU2VnbWVudHMiOiAxMiwKICAgICJyZWplY3RlZFNlZ21lbnRzIjogMCwKICAgICJwZWVycyI6IDAKICB9LAogICJ0cmFja2VyRGlzY29ubmVjdGVkIjogdHJ1ZQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "17d5188ceb19865dafb3-48b659d3119f305ca60d",
+          "file": "peer.spec.ts",
+          "line": 68,
+          "column": 1
+        },
+        {
+          "title": "corrupted bytes sent on a real data channel are rejected, then HTTP playback succeeds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9362,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "buffer": ""
+                    },
+                    {
+                      "buffer": ""
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:57:12.009Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "tamper-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJicm93c2VyIjogIjE1Ni4wLjgwNzguNCIsCiAgInNvdXJjZSI6IHsKICAgICJiYXNlQ29tbWl0IjogIjc4MDllYjNjOGViYjA0YmY1NGEyMDEyZWEwZmRlNThkMWY4MzdmOTciLAogICAgIndvcmtpbmdUcmVlQ2hhbmdlZCI6IHRydWUsCiAgICAic291cmNlSGFzaGVzIjogewogICAgICAicGFja2FnZXMvcGxheWVyL3NyYy9pbmRleC50cyI6ICJlNTlkYjJmZGQ0NDNiNGY5OWFlYmRkZDJiZWRlYTI3NzdiZDQ1ZDUxMGJlZDQzMWNjYmUyYmE1MDMyMjJlNjRhIiwKICAgICAgInBhY2thZ2VzL3BsYXllci9zcmMvaHR0cC1sb2FkZXIudHMiOiAiYzVmYTkwNzE5NTFlM2YxMjA4NDU5YWM1YWRjZjcwYjdmN2RhMTNkOWJkMmE3MGEzMDRiNmE3YzU5ZDkzZjVmMyIsCiAgICAgICJwYWNrYWdlcy9wbGF5ZXIvc3JjL2ludGVncml0eS50cyI6ICJjZjc2MWI3ZDZlMGQ5ZWMyZjEwOTlkODIxODlhYjhjODUyY2M1N2E4MjNkZTA5MjY0YWU4YmIzM2VjZWNiNTdhIiwKICAgICAgImFwcHMvd2ViL2NvbXBvbmVudHMvd2F0Y2gudHN4IjogIjY5NzAwMDZjNWRjOGU5YWJjYzhiMTYxMGE4NGQ1ZGY1N2RkNjUyMWVkMmQyZmZmOGZkY2JjM2NkNDM1YTNkZTEiLAogICAgICAidGVzdHMvYnJvd3Nlci9wZWVyLnNwZWMudHMiOiAiMjE2MDAxYWIzZjgzMDU4NGY0MTQxNWMxNTQ1YTZmNzVmOWU3MDdjNTE2NzU2NTIzNDc5OGZiNzA5NWIxYzBlMCIsCiAgICAgICJwYWNrYWdlLWxvY2suanNvbiI6ICJkMGUxZmFjYTdhNjU5NWE1OWE0YWRhYzQ5OWRiNWVkZDEzMjE3N2QzM2NlOTFhZmNkMDE3MjQ2NWQzZTZiYmQ5IgogICAgfSwKICAgICJob3N0IjogewogICAgICAicGxhdGZvcm0iOiAibGludXgiLAogICAgICAiY3B1IjogIjEzdGggR2VuIEludGVsKFIpIENvcmUoVE0pIGk3LTEzNzAwSFgiLAogICAgICAibG9naWNhbENQVXMiOiAyNCwKICAgICAgInJhbUJ5dGVzIjogMTY0NjYwOTYxMjgKICAgIH0KICB9LAogICJ0ZXN0ZWRBdCI6ICIyMDI2LTEwLTEzVDEwOjU3OjE5LjQ5MVoiLAogICJ0YW1wZXJlZE1lZGlhQ2h1bmtzIjogOCwKICAicmVjZWl2ZXIiOiB7CiAgICAiaHR0cEJ5dGVzIjogMTU2MjY1NiwKICAgICJwZWVyQnl0ZXMiOiAwLAogICAgInVwbG9hZGVkQnl0ZXMiOiAwLAogICAgInZlcmlmaWVkU2VnbWVudHMiOiAzLAogICAgInJlamVjdGVkU2VnbWVudHMiOiAxLAogICAgInBlZXJzIjogMAogIH0sCiAgImluamVjdGlvbiI6ICJ0ZXN0LW9ubHkgbXV0YXRpb24gb2Ygb3V0Z29pbmcgUlRDRGF0YUNoYW5uZWwgbWVkaWEgYnl0ZXM7IHRydXN0ZWQgZGVzY3JpcHRvciBhbmQgSFRUUCBieXRlcyB1bmNoYW5nZWQiCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "17d5188ceb19865dafb3-6267b267d3e01c97bc8d",
+          "file": "peer.spec.ts",
+          "line": 155,
+          "column": 1
+        },
+        {
+          "title": "sharing off and route departure close real WebRTC connections",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5447,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:57:21.401Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "17d5188ceb19865dafb3-e531ad642d9458bd35f3",
+          "file": "peer.spec.ts",
+          "line": 238,
+          "column": 1
+        },
+        {
+          "title": "an unavailable tracker leaves verified HTTP playback working",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4909,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:57:26.870Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "17d5188ceb19865dafb3-e8a47414baceaa185766",
+          "file": "peer.spec.ts",
+          "line": 307,
+          "column": 1
+        },
+        {
+          "title": "different trusted media versions stay in separate peer swarms",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11881,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T10:57:31.799Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "17d5188ceb19865dafb3-3c5d3ae8483aacdff6d5",
+          "file": "peer.spec.ts",
+          "line": 329,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-13T10:56:38.855Z",
+    "duration": 65716.589,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

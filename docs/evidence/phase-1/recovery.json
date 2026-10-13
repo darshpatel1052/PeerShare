@@ -1,0 +1,198 @@
+{
+  "testedAt": "2026-10-13T10:50:18.923Z",
+  "scope": "Actual Go OS process replacement and PostgreSQL/Redis container stop/start on the isolated peerscreen-test project; original session cookie reused, no re-registration",
+  "processIDs": [468060, 468289],
+  "before": {
+    "user": {
+      "id": "f45f068e-15c9-4ddd-8edd-2b67d51f0a9e",
+      "email": "627c1660-d201-42a7-98bb-3e6d271f445b@example.test",
+      "display_name": "Recovery creator",
+      "role": "member",
+      "created_at": "2026-10-13T16:20:13.118512+05:30"
+    },
+    "channel": {
+      "id": "508f008c-be0e-474a-93dd-d970e1119031",
+      "handle": "recover-be7324a5",
+      "title": "Recovery channel",
+      "description": "Persisted before actual process and database restarts.",
+      "owner_display_name": "Recovery creator",
+      "revision": 1,
+      "created_at": "2026-10-13T16:20:13.131229+05:30",
+      "updated_at": "2026-10-13T16:20:13.131229+05:30"
+    }
+  },
+  "afterProcessRestart": {
+    "user": {
+      "id": "f45f068e-15c9-4ddd-8edd-2b67d51f0a9e",
+      "email": "627c1660-d201-42a7-98bb-3e6d271f445b@example.test",
+      "display_name": "Recovery creator",
+      "role": "member",
+      "created_at": "2026-10-13T16:20:13.118512+05:30"
+    },
+    "channel": {
+      "id": "508f008c-be0e-474a-93dd-d970e1119031",
+      "handle": "recover-be7324a5",
+      "title": "Recovery channel",
+      "description": "Persisted before actual process and database restarts.",
+      "owner_display_name": "Recovery creator",
+      "revision": 1,
+      "created_at": "2026-10-13T16:20:13.131229+05:30",
+      "updated_at": "2026-10-13T16:20:13.131229+05:30"
+    }
+  },
+  "afterDatabaseRestart": {
+    "user": {
+      "id": "f45f068e-15c9-4ddd-8edd-2b67d51f0a9e",
+      "email": "627c1660-d201-42a7-98bb-3e6d271f445b@example.test",
+      "display_name": "Recovery creator",
+      "role": "member",
+      "created_at": "2026-10-13T16:20:13.118512+05:30"
+    },
+    "channel": {
+      "id": "508f008c-be0e-474a-93dd-d970e1119031",
+      "handle": "recover-be7324a5",
+      "title": "Recovery channel",
+      "description": "Persisted before actual process and database restarts.",
+      "owner_display_name": "Recovery creator",
+      "revision": 1,
+      "created_at": "2026-10-13T16:20:13.131229+05:30",
+      "updated_at": "2026-10-13T16:20:13.131229+05:30"
+    }
+  },
+  "databaseRecoveryMs": 755,
+  "redisRecoveryMs": 462,
+  "observations": [
+    {
+      "at": "2026-10-13T10:50:13.126Z",
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "status": 201,
+      "requestId": "2b29cc91-e75f-4cfe-a478-60f266a9be8e"
+    },
+    {
+      "at": "2026-10-13T10:50:13.135Z",
+      "method": "POST",
+      "path": "/api/v1/channels",
+      "status": 201,
+      "requestId": "b3c3a5b1-7b3a-4d2d-9433-0744d693a14b"
+    },
+    {
+      "at": "2026-10-13T10:50:13.142Z",
+      "method": "GET",
+      "path": "/api/v1/me",
+      "status": 200,
+      "requestId": "c37883e4-aaf5-48c4-9325-54d961929665"
+    },
+    {
+      "at": "2026-10-13T10:50:14.877Z",
+      "method": "GET",
+      "path": "/api/v1/me",
+      "status": 200,
+      "requestId": "6fc532c9-e721-4773-a58c-2cb02ad1d4aa"
+    },
+    {
+      "at": "2026-10-13T10:50:15.351Z",
+      "method": "GET",
+      "path": "/health/live",
+      "status": 200,
+      "requestId": "f4e24235-7058-4f14-ba7d-412786ccfd8c"
+    },
+    {
+      "at": "2026-10-13T10:50:15.356Z",
+      "method": "GET",
+      "path": "/health/ready",
+      "status": 503,
+      "requestId": "73b06bf2-acac-43f0-acf8-a48e8ccf1f5e"
+    },
+    {
+      "at": "2026-10-13T10:50:15.360Z",
+      "method": "GET",
+      "path": "/api/v1/videos",
+      "status": 503,
+      "code": "dependency_unavailable",
+      "requestId": "f9e01a84-a477-4ba9-a897-3e51003f7809"
+    },
+    {
+      "at": "2026-10-13T10:50:15.839Z",
+      "method": "GET",
+      "path": "/health/ready",
+      "status": 503,
+      "requestId": "587a714a-d9ef-4c9e-95a2-319d93996524"
+    },
+    {
+      "at": "2026-10-13T10:50:16.115Z",
+      "method": "GET",
+      "path": "/health/ready",
+      "status": 200,
+      "requestId": "fbbaffb3-a31f-4cde-8183-09a9c46b98db"
+    },
+    {
+      "at": "2026-10-13T10:50:16.125Z",
+      "method": "GET",
+      "path": "/api/v1/me",
+      "status": 200,
+      "requestId": "a015cd96-720e-4557-b101-90119ca126f5"
+    },
+    {
+      "at": "2026-10-13T10:50:16.566Z",
+      "method": "GET",
+      "path": "/health/live",
+      "status": 200,
+      "requestId": "a645496d-c6bd-4470-a18c-9399b1adc5b4"
+    },
+    {
+      "at": "2026-10-13T10:50:17.391Z",
+      "method": "GET",
+      "path": "/health/ready",
+      "status": 503,
+      "requestId": "1c72772d-f404-47ee-9afc-692f3d59799b"
+    },
+    {
+      "at": "2026-10-13T10:50:17.399Z",
+      "method": "GET",
+      "path": "/api/v1/videos",
+      "status": 200,
+      "requestId": "bc38179e-66bb-4eab-b41e-90e960c13cb0"
+    },
+    {
+      "at": "2026-10-13T10:50:17.404Z",
+      "method": "GET",
+      "path": "/api/v1/me",
+      "status": 200,
+      "requestId": "ebe0776d-ee88-4fbd-8f18-865934537193"
+    },
+    {
+      "at": "2026-10-13T10:50:18.230Z",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 503,
+      "code": "limits_unavailable",
+      "requestId": "ac5de3f5-2d8e-441b-af2e-723de896698a"
+    },
+    {
+      "at": "2026-10-13T10:50:18.692Z",
+      "method": "GET",
+      "path": "/health/ready",
+      "status": 200,
+      "requestId": "e23527c4-69a6-4ca1-9658-7edc4b5818cf"
+    },
+    {
+      "at": "2026-10-13T10:50:18.919Z",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "requestId": "afdc46a9-182f-4e0d-a479-1030bedc1d77"
+    },
+    {
+      "at": "2026-10-13T10:50:18.923Z",
+      "method": "GET",
+      "path": "/api/v1/me",
+      "status": 200,
+      "requestId": "b0ce2884-865c-480a-a0d6-3393f046e600"
+    }
+  ],
+  "exclusions": [
+    "Passwords, tokens and connection credentials excluded",
+    "This is one-host metadata/session recovery, not backup restoration, multi-host HA or media-job recovery"
+  ]
+}

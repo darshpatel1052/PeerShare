@@ -31,6 +31,8 @@
     "migrate": "node scripts/go.mjs migrate",
     "seed": "node scripts/go.mjs seed-fixture",
     "test:integration": "node scripts/integration.mjs",
+    "test:recovery": "node scripts/recovery.mjs",
+    "compose:demo": "node scripts/compose-demo.mjs",
     "check": "npm run format:check && npm run typecheck && npm test"
   },
   "devDependencies": {

@@ -60,7 +60,7 @@ test("media origin supplies correct MIME and explicit cross-origin permission", 
 }) => {
   await page.goto("/");
   const result = await page.evaluate(async () => {
-    const response = await fetch("http://localhost:3001/fixture/master.m3u8");
+    const response = await fetch("http://localhost:3101/fixture/master.m3u8");
     return {
       status: response.status,
       type: response.headers.get("content-type"),
@@ -71,12 +71,12 @@ test("media origin supplies correct MIME and explicit cross-origin permission", 
   expect(result.type).toContain("application/vnd.apple.mpegurl");
   expect(result.text).toContain("#EXTM3U");
   const denied = await request.get(
-    "http://localhost:3001/fixture/integrity.json",
+    "http://localhost:3101/fixture/integrity.json",
     { headers: { Origin: "https://untrusted.example" } },
   );
   expect(denied.headers()["access-control-allow-origin"]).toBeUndefined();
   const segment = await request.get(
-    "http://localhost:3001/fixture/360p/segment-000.ts",
+    "http://localhost:3101/fixture/360p/segment-000.ts",
   );
   expect(segment.headers()["content-type"]).toBe("video/mp2t");
 });

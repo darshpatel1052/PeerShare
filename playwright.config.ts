@@ -12,7 +12,7 @@ export default defineConfig({
     ["json", { outputFile: ".local/browser-results.json" }],
   ],
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:3100",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     browserName: "chromium",
@@ -20,8 +20,16 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run demo",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-    timeout: 20_000,
+    env: {
+      PEERSCREEN_TEST_RUNTIME: "true",
+      DEMO_PORT: "3100",
+      MEDIA_PORT: "3101",
+      TRACKER_PORT: "8100",
+      API_LISTEN_ADDR: "127.0.0.1:8081",
+    },
+    url: "http://localhost:3100",
+    reuseExistingServer: false,
+    gracefulShutdown: { signal: "SIGTERM", timeout: 20_000 },
+    timeout: 120_000,
   },
 });

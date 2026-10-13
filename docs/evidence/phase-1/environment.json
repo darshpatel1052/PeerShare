@@ -1,0 +1,172 @@
+{
+  "capturedAt": "2026-10-13T11:03:18.353Z",
+  "host": {
+    "platform": "linux",
+    "kernel": "7.0.0-38-generic",
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+    "logicalCPUs": 24,
+    "ramBytes": 16466096128
+  },
+  "versions": {
+    "node": "v22.23.3",
+    "npm": "10.9.9",
+    "go": "go version go1.27.2 linux/amd64",
+    "postgres": "18.6 (Debian 18.6-1.pgdg12+2)",
+    "redis": "8.2.10",
+    "docker": "29.1.3",
+    "compose": "2.36.2",
+    "ffmpeg": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "typescript": "7.0.2",
+    "@playwright/test": "1.64.0",
+    "hls.js": "1.7.3",
+    "p2p-media-loader-hlsjs": "4.0.0",
+    "bittorrent-tracker": "11.2.3",
+    "openapi-typescript": "7.13.0",
+    "contract-generator-typescript": "5.9.3"
+  },
+  "services": [
+    {
+      "service": "postgres",
+      "state": "running",
+      "exitCode": 0,
+      "healthy": "healthy",
+      "image": "postgres:18-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c",
+      "imageID": "sha256:2e182ed2ff8f5d0835353864264437a26dffc542a9a6c677ec495aa54e491627",
+      "user": "",
+      "readOnly": false,
+      "memoryBytes": 536870912,
+      "nanoCPUs": 2000000000,
+      "networks": ["peerscreen_default"],
+      "hostPorts": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "55432"
+          }
+        ]
+      },
+      "capDrop": null,
+      "securityOptions": null
+    },
+    {
+      "service": "redis",
+      "state": "running",
+      "exitCode": 0,
+      "healthy": "healthy",
+      "image": "redis:8-bookworm@sha256:47670742d7924adbcdb404d1288b6327815b23141969c0939b8e5d61f78c2634",
+      "imageID": "sha256:4712d69c6daca134968898d2966784bba77b10fe47f1fd0293c592e61fd99030",
+      "user": "",
+      "readOnly": false,
+      "memoryBytes": 134217728,
+      "nanoCPUs": 1000000000,
+      "networks": ["peerscreen_default"],
+      "hostPorts": {
+        "6379/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "56379"
+          }
+        ]
+      },
+      "capDrop": null,
+      "securityOptions": null
+    },
+    {
+      "service": "migrate",
+      "state": "exited",
+      "exitCode": 0,
+      "image": "peerscreen-api:local",
+      "imageID": "sha256:3828a9c48125348e1b451dbcdf4393cd478e022b877ca508cc132350f2d603fd",
+      "user": "10001:10001",
+      "readOnly": false,
+      "memoryBytes": 0,
+      "nanoCPUs": 0,
+      "networks": ["peerscreen_default"],
+      "hostPorts": {},
+      "capDrop": null,
+      "securityOptions": null
+    },
+    {
+      "service": "seed",
+      "state": "exited",
+      "exitCode": 0,
+      "image": "peerscreen-api:local",
+      "imageID": "sha256:3828a9c48125348e1b451dbcdf4393cd478e022b877ca508cc132350f2d603fd",
+      "user": "10001:10001",
+      "readOnly": false,
+      "memoryBytes": 0,
+      "nanoCPUs": 0,
+      "networks": ["peerscreen_default"],
+      "hostPorts": {},
+      "capDrop": null,
+      "securityOptions": null
+    },
+    {
+      "service": "api",
+      "state": "running",
+      "exitCode": 0,
+      "healthy": "healthy",
+      "image": "peerscreen-api:local",
+      "imageID": "sha256:3828a9c48125348e1b451dbcdf4393cd478e022b877ca508cc132350f2d603fd",
+      "user": "10001:10001",
+      "readOnly": true,
+      "memoryBytes": 402653184,
+      "nanoCPUs": 2000000000,
+      "networks": ["peerscreen_default"],
+      "hostPorts": {
+        "8080/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18080"
+          }
+        ]
+      },
+      "capDrop": ["ALL"],
+      "securityOptions": ["no-new-privileges:true"]
+    },
+    {
+      "service": "web",
+      "state": "running",
+      "exitCode": 0,
+      "healthy": "healthy",
+      "image": "peerscreen-web:local",
+      "imageID": "sha256:9b32b50fb29b5188a816f9c2cdfc962b7d59813e9971f79fe23d4ccc3bd8b208",
+      "user": "node",
+      "readOnly": true,
+      "memoryBytes": 268435456,
+      "nanoCPUs": 1000000000,
+      "networks": ["peerscreen_default"],
+      "hostPorts": {
+        "3000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "3000"
+          }
+        ],
+        "3001/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "3001"
+          }
+        ],
+        "8000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8000"
+          }
+        ]
+      },
+      "capDrop": ["ALL"],
+      "securityOptions": ["no-new-privileges:true"]
+    }
+  ],
+  "testServicesRemaining": [],
+  "notes": [
+    "No container environment values or credentials retained",
+    "Runtime services use the private peerscreen_default bridge",
+    "Host networking was used only for image build downloads because this host lacks Docker default bridge",
+    "Migration and fixture-import exit codes are expected 0; other services should be healthy"
+  ]
+}

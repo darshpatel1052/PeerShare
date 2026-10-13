@@ -1,0 +1,58 @@
+
+> peerscreen@0.0.0 check
+> npm run format:check && npm run typecheck && npm test
+
+
+> peerscreen@0.0.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> peerscreen@0.0.0 typecheck
+> tsc --noEmit -p apps/web/tsconfig.json
+
+
+> peerscreen@0.0.0 test
+> node --experimental-strip-types --test tests/unit/*.test.ts
+
+TAP version 13
+# Subtest: accepts exact bytes and signed URL query variation
+ok 1 - accepts exact bytes and signed URL query variation
+  ---
+  duration_ms: 15.081785
+  type: 'test'
+  ...
+# Subtest: rejects a changed byte even when the length matches
+ok 2 - rejects a changed byte even when the length matches
+  ---
+  duration_ms: 2.19103
+  type: 'test'
+  ...
+# Subtest: rejects truncated segments, unknown keys, another origin and another generation
+ok 3 - rejects truncated segments, unknown keys, another origin and another generation
+  ---
+  duration_ms: 1.002944
+  type: 'test'
+  ...
+# Subtest: fails closed for unsupported byte ranges and malformed URLs
+ok 4 - fails closed for unsupported byte ranges and malformed URLs
+  ---
+  duration_ms: 0.730453
+  type: 'test'
+  ...
+# Subtest: rejects malformed, unbounded and traversal descriptor entries
+ok 5 - rejects malformed, unbounded and traversal descriptor entries
+  ---
+  duration_ms: 1.217761
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 282.475205

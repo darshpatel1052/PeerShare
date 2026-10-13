@@ -78,7 +78,7 @@ An unsuccessful API request must not make the UI assume no durable work happened
 
 ## Errors, retries and diagnostics
 
-Responses include `code`, a readable `message`, and `request_id`. The same request ID is returned in a header and logged with method, path, status and duration. Request bodies, cookies, hashes, query strings and connection URLs are not logged.
+Responses include `code`, a readable `message`, and `request_id`. The same request ID is returned in a header and logged with method, matched route pattern, status and duration. Request bodies, cookies, hashes, query strings and connection URLs are not logged.
 
 | Status    | Caller meaning                                                    |
 | --------- | ----------------------------------------------------------------- |

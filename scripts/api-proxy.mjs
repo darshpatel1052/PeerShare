@@ -1,0 +1,80 @@
+import { request as httpRequest } from "node:http";
+import { request as httpsRequest } from "node:https";
+import { randomUUID } from "node:crypto";
+
+const stripped = new Set([
+  "connection",
+  "upgrade",
+  "keep-alive",
+  "proxy-authenticate",
+  "proxy-authorization",
+  "te",
+  "trailer",
+  "transfer-encoding",
+  "forwarded",
+  "x-forwarded-for",
+  "x-forwarded-host",
+  "x-forwarded-proto",
+  "x-user-id",
+]);
+export function proxyAPI(request, response, target) {
+  const fail = (status, code, message) => {
+    if (response.headersSent) {
+      response.destroy();
+      return;
+    }
+    const id = randomUUID();
+    response.writeHead(status, {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      "X-Request-ID": id,
+    });
+    response.end(JSON.stringify({ code, message, request_id: id }));
+  };
+  if (!request.url.startsWith("/")) {
+    fail(400, "invalid_target", "Use an application-relative request path.");
+    return;
+  }
+  if (Number(request.headers["content-length"] || 0) > 16 * 1024) {
+    fail(413, "body_too_large", "The request body exceeds 16 KiB.");
+    request.resume();
+    return;
+  }
+  const origin = new URL(target);
+  const headers = Object.fromEntries(
+    Object.entries(request.headers).filter(([name]) => !stripped.has(name)),
+  );
+  headers.host = origin.host;
+  const upstream = (origin.protocol === "https:" ? httpsRequest : httpRequest)(
+    {
+      hostname: origin.hostname,
+      port: origin.port,
+      path: request.url,
+      method: request.method,
+      headers,
+    },
+    (incoming) => {
+      const returnedHeaders = Object.fromEntries(
+        Object.entries(incoming.headers).filter(
+          ([name]) => !stripped.has(name),
+        ),
+      );
+      response.writeHead(incoming.statusCode || 502, returnedHeaders);
+      incoming.pipe(response);
+      incoming.on("error", () => response.destroy());
+    },
+  );
+  upstream.setTimeout(10_000, () =>
+    upstream.destroy(new Error("upstream timeout")),
+  );
+  upstream.on("error", () =>
+    fail(
+      503,
+      "api_unavailable",
+      "The catalogue service is temporarily unavailable. Please retry.",
+    ),
+  );
+  request.on("aborted", () => upstream.destroy());
+  request.on("error", () => upstream.destroy());
+  request.pipe(upstream);
+}

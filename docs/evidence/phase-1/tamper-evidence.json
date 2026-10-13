@@ -1,0 +1,32 @@
+{
+  "browser": "156.0.8078.4",
+  "source": {
+    "baseCommit": "7809eb3c8ebb04bf54a2012ea0fde58d1f837f97",
+    "workingTreeChanged": true,
+    "sourceHashes": {
+      "packages/player/src/index.ts": "e59db2fdd443b4f99aebddd2bedea2777bd45d510bed431ccbe2ba503222e64a",
+      "packages/player/src/http-loader.ts": "c5fa9071951e3f1208459ac5adcf70b7f7da13d9bd2a70a304b6a7c59d93f5f3",
+      "packages/player/src/integrity.ts": "cf761b7d6e0d9ec2f1099d82189ab8c852cc57a823de09264ae8bb33ececb57a",
+      "apps/web/components/watch.tsx": "6970006c5dc8e9abcc8b1610a84d5df57dd6521ed2d2fff8fdcbc3cd435a3de1",
+      "tests/browser/peer.spec.ts": "216001ab3f830584f41415c1545a6f75f9e707c5167565234798fb7095b1c0e0",
+      "package-lock.json": "d0e1faca7a6595a59a4adac499db5edd132177d33ce91afcd0172465d3e6bbd9"
+    },
+    "host": {
+      "platform": "linux",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "logicalCPUs": 24,
+      "ramBytes": 16466096128
+    }
+  },
+  "testedAt": "2026-10-13T10:57:19.491Z",
+  "tamperedMediaChunks": 8,
+  "receiver": {
+    "httpBytes": 1562656,
+    "peerBytes": 0,
+    "uploadedBytes": 0,
+    "verifiedSegments": 3,
+    "rejectedSegments": 1,
+    "peers": 0
+  },
+  "injection": "test-only mutation of outgoing RTCDataChannel media bytes; trusted descriptor and HTTP bytes unchanged"
+}

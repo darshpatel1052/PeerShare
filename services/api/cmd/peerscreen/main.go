@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -19,6 +20,12 @@ import (
 )
 
 func main() {
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{ReplaceAttr: func(_ []string, attr slog.Attr) slog.Attr {
+		if attr.Key == slog.TimeKey && attr.Value.Kind() == slog.KindTime {
+			attr.Value = slog.TimeValue(attr.Value.Time().UTC())
+		}
+		return attr
+	}})))
 	if err := run(); err != nil {
 		slog.Error("command_failed", "reason", err.Error())
 		os.Exit(1)
@@ -31,7 +38,15 @@ func run() error {
 	}
 	if command == "healthcheck" {
 		client := http.Client{Timeout: 3 * time.Second}
-		response, err := client.Get("http://127.0.0.1:8080/health/ready")
+		listen := os.Getenv("API_LISTEN_ADDR")
+		if listen == "" {
+			listen = "127.0.0.1:18080"
+		}
+		_, port, splitError := net.SplitHostPort(listen)
+		if splitError != nil {
+			return errors.New("invalid health-check listen address")
+		}
+		response, err := client.Get("http://127.0.0.1:" + port + "/health/ready")
 		if err != nil {
 			return errors.New("health endpoint unavailable")
 		}
@@ -102,7 +117,7 @@ func run() error {
 	if cache.Ping(ctx).Err() != nil {
 		return errors.New("Redis initialization failed")
 	}
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	logger := slog.Default()
 	app, err := httpapi.New(ctx, cfg, db, cache, logger)
 	if err != nil {
 		return errors.New("API initialization failed")

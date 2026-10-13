@@ -1,0 +1,74 @@
+{
+  "testedAt": "2026-10-13T11:02:29.061Z",
+  "mode": "containers",
+  "browser": "156.0.8078.4",
+  "responses": [
+    {
+      "path": "/health/ready",
+      "status": 200,
+      "body": {
+        "status": "ok"
+      }
+    },
+    {
+      "path": "/api/v1/me",
+      "status": 401,
+      "body": {
+        "code": "authentication_required",
+        "message": "Sign in to continue.",
+        "request_id": "159f38f1-c300-4156-9376-b2dfc9e0e481"
+      }
+    },
+    {
+      "path": "/api/v1/auth/login",
+      "status": 401,
+      "body": {
+        "code": "invalid_credentials",
+        "message": "The email or password is incorrect.",
+        "request_id": "398f7af4-351e-4c70-8e0f-096a529b7cb4"
+      }
+    },
+    {
+      "path": "/api/v1/auth/login",
+      "status": 403,
+      "body": {
+        "code": "origin_not_allowed",
+        "message": "The request must come from the configured application origin.",
+        "request_id": "298f859a-e45a-4a83-99c7-ac2ac7edd8c2"
+      }
+    },
+    {
+      "path": "/api/v1/videos?limit=1",
+      "status": 200,
+      "body": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "channel_id": "00000000-0000-4000-8000-000000000002",
+            "channel_title": "PeerScreen Lab",
+            "channel_handle": "peerscreen-lab",
+            "title": "Signal garden",
+            "description": "A moving test pattern and a quiet tone, generated to check video quality, seeking, and delivery. Every frame and audio sample is generated locally.",
+            "tags": ["hls", "test"],
+            "source_kind": "fixture",
+            "duration_seconds": 60,
+            "accepted_generation_id": "a9def394-587a-5cbc-962f-e460c400ba83",
+            "accepted_attempt_id": "4b84e972-dec9-51f8-9508-46d223f5ee91",
+            "qualities": [360, 480],
+            "published_at": "2026-10-13T09:28:39.221218Z",
+            "thumbnail_url": "http://localhost:3000/media/fixture/thumbnail.jpg"
+          }
+        ],
+        "next_cursor": null
+      }
+    }
+  ],
+  "playback": {
+    "seconds": 1.03638,
+    "httpBytes": 12877248,
+    "peerBytes": 0
+  },
+  "pageErrors": [],
+  "mobileHorizontalOverflow": false,
+  "scope": "Anonymous real browser and API proxy smoke, correct and rejected Origin, real verified HTTP playback. No credentials/cookies recorded."
+}

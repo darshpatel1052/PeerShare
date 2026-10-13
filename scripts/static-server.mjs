@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import { createReadStream } from "node:fs";
 import { stat, realpath } from "node:fs/promises";
 import { resolve, extname, sep } from "node:path";
+import { proxyAPI } from "./api-proxy.mjs";
 
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
@@ -18,8 +19,17 @@ export function createStaticServer({
   webRoot,
   mediaRoot,
   allowedOrigin = "http://localhost:3000",
+  apiTarget,
 }) {
   return createServer(async (request, response) => {
+    const pathname = new URL(request.url, "http://localhost").pathname;
+    if (
+      apiTarget &&
+      (pathname.startsWith("/api/v1/") || pathname.startsWith("/health/"))
+    ) {
+      proxyAPI(request, response, apiTarget);
+      return;
+    }
     response.setHeader("X-Content-Type-Options", "nosniff");
     const origin = request.headers.origin;
     if (origin === allowedOrigin) {

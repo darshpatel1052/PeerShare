@@ -27,7 +27,7 @@ type Config struct {
 
 func Load() (Config, error) {
 	cfg := Config{DatabaseURL: os.Getenv("DATABASE_URL"), RedisURL: os.Getenv("REDIS_URL"),
-		ListenAddr: value("API_LISTEN_ADDR", "127.0.0.1:8080"), AppOrigin: value("APP_ORIGIN", "http://localhost:3000"),
+		ListenAddr: value("API_LISTEN_ADDR", "127.0.0.1:18080"), AppOrigin: value("APP_ORIGIN", "http://localhost:3000"),
 		MediaBaseURL: value("MEDIA_BASE_URL", "http://localhost:3000/media/"), TrackerURL: value("TRACKER_URL", "ws://localhost:8000"),
 		Environment: value("APP_ENV", "development"), SessionTTL: 7 * 24 * time.Hour, AuthLimit: 60,
 		RatePrefix: value("RATE_PREFIX", "peerscreen:auth"), CookieName: "peerscreen_session"}
