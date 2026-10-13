@@ -1,0 +1,354 @@
+{
+  "checkedOn": "2026-10-14",
+  "scope": "real isolated PostgreSQL, Redis, Kafka, gRPC and FFmpeg; race detector; package fixtures run serially",
+  "topLevelPassed": 43,
+  "namedPassedIncludingSubcases": 67,
+  "failed": 0,
+  "skippedTests": 0,
+  "passed": [
+    {
+      "name": "TestPasswordHashAndVerification",
+      "seconds": 0.63,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
+    },
+    {
+      "name": "TestMalformedHashFailsClosed",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
+    },
+    {
+      "name": "TestHashWaitHonorsCancellation",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
+    },
+    {
+      "name": "TestSessionTokensAreRandomCanonicalAndHashed",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
+    },
+    {
+      "name": "TestProductionRejectsUnsafeBrowserDefaults",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/config"
+    },
+    {
+      "name": "TestGoogleCredentialsMustBeConfiguredTogether",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/config"
+    },
+    {
+      "name": "TestOperatorFixtureCannotAppearInProduction",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/config"
+    },
+    {
+      "name": "TestQualitiesNeverUpscale",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+    },
+    {
+      "name": "TestStoragePathRejectsTraversalAndSymlinks",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+    },
+    {
+      "name": "TestIntegrationAdaptiveMediaAndDescriptorValidation/wrong-attempt",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+    },
+    {
+      "name": "TestIntegrationAdaptiveMediaAndDescriptorValidation/missing-playlist",
+      "seconds": 0.01,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+    },
+    {
+      "name": "TestIntegrationAdaptiveMediaAndDescriptorValidation/corrupt-segment",
+      "seconds": 0.03,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+    },
+    {
+      "name": "TestIntegrationAdaptiveMediaAndDescriptorValidation/descriptor-traversal",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+    },
+    {
+      "name": "TestIntegrationAdaptiveMediaAndDescriptorValidation",
+      "seconds": 5.27,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+    },
+    {
+      "name": "TestIntegrationDistributedUploadKafkaAcceptanceAndProjection/accepted-completion-response-replay",
+      "seconds": 0.01,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationDistributedUploadKafkaAcceptanceAndProjection/duplicate-and-stale-projection",
+      "seconds": 0.01,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationDistributedUploadKafkaAcceptanceAndProjection",
+      "seconds": 11.83,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleSignedLoginStableSubjectAndExistingSessions",
+      "seconds": 0.97,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/nonce",
+      "seconds": 0.03,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/audience",
+      "seconds": 0.03,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/issuer",
+      "seconds": 0.03,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/expiry",
+      "seconds": 0.03,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/future-issued",
+      "seconds": 0.03,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/signature",
+      "seconds": 0.03,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/unverified-email",
+      "seconds": 0.03,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/empty-subject",
+      "seconds": 0.02,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/authorized-party",
+      "seconds": 0.03,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/multi-audience-no-party",
+      "seconds": 0.02,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/missing-id-token",
+      "seconds": 0.02,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay/token-endpoint-error",
+      "seconds": 0.02,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleRejectsInvalidSignedClaimsAndReplay",
+      "seconds": 1.09,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleBrowserBindingExpiredStateAndCancellation",
+      "seconds": 0.45,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleExplicitLinkPreservesChannelAndRefusesAccountMerge",
+      "seconds": 2.1,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleDisabledConfigurationAndOrigin",
+      "seconds": 0.35,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationGoogleFlowConsumptionAndIdentityAdmissionAreAtomic",
+      "seconds": 0.49,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationCreatorBannerValidationOwnershipRevisionAndPersistence/other_owner",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationCreatorBannerValidationOwnershipRevisionAndPersistence/anonymous",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationCreatorBannerValidationOwnershipRevisionAndPersistence/cross_origin",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationCreatorBannerValidationOwnershipRevisionAndPersistence/SVG",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationCreatorBannerValidationOwnershipRevisionAndPersistence/oversize",
+      "seconds": 0.03,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationCreatorBannerValidationOwnershipRevisionAndPersistence/too_many_pixels",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationCreatorBannerValidationOwnershipRevisionAndPersistence",
+      "seconds": 2.98,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationThumbnailPrivacyPublicationResetAndDeletion",
+      "seconds": 2.18,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationIdentityStorageRevocationAndExpiry",
+      "seconds": 0.95,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationUploadIdempotencyResumeOwnershipAndPublishGate",
+      "seconds": 1.06,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationOwnershipRevisionAndDuplicateCreation",
+      "seconds": 0.69,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationConcurrentChannelAdmissionAndForeignKeys",
+      "seconds": 0.49,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationStrictInputOriginAndErrors",
+      "seconds": 0.51,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationTransactionRollbackAndMigrationReplay",
+      "seconds": 0.32,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationPublicVisibilityAndCursorTies",
+      "seconds": 0.35,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationSharedAtomicRateLimits",
+      "seconds": 0.47,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationSessionsSurviveFreshAPIInstanceAndLogoutAll",
+      "seconds": 0.77,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationNormalCatalogueExcludesOperatorTestMedia",
+      "seconds": 0.53,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationConcurrentUploadAdmissionAndReservation",
+      "seconds": 0.98,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationPartPermissionsCorruptionAndRepair",
+      "seconds": 0.89,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationWorkerLeaseRecoveryAndStaleCompletion",
+      "seconds": 0.75,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationExpiryAbortAndOrphanReconciliation",
+      "seconds": 0.74,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationInvalidMediaAndBoundedRetries",
+      "seconds": 0.83,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationRealTranscodePrivatePreviewPublicationAndDeletion",
+      "seconds": 1.87,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
+    },
+    {
+      "name": "TestIntegrationMediaRPCRolesAndDatabaseOwnership",
+      "seconds": 0.04,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
+    },
+    {
+      "name": "TestIntegrationConcurrentSubmitAndConflictingInputs",
+      "seconds": 0.05,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
+    },
+    {
+      "name": "TestIntegrationDurableClaimReplayAndEpochFencing",
+      "seconds": 0.12,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
+    },
+    {
+      "name": "TestIntegrationCancelRequiresStoppedAttemptAndIdempotentRetry",
+      "seconds": 0.16,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
+    },
+    {
+      "name": "TestIntegrationTransientRetryAndExhaustion",
+      "seconds": 0.19,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
+    },
+    {
+      "name": "TestIntegrationImportedAttemptBudgetCannotReset",
+      "seconds": 0.12,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
+    },
+    {
+      "name": "TestCursorRoundTripPreservesTuple",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+    },
+    {
+      "name": "TestCursorRejectsMalformedAndUnboundedInput",
+      "seconds": 0,
+      "package": "github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+    }
+  ],
+  "firstConnectedRun": {
+    "result": "interrupted during stalled Kafka consumer cleanup",
+    "fix": "CloseAllowingRebalance and bounded teardown checks",
+    "finalConnectedResult": "passed"
+  },
+  "startupFinding": {
+    "problem": "Compose --wait rejected an exited top-level bootstrap container despite exit 0",
+    "fix": "wait for long-lived dependencies and then run setup tasks to completion"
+  }
+}

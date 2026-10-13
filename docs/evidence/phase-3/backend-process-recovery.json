@@ -1,0 +1,5986 @@
+{
+  "checkedOn": "2026-10-13T21:56:00.128Z",
+  "scope": "isolated local single-host services; actual Kafka, gRPC, PostgreSQL and FFmpeg",
+  "sourceBytes": 27981442,
+  "renditions": [480, 720],
+  "brokerOutage": {
+    "before": {
+      "job_id": "59fc73d3-cd5a-48c2-a582-d875c4481a32",
+      "generation_id": "ef1dcce5-b985-40ab-a7ed-ae71abe5e54e",
+      "state": "queued",
+      "attempts": 0,
+      "version": 1,
+      "epoch": null,
+      "attempt_id": null,
+      "worker_id": null,
+      "pending_events": 2
+    },
+    "afterCoordinatorRestart": {
+      "job_id": "59fc73d3-cd5a-48c2-a582-d875c4481a32",
+      "generation_id": "ef1dcce5-b985-40ab-a7ed-ae71abe5e54e",
+      "state": "queued",
+      "attempts": 0,
+      "version": 1,
+      "epoch": null,
+      "attempt_id": null,
+      "worker_id": null,
+      "pending_events": 2
+    }
+  },
+  "workerCrash": {
+    "before": {
+      "job_id": "59fc73d3-cd5a-48c2-a582-d875c4481a32",
+      "generation_id": "ef1dcce5-b985-40ab-a7ed-ae71abe5e54e",
+      "state": "running",
+      "attempts": 1,
+      "version": 4,
+      "epoch": 1,
+      "attempt_id": "e372d423-d62c-4163-85f2-b30f34c3811d",
+      "worker_id": "8bc4c062-7d72-4410-aff8-16346fbd2edc",
+      "pending_events": 0
+    },
+    "retainedLease": {
+      "job_id": "59fc73d3-cd5a-48c2-a582-d875c4481a32",
+      "generation_id": "ef1dcce5-b985-40ab-a7ed-ae71abe5e54e",
+      "state": "running",
+      "attempts": 1,
+      "version": 4,
+      "epoch": 1,
+      "attempt_id": "e372d423-d62c-4163-85f2-b30f34c3811d",
+      "worker_id": "8bc4c062-7d72-4410-aff8-16346fbd2edc",
+      "pending_events": 0
+    },
+    "after": {
+      "job_id": "59fc73d3-cd5a-48c2-a582-d875c4481a32",
+      "generation_id": "ef1dcce5-b985-40ab-a7ed-ae71abe5e54e",
+      "state": "ready",
+      "attempts": 2,
+      "version": 12,
+      "epoch": 2,
+      "attempt_id": "8c725cb2-357f-45f1-9abf-f3c06306a1a5",
+      "worker_id": "4d496e7a-dc90-47eb-8d36-352d7cd974e2",
+      "pending_events": 0
+    },
+    "actualFFmpegChildStopped": true,
+    "staleCompletionStatus": "FailedPrecondition",
+    "recoveryAndValidationMilliseconds": 70410
+  },
+  "apiRestart": {
+    "originalSessionRetained": true,
+    "publishedVideoRetained": true
+  },
+  "observations": [
+    {
+      "at": "2026-10-13T21:54:17.770Z",
+      "method": "POST",
+      "path": "/auth/register",
+      "status": 201
+    },
+    {
+      "at": "2026-10-13T21:54:17.785Z",
+      "method": "POST",
+      "path": "/channels",
+      "status": 201
+    },
+    {
+      "at": "2026-10-13T21:54:23.941Z",
+      "method": "POST",
+      "path": "/uploads",
+      "status": 201,
+      "state": "open",
+      "processing": "pending",
+      "stage": "queued"
+    },
+    {
+      "at": "2026-10-13T21:54:23.957Z",
+      "method": "POST",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460/parts/presign",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:54:24.053Z",
+      "method": "PUT",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460/parts/1",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:54:24.067Z",
+      "method": "POST",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460/parts/presign",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:54:24.140Z",
+      "method": "PUT",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460/parts/2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:54:24.150Z",
+      "method": "POST",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460/parts/presign",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:54:24.227Z",
+      "method": "PUT",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460/parts/3",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:54:24.236Z",
+      "method": "POST",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460/parts/presign",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:54:24.272Z",
+      "method": "PUT",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460/parts/4",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:54:24.409Z",
+      "method": "POST",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460/complete",
+      "status": 202,
+      "processing": "pending"
+    },
+    {
+      "at": "2026-10-13T21:54:24.411Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "pending",
+      "stage": "queued"
+    },
+    {
+      "at": "2026-10-13T21:54:24.839Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "pending",
+      "stage": "queued"
+    },
+    {
+      "at": "2026-10-13T21:54:50.017Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:50.120Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:50.224Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:50.330Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:50.436Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:50.540Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:50.646Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:50.752Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:50.858Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:50.962Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:51.067Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:51.175Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:51.282Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:51.388Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:51.494Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:51.600Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:51.707Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:51.813Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:51.918Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:52.024Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:52.129Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:52.235Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:52.339Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:52.443Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:52.548Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:52.653Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:52.759Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:52.864Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:52.971Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:53.077Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:53.183Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:53.289Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:53.397Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:53.504Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:53.611Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:53.718Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:53.826Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:53.932Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:54.038Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:54.145Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:54.250Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:54.354Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:54.461Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:54.566Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:54.673Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:54.778Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:54.882Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:54.987Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:55.093Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:55.200Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:55.304Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:55.410Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:55.517Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:55.624Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:55.730Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:55.835Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:55.941Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:56.047Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:56.155Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:56.260Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:56.365Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:56.471Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:56.577Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:56.684Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:56.789Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:56.895Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:57.001Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:57.108Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:57.213Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:57.318Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:57.426Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:57.531Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:57.638Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:57.746Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:57.850Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:57.956Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:58.064Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:58.169Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:58.274Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:58.380Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:58.485Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:58.590Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:58.695Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:58.802Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:58.908Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:59.013Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:59.119Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:59.225Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:59.331Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:59.438Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:59.543Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:59.650Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:59.756Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:59.863Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:54:59.970Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:00.075Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:00.178Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:00.285Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:00.390Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:00.497Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:00.602Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:00.706Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:00.808Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:00.911Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:01.015Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:01.120Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:01.224Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:01.329Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:01.435Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:01.540Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:01.646Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:01.750Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:01.855Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:01.961Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:02.067Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:02.173Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:02.276Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:02.380Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:02.483Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:02.587Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:02.693Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:02.797Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:02.904Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:03.009Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:03.114Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:03.217Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:03.326Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:03.430Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:03.537Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:03.642Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:03.746Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:03.853Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:03.959Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:04.064Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:04.170Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:04.276Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:04.381Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:04.486Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:04.592Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:04.699Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:04.804Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:04.909Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:05.015Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:05.119Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:05.222Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:05.327Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:05.433Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:05.539Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:05.646Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:05.753Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:05.858Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:05.962Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:06.065Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:06.167Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:06.269Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:06.372Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:06.474Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:06.578Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:06.681Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:06.782Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:06.884Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:06.987Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:07.089Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:07.192Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:07.298Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:07.404Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:07.510Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:07.616Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:07.721Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:07.828Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:07.933Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:08.038Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:08.144Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:08.249Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:08.355Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:08.459Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:08.564Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:08.670Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:08.774Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:08.880Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:08.984Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:09.090Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:09.196Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:09.301Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:09.405Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:09.511Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:09.614Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:09.720Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:09.826Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:09.932Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:10.038Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:10.144Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:10.250Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:10.356Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:10.461Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:10.566Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:10.673Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:10.779Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:10.885Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:10.992Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:11.097Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:11.201Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:11.307Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:11.413Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:11.519Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:11.625Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:11.729Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:11.834Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:11.939Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:12.044Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:12.148Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:12.255Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:12.360Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:12.467Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:12.572Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:12.678Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:12.782Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:12.885Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:12.991Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:13.095Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:13.201Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:13.307Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:13.413Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:13.519Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:13.625Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:13.731Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:13.836Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:13.942Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:14.048Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:14.155Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:14.261Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:14.366Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:14.469Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:14.575Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:14.680Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:14.786Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:14.891Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:14.996Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:15.103Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:15.209Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:15.316Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:15.420Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:15.526Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:15.631Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:15.738Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:15.844Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:15.949Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:16.056Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:16.160Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:16.266Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:16.372Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:16.478Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:16.585Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:16.692Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:16.797Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:16.903Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:17.011Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:17.117Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:17.220Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:17.326Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:17.432Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:17.538Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:17.644Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:17.751Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:17.857Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:17.961Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:18.067Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:18.174Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:18.279Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:18.384Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:18.490Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:18.597Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:18.702Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:18.808Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:18.913Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:19.018Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:19.124Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:19.230Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:19.335Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:19.441Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:19.546Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:19.655Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:19.761Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:19.867Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:19.972Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:20.077Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:20.182Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:20.288Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:20.394Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:20.498Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:20.604Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:20.710Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:20.816Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:20.922Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:21.028Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:21.131Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:21.233Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:21.337Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:21.441Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:21.543Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:21.647Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:21.752Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:21.857Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:21.963Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:22.068Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:22.175Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:22.279Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:22.386Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:22.492Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:22.598Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:22.704Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:22.809Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:22.913Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:23.019Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:23.125Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:23.229Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:23.334Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:23.440Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:23.545Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:23.652Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:23.758Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:23.862Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:23.968Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:24.074Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:24.179Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:24.286Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:24.392Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:24.497Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:24.603Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:24.709Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:24.813Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:24.919Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:25.025Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:25.130Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:25.237Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:25.344Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:25.449Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:25.555Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:25.660Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:25.763Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:25.870Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:25.975Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:26.081Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:26.187Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:26.293Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:26.398Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:26.504Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:26.610Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:26.717Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:26.822Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:26.928Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:27.033Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:27.140Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:27.245Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:27.350Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:27.455Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:27.557Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:27.660Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:27.763Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:27.867Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:27.972Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:28.078Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:28.184Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:28.292Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:28.398Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:28.505Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:28.612Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:28.719Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:28.825Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:28.930Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:29.036Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:29.141Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:29.247Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:29.351Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:29.457Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:29.565Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:29.669Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:29.775Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:29.879Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:29.985Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:30.090Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:30.193Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:30.298Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:30.404Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:30.509Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:30.614Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:30.720Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:30.826Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:30.931Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:31.037Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:31.143Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:31.247Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:31.351Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:31.457Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:31.563Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:31.669Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:31.775Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:31.880Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:31.987Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:32.092Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:32.199Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:32.305Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:32.409Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:32.515Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:32.623Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:32.728Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:32.834Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:32.939Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:33.044Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:33.149Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:33.257Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:33.362Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:33.468Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:33.574Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:33.679Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:33.784Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:33.891Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:33.997Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:34.104Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:34.212Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:34.317Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:34.423Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:34.529Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:34.634Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:34.740Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:34.845Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:34.951Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:35.056Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:35.161Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:35.268Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:35.374Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:35.476Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:35.582Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:35.688Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:35.794Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:35.900Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:36.007Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:36.113Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:36.219Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:36.325Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:36.432Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:36.538Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:36.644Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:36.750Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:36.856Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:36.961Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:37.066Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:37.170Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:37.277Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:37.382Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:37.488Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:37.594Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:37.699Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:37.803Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:37.909Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:38.013Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:38.119Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:38.225Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:38.331Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:38.437Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:38.543Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:38.648Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:38.754Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:38.860Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:38.964Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:39.066Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:39.169Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:39.274Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:39.378Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:39.484Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:39.590Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:39.696Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:39.802Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:39.907Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:40.013Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:40.116Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:40.219Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:40.324Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:40.429Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:40.535Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:40.642Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:40.747Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:40.853Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:40.958Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:41.063Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:41.169Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:41.274Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:41.380Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:41.485Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:41.591Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:41.696Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:41.803Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:41.910Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:42.017Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:42.122Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:42.227Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:42.334Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:42.440Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:42.545Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:42.651Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:42.756Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:42.863Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:42.967Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:43.073Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:43.178Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:43.282Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:43.388Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:43.493Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:43.599Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:43.706Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:43.812Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:43.918Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:44.023Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:44.129Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:44.235Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:44.342Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:44.446Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:44.551Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:44.657Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:44.762Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:44.868Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:44.972Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:45.077Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:45.183Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:45.290Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:45.396Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:45.500Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:45.607Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:45.711Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:45.816Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:45.921Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:46.023Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:46.126Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:46.230Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:46.335Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:46.438Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:46.542Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:46.644Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:46.746Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:46.850Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:46.956Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:47.060Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:47.163Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:47.266Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:47.370Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:47.475Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:47.579Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:47.683Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:47.789Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:47.895Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:48.001Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:48.107Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:48.214Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:48.319Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:48.423Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:48.529Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:48.636Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:48.742Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:48.849Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:48.954Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:49.060Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:49.166Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:49.272Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:49.377Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:49.483Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:49.584Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "validating"
+    },
+    {
+      "at": "2026-10-13T21:55:49.690Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "validating"
+    },
+    {
+      "at": "2026-10-13T21:55:49.797Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "validating"
+    },
+    {
+      "at": "2026-10-13T21:55:49.902Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "validating"
+    },
+    {
+      "at": "2026-10-13T21:55:50.010Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "validating"
+    },
+    {
+      "at": "2026-10-13T21:55:50.113Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "validating"
+    },
+    {
+      "at": "2026-10-13T21:55:50.218Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "validating"
+    },
+    {
+      "at": "2026-10-13T21:55:50.323Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "validating"
+    },
+    {
+      "at": "2026-10-13T21:55:50.427Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:50.529Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:50.632Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:50.734Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:50.838Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:50.943Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:51.049Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:51.155Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:51.261Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:51.367Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:51.473Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:51.579Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:51.685Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:51.792Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:51.898Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:52.004Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:52.110Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:52.216Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:52.318Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:52.419Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:52.522Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:52.627Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:52.732Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:52.837Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:52.939Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:53.043Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:53.148Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:53.253Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:53.359Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:53.463Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:53.569Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:53.675Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:53.780Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:53.888Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:53.990Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:54.093Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:54.197Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:54.299Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:54.404Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:54.506Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:54.609Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:54.711Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:54.814Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:54.915Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:55.018Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:55.120Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:55.225Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:55.331Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:55.434Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:55.537Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:55.639Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:55.741Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:55.844Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:55.948Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:56.052Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:56.156Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:56.258Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:56.361Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:56.464Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:56.566Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:56.669Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:56.773Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:56.878Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:56.984Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:57.090Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:57.193Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:57.299Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:57.405Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:57.510Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "processing",
+      "stage": "encoding"
+    },
+    {
+      "at": "2026-10-13T21:55:57.616Z",
+      "method": "GET",
+      "path": "/uploads/5e6824eb-cc85-495c-a4e0-1ed1d5370460",
+      "status": 200,
+      "state": "completed",
+      "processing": "ready",
+      "stage": "ready"
+    },
+    {
+      "at": "2026-10-13T21:55:58.994Z",
+      "method": "GET",
+      "path": "/videos/f44d4e1d-52b1-4e29-9182-5830a37788e5",
+      "status": 404,
+      "code": "not_found"
+    },
+    {
+      "at": "2026-10-13T21:55:58.999Z",
+      "method": "POST",
+      "path": "/videos/f44d4e1d-52b1-4e29-9182-5830a37788e5/publish",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:55:59.001Z",
+      "method": "GET",
+      "path": "/videos/f44d4e1d-52b1-4e29-9182-5830a37788e5",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:56:00.122Z",
+      "method": "GET",
+      "path": "/videos/f44d4e1d-52b1-4e29-9182-5830a37788e5",
+      "status": 200
+    },
+    {
+      "at": "2026-10-13T21:56:00.128Z",
+      "method": "GET",
+      "path": "/me",
+      "status": 200
+    }
+  ]
+}

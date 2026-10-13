@@ -17,6 +17,7 @@ import (
 
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/config"
+	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/ratelimit"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
 	"github.com/google/uuid"
@@ -24,6 +25,7 @@ import (
 )
 
 type App struct {
+	Media      *mediasvc.Client
 	Google     *googleAuth
 	Config     config.Config
 	Store      *store.Store
@@ -49,17 +51,28 @@ func New(ctx context.Context, cfg config.Config, db *store.Store, cache *redis.C
 			return nil, err
 		}
 	}
-	for _, tool := range []string{"ffmpeg", "ffprobe"} {
-		if _, err := exec.LookPath(tool); err != nil {
+	if cfg.MediaAddress == "" {
+		for _, tool := range []string{"ffmpeg", "ffprobe"} {
+			if _, err := exec.LookPath(tool); err != nil {
+				return nil, err
+			}
+		}
+	}
+	var media *mediasvc.Client
+	if cfg.MediaAddress != "" {
+		var err error
+		media, err = mediasvc.Dial(cfg.MediaAddress, cfg.CatalogRPCToken)
+		if err != nil {
 			return nil, err
 		}
 	}
+	db.Distributed = media != nil
 	hasher := auth.NewHasher(2)
 	dummy, err := hasher.Hash(ctx, "dummy credential for nonexistent accounts")
 	if err != nil {
 		return nil, err
 	}
-	return &App{Google: newGoogleAuth(cfg), Config: cfg, Store: db, Redis: cache, Hasher: hasher, Logger: logger, dummyHash: dummy, partSlots: make(chan struct{}, 12), imageSlots: make(chan struct{}, 1), Limiter: &ratelimit.Limiter{Client: cache, Prefix: cfg.RatePrefix, Limit: cfg.AuthLimit, Window: time.Minute}}, nil
+	return &App{Media: media, Google: newGoogleAuth(cfg), Config: cfg, Store: db, Redis: cache, Hasher: hasher, Logger: logger, dummyHash: dummy, partSlots: make(chan struct{}, 12), imageSlots: make(chan struct{}, 1), Limiter: &ratelimit.Limiter{Client: cache, Prefix: cfg.RatePrefix, Limit: cfg.AuthLimit, Window: time.Minute}}, nil
 }
 
 func (a *App) Handler() http.Handler {

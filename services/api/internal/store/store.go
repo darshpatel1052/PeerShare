@@ -26,7 +26,10 @@ var (
 	ErrRevisionConflict = errors.New("channel revision changed")
 )
 
-type Store struct{ Pool *pgxpool.Pool }
+type Store struct {
+	Pool        *pgxpool.Pool
+	Distributed bool
+}
 
 func Open(ctx context.Context, databaseURL string) (*Store, error) {
 	cfg, err := pgxpool.ParseConfig(databaseURL)

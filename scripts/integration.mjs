@@ -11,7 +11,7 @@ try {
     PEERSCREEN_INTEGRATION: "true",
   };
   const output = await runGo(
-    ["test", "-race", "-count=1", "-json", "./..."],
+    ["test", "-race", "-p", "1", "-count=1", "-json", "./..."],
     environment,
     { json: true },
   );

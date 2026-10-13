@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { expect, test } from "@playwright/test";
 
-test("upload a real MP4, preview privately, publish, play and revoke public access", async ({
+test("upload adaptive media, preview privately, publish, switch quality and revoke access", async ({
   page,
   browser,
 }, testInfo) => {
@@ -42,11 +42,11 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
       "-f",
       "lavfi",
       "-i",
-      "testsrc2=size=640x360:rate=24:duration=3",
+      "testsrc2=size=1280x720:rate=24:duration=6",
       "-f",
       "lavfi",
       "-i",
-      "sine=frequency=440:sample_rate=48000:duration=3",
+      "sine=frequency=440:sample_rate=48000:duration=6",
       "-c:v",
       "libx264",
       "-preset",
@@ -211,6 +211,13 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
         "poster",
         thumbnailURL,
       );
+      const metadata = await (
+        await anonymous.request.get(`/api/v1/videos/${videoID}`)
+      ).json();
+      expect(metadata.qualities).toEqual([480, 720]);
+      await publicPage
+        .getByLabel("Video quality", { exact: true })
+        .selectOption("720");
       await publicPage
         .getByLabel("My first published video video player")
         .evaluate((video: HTMLVideoElement) => video.play());
@@ -221,6 +228,35 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
             .evaluate((video: HTMLVideoElement) => video.currentTime),
         )
         .toBeGreaterThan(1);
+      await expect
+        .poll(() =>
+          publicPage
+            .locator("video")
+            .evaluate((video: HTMLVideoElement) => video.videoHeight),
+        )
+        .toBe(720);
+      await publicPage
+        .getByLabel("Video quality", { exact: true })
+        .selectOption("480");
+      await publicPage
+        .getByRole("slider", { name: "Seek video", exact: true })
+        .focus();
+      await publicPage
+        .getByRole("slider", { name: "Seek video", exact: true })
+        .press("Home");
+      await expect
+        .poll(() =>
+          publicPage
+            .locator("video")
+            .evaluate((video: HTMLVideoElement) => video.videoHeight),
+        )
+        .toBe(480);
+      const adaptiveScreenshot = testInfo.outputPath("adaptive-watch.png");
+      await publicPage.screenshot({ path: adaptiveScreenshot, fullPage: true });
+      await testInfo.attach(
+        "Published adaptive playback · actual 480p/720p switching",
+        { path: adaptiveScreenshot, contentType: "image/png" },
+      );
       await publicPage.getByText("Connection details", { exact: true }).click();
       await expect
         .poll(async () =>

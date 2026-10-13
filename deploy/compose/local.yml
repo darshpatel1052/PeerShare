@@ -9,6 +9,9 @@ x-api-environment: &api-environment
   MEDIA_DIR: /app/.local/media
   TRACKER_URL: ws://localhost:8000
   API_LISTEN_ADDR: 0.0.0.0:8080
+  MEDIA_GRPC_ADDR: media:9090
+  CATALOG_RPC_TOKEN: ${CATALOG_RPC_TOKEN}
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092
   DATABASE_URL: postgres://peerscreen_catalog:${CATALOG_DB_PASSWORD}@postgres:5432/peerscreen?sslmode=disable
   REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
 
@@ -20,11 +23,13 @@ services:
       POSTGRES_USER: peerscreen_admin
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run the local setup command first}
       CATALOG_DB_PASSWORD: ${CATALOG_DB_PASSWORD:?Run the local setup command first}
+      MEDIA_DB_PASSWORD: ${MEDIA_DB_PASSWORD:?Run the local setup command first}
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-55432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql
       - ../postgres/init-catalog.sh:/docker-entrypoint-initdb.d/10-catalog.sh:ro
+      - ../postgres/bootstrap-media.sh:/docker-entrypoint-initdb.d/20-media.sh:ro
     healthcheck:
       test:
         [
@@ -59,6 +64,65 @@ services:
       retries: 30
     mem_limit: 128m
     cpus: 1
+  media-bootstrap:
+    profiles: [app]
+    image: postgres:18-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c
+    environment:
+      PGHOST: postgres
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: peerscreen_admin
+      POSTGRES_DB: peerscreen
+      MEDIA_DB_PASSWORD: ${MEDIA_DB_PASSWORD}
+    command: ["/bin/sh", "/bootstrap-media.sh"]
+    volumes: ["../postgres/bootstrap-media.sh:/bootstrap-media.sh:ro"]
+    depends_on:
+      postgres: { condition: service_healthy }
+  kafka:
+    image: apache/kafka:4.2.2@sha256:1213eb3943d551e5ed1fca7a4e109001cee35770b66a02a0c37a8964efe09b69
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://127.0.0.1:${KAFKA_PORT:-19092}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_LOG_RETENTION_HOURS: 24
+      KAFKA_LOG_RETENTION_BYTES: 67108864
+      KAFKA_MESSAGE_MAX_BYTES: 2097152
+      KAFKA_HEAP_OPTS: -Xms128m -Xmx384m
+    ports: ["127.0.0.1:${KAFKA_PORT:-19092}:9094"]
+    volumes: ["kafka-data:/var/lib/kafka/data"]
+    healthcheck:
+      test:
+        [
+          CMD-SHELL,
+          'KAFKA_HEAP_OPTS="-Xms32m -Xmx96m" /opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 >/dev/null 2>&1',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    mem_limit: 768m
+    cpus: 1.5
+  kafka-topics:
+    profiles: [app]
+    image: apache/kafka:4.2.2@sha256:1213eb3943d551e5ed1fca7a4e109001cee35770b66a02a0c37a8964efe09b69
+    environment: { KAFKA_HEAP_OPTS: "-Xms32m -Xmx96m" }
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        for topic in peerscreen.media.dispatch.v1 peerscreen.media.lifecycle.v1 peerscreen.events.dlq.v1; do
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic "$$topic" --partitions 3 --replication-factor 1 --config retention.ms=86400000 --config retention.bytes=67108864 || exit 1;
+        done
+    depends_on: { kafka: { condition: service_healthy } }
+    mem_limit: 160m
   migrate:
     profiles: [app]
     image: peerscreen-api:local
@@ -87,6 +151,8 @@ services:
       seed: { condition: service_completed_successfully }
       storage-init: { condition: service_completed_successfully }
       redis: { condition: service_healthy }
+      media: { condition: service_healthy }
+      kafka-topics: { condition: service_completed_successfully }
     ports: ["127.0.0.1:18080:8080"]
     healthcheck:
       test: [CMD, /peerscreen, healthcheck]
@@ -100,6 +166,62 @@ services:
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     mem_limit: 384m
+    cpus: 2
+  media-migrate:
+    profiles: [app]
+    image: peerscreen-api:local
+    entrypoint: [/media]
+    command: [migrate]
+    environment: &media-environment
+      APP_ENV: development
+      MEDIA_DATABASE_URL: postgres://peerscreen_media:${MEDIA_DB_PASSWORD}@postgres:5432/peerscreen?sslmode=disable
+      MEDIA_DIR: /app/.local/media
+      MEDIA_LISTEN_ADDR: 0.0.0.0:9090
+      CATALOG_RPC_TOKEN: ${CATALOG_RPC_TOKEN}
+      WORKER_RPC_TOKEN: ${WORKER_RPC_TOKEN}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      { media-bootstrap: { condition: service_completed_successfully } }
+  media:
+    profiles: [app]
+    image: peerscreen-api:local
+    entrypoint: [/media]
+    environment: *media-environment
+    depends_on:
+      media-migrate: { condition: service_completed_successfully }
+      storage-init: { condition: service_completed_successfully }
+    volumes: ["media-data:/app/.local/media:ro"]
+    healthcheck:
+      test: [CMD, /media, healthcheck]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 128m
+    cpus: 1
+  worker:
+    profiles: [app]
+    image: peerscreen-api:local
+    entrypoint: [/worker]
+    environment:
+      APP_ENV: development
+      MEDIA_GRPC_ADDR: media:9090
+      WORKER_RPC_TOKEN: ${WORKER_RPC_TOKEN}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      UPLOAD_DIR: /app/.local/uploads
+      MEDIA_DIR: /app/.local/media
+    depends_on:
+      media: { condition: service_healthy }
+      kafka-topics: { condition: service_completed_successfully }
+    volumes:
+      - upload-data:/app/.local/uploads:ro
+      - media-data:/app/.local/media
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 768m
     cpus: 2
   web:
     profiles: [app]
@@ -150,3 +272,4 @@ volumes:
   postgres-data:
   upload-data:
   media-data:
+  kafka-data:

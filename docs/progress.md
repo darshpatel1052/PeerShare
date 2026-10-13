@@ -64,9 +64,21 @@ Backend foundation checkpoint: `7809eb3c8ebb04bf54a2012ea0fde58d1f837f97`, pushe
 
 This is the local milestone exit: interrupted upload recovery, actual processed publication and HTTP watch. The filesystem transport is not S3; media processing is still in the API binary/catalog schema. No AWS resources were provisioned.
 
-## Next: milestone 3 — media service and distributed recovery
+## In verification: milestone 3 — media service and distributed recovery
 
-Extract media-owned jobs/coordinator/worker with separate credentials and versioned gRPC contracts. Add the catalogue submission outbox, media dispatch/lifecycle outboxes, Kafka notifications/inbox deduplication, authenticated RPCs, claim epochs and dispatcher/reaper failure tests. Preserve existing immutable attempts, ownership and deletion precedence. Integrate actual S3-compatible storage deliberately rather than treating local part permissions as S3 evidence.
+- Independent catalogue, coordinator and worker executables, with versioned generated protobuf/gRPC contracts and separate method-scoped credentials.
+- Separate `catalog`/`media` PostgreSQL ownership; the worker has no database or Google credential.
+- Transactional catalogue submissions, coordinator dispatch/lifecycle outboxes, real pinned Apache Kafka, explicit offset commits and durable catalogue inbox/version checks.
+- Replay-safe claims, sixty-second database-time leases, ten-second heartbeats, increasing epochs, bounded persisted retries, two-step cancellation and pending-job redispatch.
+- Real source-appropriate 480p/720p encoding and independent output descriptor/file verification. Existing accepted media paths remain intact.
+- Actual broker outage, coordinator SIGKILL, worker SIGKILL with observed FFmpeg termination, lease-respecting recovery, stale completion rejection and API-only restart have passed locally.
+- Complete integration and production-browser verification/evidence are being closed before declaring the milestone finished. See [the Phase 3 learning guide](learning/phase-3/README.md) and [ADR 0004](adr/0004-media-services-and-durable-events.md).
+
+The current adapter remains the local filesystem with paired volumes. S3-compatible operations and public deployment require their own explicit verification; no AWS resources were provisioned.
+
+## Product and Google identity follow-up
+
+Creator banners/thumbnails, Workspace Settings, custom player controls and separate Drafts/Published/Unpublished states are implemented and verified. Google OIDC supports explicit connection to an existing account and retains PeerScreen sessions/ownership. Shared-file credential loading was fixed in `b46f180`, whose complete [CI run passed](https://github.com/darshpatel1052/Peer-Screen/actions/runs/38462247614). On 14 October 2026, the user reported that live Google sign-in worked; this is user-reported validation, distinct from automated signed-provider tests. See [the implementation learning guide](learning/product-and-google/README.md).
 
 ## Product UI redesign
 

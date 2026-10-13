@@ -26,14 +26,14 @@ func (s *Store) ClaimJob(ctx context.Context, workerID string) (Job, error) {
 		return Job{}, err
 	}
 	var running bool
-	if err = tx.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM catalog.processing_jobs WHERE state='running' AND lease_expires_at>now())").Scan(&running); err != nil {
+	if err = tx.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM catalog.processing_jobs WHERE state='running' AND NOT distributed AND lease_expires_at>now())").Scan(&running); err != nil {
 		return Job{}, err
 	}
 	if running {
 		return Job{}, tx.Commit(ctx)
 	}
 	var job Job
-	err = tx.QueryRow(ctx, `SELECT j.id,j.video_id,v.source_key,v.source_bytes,u.source_sha256,j.generation_id FROM catalog.processing_jobs j JOIN catalog.videos v ON v.id=j.video_id JOIN catalog.upload_sessions u ON u.video_id=v.id WHERE j.state='queued' AND v.deleted_at IS NULL ORDER BY j.created_at FOR UPDATE OF j SKIP LOCKED LIMIT 1`).Scan(&job.ID, &job.VideoID, &job.SourceKey, &job.SourceBytes, &job.SourceHash, &job.GenerationID)
+	err = tx.QueryRow(ctx, `SELECT j.id,j.video_id,v.source_key,v.source_bytes,u.source_sha256,j.generation_id FROM catalog.processing_jobs j JOIN catalog.videos v ON v.id=j.video_id JOIN catalog.upload_sessions u ON u.video_id=v.id WHERE j.state='queued' AND NOT j.distributed AND v.deleted_at IS NULL ORDER BY j.created_at FOR UPDATE OF j SKIP LOCKED LIMIT 1`).Scan(&job.ID, &job.VideoID, &job.SourceKey, &job.SourceBytes, &job.SourceHash, &job.GenerationID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Job{}, tx.Commit(ctx)
 	}
@@ -73,7 +73,7 @@ func (s *Store) ProcessingProgress(ctx context.Context, j Job, stage string, pro
 
 // No startup-wide requeue: a second process must respect a live worker's lease.
 func (s *Store) RecoverJobs(ctx context.Context) error {
-	_, err := s.Pool.Exec(ctx, `WITH recovered AS (UPDATE catalog.processing_jobs SET state=CASE WHEN attempt>=3 THEN 'failed' ELSE 'queued' END,stage=CASE WHEN attempt>=3 THEN 'failed' ELSE 'queued' END,progress=0,error_code=CASE WHEN attempt>=3 THEN 'recovery_exhausted' ELSE NULL END,worker_id=NULL,lease_expires_at=NULL,updated_at=now() WHERE state='running' AND (lease_expires_at IS NULL OR lease_expires_at<=now()) RETURNING video_id,state) UPDATE catalog.videos v SET processing_state=CASE WHEN recovered.state='failed' THEN 'failed' ELSE 'pending' END,updated_at=now() FROM recovered WHERE v.id=recovered.video_id AND v.deleted_at IS NULL`)
+	_, err := s.Pool.Exec(ctx, `WITH recovered AS (UPDATE catalog.processing_jobs SET state=CASE WHEN attempt>=3 THEN 'failed' ELSE 'queued' END,stage=CASE WHEN attempt>=3 THEN 'failed' ELSE 'queued' END,progress=0,error_code=CASE WHEN attempt>=3 THEN 'recovery_exhausted' ELSE NULL END,worker_id=NULL,lease_expires_at=NULL,updated_at=now() WHERE state='running' AND NOT distributed AND (lease_expires_at IS NULL OR lease_expires_at<=now()) RETURNING video_id,state) UPDATE catalog.videos v SET processing_state=CASE WHEN recovered.state='failed' THEN 'failed' ELSE 'pending' END,updated_at=now() FROM recovered WHERE v.id=recovered.video_id AND v.deleted_at IS NULL`)
 	return err
 }
 func (s *Store) ReleaseJob(ctx context.Context, j Job) error {
@@ -171,6 +171,20 @@ func (s *Store) MutateJob(ctx context.Context, ownerID, videoID string, retry bo
 		if _, err = tx.Exec(ctx, "UPDATE catalog.videos SET processing_state='pending',updated_at=now() WHERE id=$1", videoID); err != nil {
 			return err
 		}
+		if s.Distributed {
+			var submitted bool
+			if err = tx.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM catalog.media_submissions WHERE job_id=$1)", jobID).Scan(&submitted); err != nil {
+				return err
+			}
+			if err = queueSubmission(ctx, tx, videoID); err != nil {
+				return err
+			}
+			if submitted {
+				if err = queueCommand(ctx, tx, videoID, "retry"); err != nil {
+					return err
+				}
+			}
+		}
 	} else {
 		if state == "cancelled" {
 			return tx.Commit(ctx)
@@ -182,6 +196,9 @@ func (s *Store) MutateJob(ctx context.Context, ownerID, videoID string, retry bo
 			return err
 		}
 		if _, err = tx.Exec(ctx, "UPDATE catalog.videos SET processing_state='cancelled',updated_at=now() WHERE id=$1", videoID); err != nil {
+			return err
+		}
+		if err = queueCommand(ctx, tx, videoID, "cancel"); err != nil {
 			return err
 		}
 	}
@@ -211,6 +228,9 @@ func (s *Store) DeleteVideo(ctx context.Context, ownerID, videoID string) error 
 		return err
 	}
 	if _, err = tx.Exec(ctx, "UPDATE catalog.upload_sessions SET state=CASE WHEN state='open' THEN 'aborted' ELSE state END,cleanup_done=false,updated_at=now() WHERE video_id=$1", videoID); err != nil {
+		return err
+	}
+	if err = queueCommand(ctx, tx, videoID, "cancel"); err != nil {
 		return err
 	}
 	return tx.Commit(ctx)

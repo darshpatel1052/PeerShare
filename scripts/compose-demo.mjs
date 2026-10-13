@@ -11,6 +11,8 @@ try {
     "--wait",
     "--wait-timeout",
     "90",
+    "web",
+    "worker",
   ]);
   console.log("Containerized PeerScreen is ready at http://localhost:3000.");
 } catch (error) {

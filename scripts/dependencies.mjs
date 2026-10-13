@@ -2,6 +2,27 @@ import { spawn } from "node:child_process";
 import { localEnvironment } from "./local-environment.mjs";
 
 export async function compose(args, { test = false, quiet = false } = {}) {
+  // Wait for long-lived dependencies, then run bounded setup tasks to completion.
+  // Compose --wait treats an exited top-level setup container as a failure, even on exit 0.
+  if (
+    args[0] === "up" &&
+    args.includes("--wait") &&
+    /^\d+$/.test(args.at(-1))
+  ) {
+    const output = await compose([...args, "postgres", "redis", "kafka"], {
+      test,
+      quiet,
+    });
+    await compose(["run", "--rm", "--no-deps", "media-bootstrap"], {
+      test,
+      quiet,
+    });
+    await compose(["run", "--rm", "--no-deps", "kafka-topics"], {
+      test,
+      quiet,
+    });
+    return output;
+  }
   const environment = await localEnvironment({ test });
   const name = test ? "peerscreen-test" : "peerscreen";
   return await new Promise((accept, reject) => {

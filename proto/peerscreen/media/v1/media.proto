@@ -1,0 +1,73 @@
+syntax = "proto3";
+package peerscreen.media.v1;
+option go_package = "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1;mediav1";
+
+// These are short control requests. Video bytes never travel through this service.
+service MediaCoordinator {
+  rpc SubmitProcessingJob(JobSpec) returns (JobSnapshot);
+  rpc GetJob(JobRequest) returns (JobSnapshot);
+  rpc CancelJob(JobRequest) returns (JobSnapshot);
+  rpc RetryJob(JobRequest) returns (JobSnapshot);
+  rpc ClaimJob(ClaimRequest) returns (JobSnapshot);
+  rpc HeartbeatJob(HeartbeatRequest) returns (JobSnapshot);
+  rpc CompleteJob(CompleteRequest) returns (JobSnapshot);
+  rpc FailJob(FailRequest) returns (JobSnapshot);
+}
+message JobSpec {
+  string job_id = 1;
+  string owner_id = 2;
+  string video_id = 3;
+  string generation_id = 4;
+  string source_key = 5;
+  int64 source_bytes = 6;
+  bytes source_sha256 = 7;
+  string recipe_version = 8;
+  // Carries already-consumed attempts when importing a Phase 2 pending job.
+  int32 prior_attempts = 9;
+}
+message JobSnapshot {
+  JobSpec spec = 1;
+  string state = 2;
+  string stage = 3;
+  int32 progress = 4;
+  int32 attempts = 5;
+  string attempt_id = 6;
+  string worker_id = 7;
+  int64 lease_epoch = 8;
+  int64 lease_expires_unix_ms = 9;
+  string error_code = 10;
+  int64 version = 11;
+  string event_id = 12;
+  bytes accepted_output_json = 13;
+  string claim_request_id = 14;
+  int64 output_bytes = 15;
+}
+message JobRequest {
+  string job_id = 1;
+  string request_id = 2;
+}
+message ClaimRequest {
+  string job_id = 1;
+  string worker_id = 2;
+  string claim_request_id = 3;
+}
+message Attempt {
+  string job_id = 1;
+  string attempt_id = 2;
+  string worker_id = 3;
+  int64 lease_epoch = 4;
+}
+message HeartbeatRequest {
+  Attempt attempt = 1;
+  string stage = 2;
+  int32 progress = 3;
+}
+message CompleteRequest {
+  Attempt attempt = 1;
+  string output_descriptor_key = 2;
+}
+message FailRequest {
+  Attempt attempt = 1;
+  string error_code = 2;
+  bool permanent = 3;
+}

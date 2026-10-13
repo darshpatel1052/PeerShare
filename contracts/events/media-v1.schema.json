@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peerscreen.local/contracts/events/media-v1.schema.json",
+  "title": "PeerScreen media notification v1",
+  "description": "The snapshot is base64 protobuf peerscreen.media.v1.JobSnapshot. Consumers validate identities and fetch authoritative coordinator state before product effects.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_id",
+    "event_type",
+    "aggregate_id",
+    "job_id",
+    "generation_id",
+    "version",
+    "snapshot"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "event_id": { "type": "string", "format": "uuid" },
+    "event_type": {
+      "enum": [
+        "media.dispatch",
+        "media.processing.queued",
+        "media.processing.running",
+        "media.processing.retry_wait",
+        "media.processing.ready",
+        "media.processing.failed",
+        "media.processing.cancel_requested",
+        "media.processing.cancelled"
+      ]
+    },
+    "aggregate_id": { "type": "string", "format": "uuid" },
+    "job_id": { "type": "string", "format": "uuid" },
+    "generation_id": { "type": "string", "format": "uuid" },
+    "version": { "type": "integer", "minimum": 1 },
+    "snapshot": {
+      "type": "string",
+      "contentEncoding": "base64",
+      "maxLength": 1398104
+    }
+  },
+  "additionalProperties": true
+}

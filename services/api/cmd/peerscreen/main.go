@@ -122,6 +122,9 @@ func run() error {
 	if err != nil {
 		return errors.New("API initialization failed")
 	}
+	if app.Media != nil {
+		defer app.Media.Conn.Close()
+	}
 	server := http.Server{Addr: cfg.ListenAddr, Handler: app.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 2 * time.Minute, WriteTimeout: 2 * time.Minute, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 8 * 1024}
 	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

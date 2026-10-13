@@ -10,6 +10,7 @@ if (process.env.API_TARGET)
   );
 process.env.PEERSCREEN_TEST_RUNTIME = "true";
 const options = {
+  legacy: true, // Retain the historical Phase 1 process-replacement regression.
   origin: "http://localhost:3190",
   trackerUrl: "ws://localhost:8190",
   mediaBase: "http://localhost:3190/media/",

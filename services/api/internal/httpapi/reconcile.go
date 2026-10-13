@@ -101,9 +101,15 @@ func (a *App) reconcileMedia(ctx context.Context) {
 		if e != nil || info.ModTime().After(cutoff) {
 			return filepath.SkipDir
 		}
-		referenced, e := a.Store.AttemptReferenced(ctx, entry.Name())
+		parts := strings.Split(rel, string(filepath.Separator))
+		referenced, e := a.attemptReferenced(ctx, parts[0], parts[1], parts[2])
+		if e != nil {
+			swept = false
+		}
 		if e == nil && !referenced {
-			_ = os.RemoveAll(path)
+			if e = os.RemoveAll(path); e != nil {
+				swept = false
+			}
 		}
 		return filepath.SkipDir
 	})
@@ -113,6 +119,9 @@ func (a *App) reconcileMedia(ctx context.Context) {
 }
 
 func (a *App) cleanupUpload(ctx context.Context, c store.Cleanup) {
+	if !a.cleanupQuiesced(ctx, c) {
+		return
+	}
 	if err := os.RemoveAll(filepath.Join(a.Config.UploadDir, c.ID)); err != nil {
 		return
 	}

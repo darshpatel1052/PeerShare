@@ -11,6 +11,7 @@ if (process.env.API_TARGET)
   throw new Error("Media recovery checks require the isolated local stack.");
 process.env.PEERSCREEN_TEST_RUNTIME = "true";
 const options = {
+  legacy: true, // Phase 2 regression; distributed process crashes have a separate Phase 3 runner.
   origin: "http://localhost:3191",
   trackerUrl: "ws://localhost:8191",
   mediaBase: "http://localhost:3191/media/",

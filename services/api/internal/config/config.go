@@ -10,6 +10,9 @@ import (
 )
 
 type Config struct {
+	MediaAddress          string
+	CatalogRPCToken       string
+	KafkaServers          string
 	ExposeOperatorFixture bool
 	GoogleClientID        string
 	GoogleClientSecret    string
@@ -38,6 +41,12 @@ func Load() (Config, error) {
 		Environment: value("APP_ENV", "development"), SessionTTL: 7 * 24 * time.Hour, AuthLimit: 60,
 		RatePrefix: value("RATE_PREFIX", "peerscreen:auth"), CookieName: "peerscreen_session",
 		UploadDir: value("UPLOAD_DIR", ".local/uploads"), MediaDir: value("MEDIA_DIR", ".local/media")}
+	cfg.MediaAddress = os.Getenv("MEDIA_GRPC_ADDR")
+	cfg.CatalogRPCToken = os.Getenv("CATALOG_RPC_TOKEN")
+	cfg.KafkaServers = os.Getenv("KAFKA_BOOTSTRAP_SERVERS")
+	if cfg.MediaAddress != "" && (len(cfg.CatalogRPCToken) != 64 || cfg.KafkaServers == "") {
+		return cfg, errors.New("distributed media requires internal RPC authentication and Kafka configuration")
+	}
 	if (cfg.GoogleClientID == "") != (cfg.GoogleClientSecret == "") {
 		return cfg, errors.New("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be configured together")
 	}

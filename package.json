@@ -23,6 +23,8 @@
     "test:browser": "playwright test",
     "contracts:generate": "node packages/contracts/generate.mjs",
     "contracts:check": "node packages/contracts/generate.mjs --check",
+    "proto:generate": "node scripts/protobuf.mjs",
+    "proto:check": "node scripts/protobuf.mjs --check",
     "deps": "node scripts/dependencies.mjs up",
     "stop": "node scripts/dependencies.mjs stop",
     "api:build": "node scripts/go.mjs build",
@@ -33,6 +35,7 @@
     "test:integration": "node scripts/integration.mjs",
     "test:recovery": "node scripts/recovery.mjs",
     "test:media-recovery": "node scripts/media-recovery.mjs",
+    "test:distributed-recovery": "node scripts/distributed-recovery.mjs",
     "compose:demo": "node scripts/compose-demo.mjs",
     "check": "npm run format:check && npm run typecheck && npm test"
   },

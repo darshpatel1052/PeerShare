@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { mediaEnvironment } from "./media-environment.mjs";
 
 export async function localEnvironment({ test = false } = {}) {
   const path = resolve(".local/local.env");
@@ -67,6 +68,7 @@ export async function localEnvironment({ test = false } = {}) {
     ...process.env,
     ...values,
     ...google,
+    ...(await mediaEnvironment({ test })),
     POSTGRES_PORT: String(postgresPort),
     REDIS_PORT: String(redisPort),
     DATABASE_URL: `postgres://peerscreen_catalog:${values.CATALOG_DB_PASSWORD}@127.0.0.1:${postgresPort}/peerscreen?sslmode=disable`,

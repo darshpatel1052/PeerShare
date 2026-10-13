@@ -290,6 +290,11 @@ func (s *Store) CompleteUpload(ctx context.Context, ownerID, id, sourceKey strin
 	if _, err = tx.Exec(ctx, `INSERT INTO catalog.processing_jobs(id,video_id) VALUES($1,$2) ON CONFLICT(video_id) DO NOTHING`, uuid.NewString(), videoID); err != nil {
 		return "", err
 	}
+	if s.Distributed {
+		if err = queueSubmission(ctx, tx, videoID); err != nil {
+			return "", err
+		}
+	}
 	return videoID, tx.Commit(ctx)
 }
 func (s *Store) AbortUpload(ctx context.Context, ownerID, id string) error {
