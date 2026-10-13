@@ -150,7 +150,7 @@ Follow Google's [client and branding setup](https://developers.google.com/identi
 9. Use `http://localhost:3000` consistently. A different port, `127.0.0.1`, or a trailing slash on the callback is a different registered redirect URI.
 10. For your existing account, choose **Workspace → Settings → Sign-in methods**, confirm your password and use the Google button. After connection, sign out and sign in with Google; your channel should be the same channel.
 
-The local scripts load this file only for the normal runtime. Tests explicitly clear provider credentials and never load it. Credentials enter the API container's runtime environment, not the web container or frontend build. Never paste the secret into chat, commit it, or put it in a `NEXT_PUBLIC_` variable.
+The local scripts also accept `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.local/local.env`, if you already added them there. Process environment values override that shared file; a dedicated `.local/google.env` overrides both. Test runtimes skip the dedicated Google file and clear both provider values, even when the shared file or process environment contains them. Credentials enter the API container's runtime environment, not the web container or frontend build. Never paste the secret into chat, commit it, or put it in a `NEXT_PUBLIC_` variable.
 
 Registering the client is enough for this integration; our implementation does not require paid compute, Cloud Storage, Firebase Authentication, or Identity Platform. Public release will need real HTTPS origins, appropriate app branding/domain information, Google's applicable verification requirements, and our separate public admission/deployment work.
 

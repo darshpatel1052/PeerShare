@@ -39,8 +39,10 @@ export async function localEnvironment({ test = false } = {}) {
   // Optional Google credentials are server-only, ignored by Git, and never loaded into test runtimes.
   const google = { GOOGLE_CLIENT_ID: "", GOOGLE_CLIENT_SECRET: "" };
   if (!test) {
-    google.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
-    google.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
+    google.GOOGLE_CLIENT_ID =
+      process.env.GOOGLE_CLIENT_ID || values.GOOGLE_CLIENT_ID || "";
+    google.GOOGLE_CLIENT_SECRET =
+      process.env.GOOGLE_CLIENT_SECRET || values.GOOGLE_CLIENT_SECRET || "";
     try {
       for (const raw of (
         await readFile(resolve(".local/google.env"), "utf8")

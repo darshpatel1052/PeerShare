@@ -6,7 +6,9 @@ Recorded 14 October 2026. Read the [product implementation guide](../../learning
 
 Browser tests use the production Next.js static export on port 3100, the real Go API, isolated PostgreSQL/Redis, local FFmpeg processing, and Chromium. Go integration tests run against a separate disposable database/cache with the race detector enabled. Their cleanup removes only `peerscreen-test` resources. The normal application's accounts, media volumes, and uploaded source are retained.
 
-Google tests use a disposable local OAuth token endpoint and JWKS endpoint. Tokens contain real RSA signatures; the application calls the maintained OIDC verifier. This verifies cryptographic and database behavior without substituting a fake successful login. **A real Google login is not verified: no Google OAuth client credentials are configured.** Browser tests explicitly distinguish controlled availability responses from actual provider authentication.
+Google tests use a disposable local OAuth token endpoint and JWKS endpoint. Tokens contain real RSA signatures; the application calls the maintained OIDC verifier. This verifies cryptographic and database behavior without substituting a fake successful login. No real Google credentials were configured at the original checkpoint. Browser tests explicitly distinguish controlled availability responses from actual provider authentication.
+
+The configuration follow-up now loads the creator's credentials from the ignored `.local/local.env` file. The normal API reports Google enabled and the account page's Google button is enabled. **A real Google login remains unverified:** automatic approval review blocked initiating external authentication without authorization for a Google account. The follow-up record contains only configuration booleans and public callback information, not credential values.
 
 ## Product behavior verified
 
@@ -54,6 +56,7 @@ Image tests additionally reject SVG, oversized compressed bodies, images above s
 - `final-go.json` lists named Go results, including security subcases, without credentials or token contents.
 - `source-fingerprints.json` binds those final results to the relevant source files through SHA-256 hashes.
 - `local-preservation.json` records read-only checks of the original channel/video after rebuilding the normal application, plus an actual custom-control playback check.
+- `google-configuration-fix.json` records the shared-file credential fix, enabled normal runtime, cleared test runtime, eight passing unit tests, and the boundary on live Google verification.
 - PNG screenshots show desktop/mobile channel, workspace, player and Settings layouts using disposable test creators. The real local creator's email and credentials are not included in these screenshots.
 
 Formatting, TypeScript checking, the five segment-integrity unit tests, contract generation comparison, Go vet, and production frontend builds passed. The containerized local application rebuilt successfully and its health checks passed.
@@ -66,4 +69,4 @@ The first full product browser run had 15 passes and two failures: a successful 
 
 ## Remaining boundary
 
-This evidence covers the local implementation and the signed-provider integration fixture. Live Google requires the free OAuth registration described in the setup guide, followed by a real consent/sign-in check. Public HTTPS deployment, public admission policy, account recovery, and future media renditions remain separate roadmap work.
+This evidence covers the local implementation, the signed-provider integration fixture, and local credential loading. The creator has supplied OAuth credentials; live Google still needs an authorized real consent/sign-in check. Public HTTPS deployment, public admission policy, account recovery, and future media renditions remain separate roadmap work.

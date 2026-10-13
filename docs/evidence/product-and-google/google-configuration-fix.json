@@ -1,0 +1,26 @@
+{
+  "checkedOn": "2026-10-14",
+  "credentialSource": ".local/local.env",
+  "clientIdLoaded": true,
+  "clientSecretLoaded": true,
+  "credentialFileMode": "600",
+  "isolatedClientIdEmpty": true,
+  "isolatedClientSecretEmpty": true,
+  "authOptionsStatus": 200,
+  "googleEnabled": true,
+  "callback": "http://localhost:3000/api/v1/auth/google/callback",
+  "accountPageGoogleButtonEnabled": true,
+  "originalChannelStatus": 200,
+  "originalPublishedVideoStatus": 200,
+  "validation": {
+    "formatting": "passed",
+    "typecheck": "passed",
+    "unitTests": {
+      "passed": 8,
+      "failed": 0,
+      "newConfigurationCases": 3
+    }
+  },
+  "liveGoogleAuthorizationVerified": false,
+  "liveGoogleAuthorizationLimitation": "Automatic approval review blocked initiating external authentication without authorization for a Google account."
+}
