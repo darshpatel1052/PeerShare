@@ -1,0 +1,8 @@
+package-lock.json
+docs/project-brief.md
+node_modules
+.next
+out
+.local
+test-results
+playwright-report

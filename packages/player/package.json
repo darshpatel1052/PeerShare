@@ -1,0 +1,14 @@
+{
+  "name": "@peerscreen/player",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./integrity": "./src/integrity.ts"
+  },
+  "dependencies": {
+    "hls.js": "1.7.3",
+    "p2p-media-loader-hlsjs": "4.0.0"
+  }
+}

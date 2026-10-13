@@ -1,0 +1,9 @@
+{
+  "name": "@peerscreen/tracker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "bittorrent-tracker": "11.2.3"
+  }
+}
