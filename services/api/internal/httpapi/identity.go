@@ -91,6 +91,7 @@ func (a *App) login(w http.ResponseWriter, r *http.Request) {
 		a.storeError(w, r, err)
 		return
 	}
+	missing = missing || hash == ""
 	if missing {
 		hash = a.dummyHash
 	}

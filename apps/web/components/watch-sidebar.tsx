@@ -40,7 +40,7 @@ export default function WatchSidebar({ video }: { video: VideoDetail }) {
         <div className="peer-panel-icon">
           <Icon name="signal" />
         </div>
-        <h2>Watch together</h2>
+        <h2>Help other viewers</h2>
         <p className="muted">
           You can help other viewers load this video by enabling peer sharing.
         </p>

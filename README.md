@@ -76,3 +76,11 @@ Phase 0's historical [evidence](docs/evidence/milestone-0.md) and [ADR](docs/adr
 The UI redesign adds a graphite/lime visual identity, a light theme, a media-led catalogue, branded channel pages, a creator workspace and a focused player. Search filters loaded videos; channel tabs, keyboard navigation, copy-link and theme persistence work. The creator studio now provides actual source upload, private preview and owner publication.
 
 See [the UI learning notes](docs/learning/ui-design.md) for design tokens, component responsibilities and browser state, and [the UI evidence](docs/evidence/ui-redesign.md) for screenshots and actual checks.
+
+## Creator settings and Google sign-in
+
+Open **Workspace → Settings** for Appearance and connected sign-in methods. Choose channel artwork under **Channel & account**, and video thumbnails under **Studio → Edit details**. Studio separates drafts, published videos, and unpublished videos; deleting a draft removes it after confirmation.
+
+Google sign-in uses the existing PeerScreen sessions and ownership checks. It becomes available after a free Google OAuth Web client is configured in ignored `.local/google.env`. Existing password accounts connect Google explicitly from Settings. See the [Google setup and implementation guide](docs/learning/product-and-google/02-google-sign-in.md).
+
+For the data model, image APIs, custom player components and detailed validation, read the [product learning guide](docs/learning/product-and-google/README.md) and [evidence report](docs/evidence/product-and-google/README.md).

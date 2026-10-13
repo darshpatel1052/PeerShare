@@ -207,6 +207,10 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
         "Ready to play",
         { timeout: 30_000 },
       );
+      await expect(publicPage.locator("video")).toHaveAttribute(
+        "poster",
+        thumbnailURL,
+      );
       await publicPage
         .getByLabel("My first published video video player")
         .evaluate((video: HTMLVideoElement) => video.play());

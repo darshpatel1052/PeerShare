@@ -14,6 +14,8 @@ import {
 } from "../lib/api";
 import { useAuth } from "./auth-provider";
 import CreatorImagePicker from "./creator-image-picker";
+import GoogleSignIn from "./google-sign-in";
+import AuthFeedback from "./auth-feedback";
 export default function Account() {
   const auth = useAuth();
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -194,7 +196,12 @@ export default function Account() {
               ? "Sign in to your account and channel."
               : "Set up your profile. Make a space of your own."}
           </p>
+          <AuthFeedback />
           {feedback}
+          <GoogleSignIn />
+          <div className="auth-divider">
+            <span>or use email</span>
+          </div>
           <form
             onSubmit={signIn}
             className="account-form"
@@ -311,6 +318,7 @@ export default function Account() {
           </Link>
         </aside>
         <div className="workspace-content">
+          <AuthFeedback />
           {feedback}
           <section className="settings-panel" id="channel-settings">
             <div className="settings-heading">

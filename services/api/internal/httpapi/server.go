@@ -24,6 +24,7 @@ import (
 )
 
 type App struct {
+	Google     *googleAuth
 	Config     config.Config
 	Store      *store.Store
 	Redis      *redis.Client
@@ -58,7 +59,7 @@ func New(ctx context.Context, cfg config.Config, db *store.Store, cache *redis.C
 	if err != nil {
 		return nil, err
 	}
-	return &App{Config: cfg, Store: db, Redis: cache, Hasher: hasher, Logger: logger, dummyHash: dummy, partSlots: make(chan struct{}, 12), imageSlots: make(chan struct{}, 1), Limiter: &ratelimit.Limiter{Client: cache, Prefix: cfg.RatePrefix, Limit: cfg.AuthLimit, Window: time.Minute}}, nil
+	return &App{Google: newGoogleAuth(cfg), Config: cfg, Store: db, Redis: cache, Hasher: hasher, Logger: logger, dummyHash: dummy, partSlots: make(chan struct{}, 12), imageSlots: make(chan struct{}, 1), Limiter: &ratelimit.Limiter{Client: cache, Prefix: cfg.RatePrefix, Limit: cfg.AuthLimit, Window: time.Minute}}, nil
 }
 
 func (a *App) Handler() http.Handler {
@@ -78,6 +79,7 @@ func (a *App) Handler() http.Handler {
 	mux.HandleFunc("GET /api/v1/media/{key...}", a.getProcessedMedia)
 	a.registerUploads(mux)
 	a.registerImages(mux)
+	a.registerGoogle(mux)
 	for path, allowed := range map[string]string{"/api/v1/auth/register": "POST", "/api/v1/auth/login": "POST", "/api/v1/auth/logout": "POST", "/api/v1/auth/logout-all": "POST", "/api/v1/me": "GET, HEAD", "/api/v1/channels": "POST", "/api/v1/channels/{id}": "GET, HEAD, PATCH", "/api/v1/videos": "GET, HEAD", "/api/v1/videos/{id}": "GET, HEAD, PATCH, DELETE"} {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Allow", allowed)

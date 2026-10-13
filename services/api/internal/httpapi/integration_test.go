@@ -592,3 +592,28 @@ func TestIntegrationSessionsSurviveFreshAPIInstanceAndLogoutAll(t *testing.T) {
 		t.Fatal("revocation must apply across API instances")
 	}
 }
+
+func TestIntegrationNormalCatalogueExcludesOperatorTestMedia(t *testing.T) {
+	f := setup(t)
+	owner := client()
+	registerUser(t, f, owner)
+	channel := createChannel(t, f, owner, "catalogue-"+uuid.NewString()[:8])
+	fixtureID, uploadID := uuid.NewString(), uuid.NewString()
+	for _, video := range []struct{ id, kind string }{{fixtureID, "fixture"}, {uploadID, "upload"}} {
+		mustExec(t, f, `INSERT INTO catalog.videos(id,channel_id,title,source_kind,processing_state,publication_state,duration_seconds,accepted_generation_id,accepted_attempt_id,manifest_key,integrity_key,thumbnail_key,qualities,published_at) VALUES($1,$2,'Catalogue visibility test',$3,'ready','published',3,$4,$5,'fixture/master.m3u8','fixture/integrity.json','fixture/thumbnail.jpg',ARRAY[360],now())`, video.id, channel.ID, video.kind, uuid.NewString(), uuid.NewString())
+	}
+	f.App.Config.ExposeOperatorFixture = false
+	status, data, _ := request(t, client(), f.Server.URL, "GET", "/api/v1/videos", nil, nil)
+	if status != 200 || bytes.Contains(data, []byte(fixtureID)) || !bytes.Contains(data, []byte(uploadID)) {
+		t.Fatal("normal catalogue mixed test and creator media")
+	}
+	status, _, _ = request(t, client(), f.Server.URL, "GET", "/api/v1/videos/"+fixtureID, nil, nil)
+	if status != 404 {
+		t.Fatal("normal watch endpoint exposed test film")
+	}
+	f.App.Config.ExposeOperatorFixture = true
+	status, data, _ = request(t, client(), f.Server.URL, "GET", "/api/v1/videos", nil, nil)
+	if status != 200 || !bytes.Contains(data, []byte(fixtureID)) {
+		t.Fatal("isolated test runtime lost test film")
+	}
+}

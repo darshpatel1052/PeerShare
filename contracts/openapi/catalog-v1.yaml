@@ -2,10 +2,95 @@ openapi: 3.1.1
 info:
   title: PeerScreen catalogue API
   version: 1.0.0
-  description: Phase 1 identity and public catalogue contract. Mutations require the exact configured Origin header. Cookie sessions are stored as hashes and checked against PostgreSQL on each authenticated request.
+  description: Identity, creator media and public catalogue contract. Mutations require the exact configured Origin header. Cookie sessions are stored as hashes and checked against PostgreSQL on each authenticated request.
 servers:
   - url: /
 paths:
+  /api/v1/auth/options:
+    get:
+      operationId: authenticationOptions
+      responses:
+        "200":
+          description: Available authentication methods; never returns client credentials.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthOptions" }
+  /api/v1/auth/methods:
+    get:
+      operationId: connectedAuthenticationMethods
+      security: [{ session: [] }]
+      responses:
+        "200":
+          description: Current user's sign-in methods.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthMethods" }
+        "401": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/auth/google/start:
+    post:
+      operationId: startGoogleSignIn
+      description: Creates a ten-minute browser-bound one-use OAuth flow with state, nonce and S256 PKCE. Requires the configured Origin. Does not auto-link email collisions.
+      requestBody: { $ref: "#/components/requestBodies/Empty" }
+      responses:
+        "200":
+          description: Authorization URL plus HttpOnly flow cookie; browser navigates to Google.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OAuthRedirect" }
+        "400": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/auth/google/link:
+    post:
+      operationId: startGoogleConnection
+      security: [{ session: [] }]
+      description: Requires the current local password. The callback must retain this exact active session; no email-based account merge or provider reassignment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [password]
+              properties:
+                password: { type: string, minLength: 1, maxLength: 128 }
+      responses:
+        "200":
+          description: Authorization URL plus flow cookie.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OAuthRedirect" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/auth/google/callback:
+    get:
+      operationId: finishGoogleAuthentication
+      description: Consumes matching state and browser binding once, exchanges code with PKCE, validates signed ID token and nonce, then creates an existing database-backed PeerScreen session or explicitly connects the identity. No provider access or refresh tokens are persisted.
+      parameters:
+        - name: state
+          in: query
+          required: true
+          schema: { type: string }
+        - name: code
+          in: query
+          schema: { type: string, maxLength: 2048 }
+        - name: error
+          in: query
+          schema: { type: string }
+      responses:
+        "303":
+          description: Fixed same-origin account/settings destination with a product result code. Login sets the existing HttpOnly session cookie. Callback always uses no-store and no-referrer.
+          headers:
+            Location:
+              schema: { type: string, format: uri }
   /api/v1/channels/{id}/banner:
     parameters:
       - { $ref: "#/components/parameters/ResourceID" }
@@ -570,6 +655,23 @@ components:
         application/json:
           schema: { $ref: "#/components/schemas/APIError" }
   schemas:
+    AuthOptions:
+      type: object
+      required: [google_enabled, registration_enabled]
+      properties:
+        google_enabled: { type: boolean }
+        registration_enabled: { type: boolean }
+    AuthMethods:
+      type: object
+      required: [password, google_email]
+      properties:
+        password: { type: boolean }
+        google_email: { type: [string, "null"] }
+    OAuthRedirect:
+      type: object
+      required: [authorization_url]
+      properties:
+        authorization_url: { type: string, format: uri }
     ThumbnailUpdate:
       type: object
       required: [revision, thumbnail_url, has_custom_thumbnail]

@@ -36,16 +36,43 @@ export async function localEnvironment({ test = false } = {}) {
   ])
     if (!/^[a-f0-9]{64}$/.test(values[name]))
       throw new Error(`Invalid ${name} in the local configuration`);
+  // Optional Google credentials are server-only, ignored by Git, and never loaded into test runtimes.
+  const google = { GOOGLE_CLIENT_ID: "", GOOGLE_CLIENT_SECRET: "" };
+  if (!test) {
+    google.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
+    google.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
+    try {
+      for (const raw of (
+        await readFile(resolve(".local/google.env"), "utf8")
+      ).split("\n")) {
+        const line = raw.trim();
+        if (!line || line.startsWith("#")) continue;
+        const split = line.indexOf("=");
+        const key = line.slice(0, split);
+        if (split < 1 || !Object.hasOwn(google, key))
+          throw new Error(
+            "Only GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET belong in .local/google.env",
+          );
+        google[key] = line.slice(split + 1).trim();
+      }
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+  }
   const postgresPort = test ? 55433 : 55432;
   const redisPort = test ? 56380 : 56379;
   return {
     ...process.env,
     ...values,
+    ...google,
     POSTGRES_PORT: String(postgresPort),
     REDIS_PORT: String(redisPort),
     DATABASE_URL: `postgres://peerscreen_catalog:${values.CATALOG_DB_PASSWORD}@127.0.0.1:${postgresPort}/peerscreen?sslmode=disable`,
     REDIS_URL: `redis://:${values.REDIS_PASSWORD}@127.0.0.1:${redisPort}/0`,
     APP_ENV: "development",
+    EXPOSE_OPERATOR_FIXTURE: test
+      ? "true"
+      : process.env.EXPOSE_OPERATOR_FIXTURE || "false",
     APP_ORIGIN: "http://localhost:3000",
     MEDIA_BASE_URL:
       process.env.MEDIA_BASE_URL || "http://localhost:3000/media/",

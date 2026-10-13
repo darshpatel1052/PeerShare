@@ -1,0 +1,225 @@
+{
+  "recorded_at": "2026-10-13T19:30:45.144182+00:00",
+  "scope": "Production static export, isolated real Go/PostgreSQL/Redis/FFmpeg; Chromium; real Google credentials not used",
+  "stats": {
+    "startTime": "2026-10-13T19:27:32.692Z",
+    "duration": 122449.537,
+    "expected": 19,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "name": "product theme, catalogue search, channel tools and phone layouts work",
+      "file": "design.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 8445
+        }
+      ]
+    },
+    {
+      "name": "Google availability is honest and callback errors explain account linking",
+      "file": "google-settings.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 1127
+        }
+      ]
+    },
+    {
+      "name": "Workspace settings contain Appearance and password-confirmed Google connection",
+      "file": "google-settings.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 2235
+        }
+      ]
+    },
+    {
+      "name": "production export supports direct watch/channel links and reload",
+      "file": "http.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 1400
+        }
+      ]
+    },
+    {
+      "name": "HTTP playback, seek and quality selection work with no tracker requests",
+      "file": "http.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 4728
+        }
+      ]
+    },
+    {
+      "name": "media origin supplies correct MIME and explicit cross-origin permission",
+      "file": "http.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 738
+        }
+      ]
+    },
+    {
+      "name": "missing videos and integrity failures show useful states",
+      "file": "http.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 1113
+        }
+      ]
+    },
+    {
+      "name": "register, create, reload, edit, sign out and sign in through the production UI",
+      "file": "identity.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 2725
+        }
+      ]
+    },
+    {
+      "name": "a second owner is denied and a stale form preserves its unsaved edit",
+      "file": "identity.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 2609
+        }
+      ]
+    },
+    {
+      "name": "controlled failed requests preserve channel fields and catalogue retry recovers",
+      "file": "identity.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 1845
+        }
+      ]
+    },
+    {
+      "name": "three independent viewers transfer verified peer bytes and recover after peers leave",
+      "file": "peer.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 21111
+        }
+      ]
+    },
+    {
+      "name": "corrupted bytes sent on a real data channel are rejected, then HTTP playback succeeds",
+      "file": "peer.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 9858
+        }
+      ]
+    },
+    {
+      "name": "sharing off and route departure close real WebRTC connections",
+      "file": "peer.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 7246
+        }
+      ]
+    },
+    {
+      "name": "an unavailable tracker leaves verified HTTP playback working",
+      "file": "peer.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 4900
+        }
+      ]
+    },
+    {
+      "name": "different trusted media versions stay in separate peer swarms",
+      "file": "peer.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 13469
+        }
+      ]
+    },
+    {
+      "name": "PeerScreen controls play, pause, seek, mute, adjust volume and enter fullscreen",
+      "file": "player-controls.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 2599
+        }
+      ]
+    },
+    {
+      "name": "upload a real MP4, preview privately, publish, play and revoke public access",
+      "file": "upload.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 12419
+        }
+      ]
+    },
+    {
+      "name": "resume a multi-chunk MP4 after a lost connection and reload; reject a different same-size file",
+      "file": "upload.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 9296
+        }
+      ]
+    },
+    {
+      "name": "failed source stays private and studio metadata edits and deletion work",
+      "file": "upload.spec.ts",
+      "passed": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration_ms": 3889
+        }
+      ]
+    }
+  ],
+  "live_google_login_verified": false,
+  "secrets_excluded": true
+}

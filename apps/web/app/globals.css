@@ -2691,3 +2691,91 @@ html[data-theme="light"] .cover-orbit {
     display: none;
   }
 }
+.google-signin {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+}
+.google-signin > .form-field {
+  width: 100%;
+  max-width: 360px;
+}
+.google-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 4px;
+  width: 180px;
+  height: 40px;
+}
+.google-button img {
+  display: block;
+  width: 180px;
+  height: 40px;
+  object-fit: contain;
+}
+.google-button:disabled {
+  opacity: 0.55;
+}
+.google-unavailable {
+  font-size: 11px;
+  margin: 0;
+}
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: var(--muted);
+  font-size: 10px;
+  margin: 25px 0;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  height: 1px;
+  background: var(--line);
+  flex: 1;
+}
+.signin-method-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.signin-method-row p {
+  font-size: 12px;
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+}
+.method-status {
+  font-size: 10px;
+  white-space: nowrap;
+  color: var(--muted);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.method-status.connected {
+  color: var(--accent);
+}
+.method-status .icon {
+  width: 13px;
+  height: 13px;
+}
+.link-explanation {
+  font-size: 12px;
+  margin: 20px 0;
+}
+@media (max-width: 680px) {
+  .preferences-nav {
+    flex-wrap: wrap;
+  }
+  .signin-method-row {
+    align-items: flex-start;
+  }
+  .signin-method-row strong {
+    font-size: 13px;
+  }
+}

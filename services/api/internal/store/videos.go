@@ -61,14 +61,14 @@ func scanVideo(row interface{ Scan(...any) error }) (Video, error) {
 func (s *Store) Video(ctx context.Context, id string) (Video, error) {
 	return scanVideo(s.Pool.QueryRow(ctx, "SELECT "+videoColumns+" FROM catalog.videos v JOIN catalog.channels c ON c.id=v.channel_id WHERE "+visibleVideo+" AND v.id=$1", id))
 }
-func (s *Store) Videos(ctx context.Context, limit int, channelID *string, cursor *Cursor) (VideosPage, error) {
+func (s *Store) Videos(ctx context.Context, limit int, channelID *string, cursor *Cursor, includeFixture bool) (VideosPage, error) {
 	var afterTime *time.Time
 	var afterID *string
 	if cursor != nil {
 		afterTime = &cursor.PublishedAt
 		afterID = &cursor.ID
 	}
-	rows, err := s.Pool.Query(ctx, "SELECT "+videoColumns+" FROM catalog.videos v JOIN catalog.channels c ON c.id=v.channel_id WHERE "+visibleVideo+` AND ($1::uuid IS NULL OR v.channel_id=$1) AND ($2::timestamptz IS NULL OR (v.published_at,v.id)<($2,$3::uuid)) ORDER BY v.published_at DESC,v.id DESC LIMIT $4`, channelID, afterTime, afterID, limit+1)
+	rows, err := s.Pool.Query(ctx, "SELECT "+videoColumns+" FROM catalog.videos v JOIN catalog.channels c ON c.id=v.channel_id WHERE "+visibleVideo+` AND ($1::uuid IS NULL OR v.channel_id=$1) AND ($2::timestamptz IS NULL OR (v.published_at,v.id)<($2,$3::uuid)) AND ($5 OR v.source_kind<>'fixture') ORDER BY v.published_at DESC,v.id DESC LIMIT $4`, channelID, afterTime, afterID, limit+1, includeFixture)
 	if err != nil {
 		return VideosPage{}, err
 	}

@@ -111,7 +111,7 @@ func (a *App) listVideos(w http.ResponseWriter, r *http.Request) {
 		a.error(w, r, 400, "invalid_cursor", "The pagination cursor is invalid.")
 		return
 	}
-	page, err := a.Store.Videos(r.Context(), limit, channelID, cursor)
+	page, err := a.Store.Videos(r.Context(), limit, channelID, cursor, a.Config.ExposeOperatorFixture)
 	if err != nil {
 		a.storeError(w, r, err)
 		return
@@ -130,6 +130,10 @@ func (a *App) getVideo(w http.ResponseWriter, r *http.Request) {
 	video, err := a.Store.Video(r.Context(), id)
 	if err != nil {
 		a.storeError(w, r, err)
+		return
+	}
+	if video.SourceKind == "fixture" && !a.Config.ExposeOperatorFixture {
+		a.storeError(w, r, store.ErrNotFound)
 		return
 	}
 	a.decorateVideo(&video, true)

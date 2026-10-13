@@ -1,4 +1,7 @@
 import type { components } from "@peerscreen/contracts";
+export type AuthOptions = components["schemas"]["AuthOptions"];
+export type AuthMethods = components["schemas"]["AuthMethods"];
+export type OAuthRedirect = components["schemas"]["OAuthRedirect"];
 export type Me = components["schemas"]["Me"];
 export type Channel = components["schemas"]["Channel"];
 export type Video = components["schemas"]["Video"];

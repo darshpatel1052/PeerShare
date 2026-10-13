@@ -90,4 +90,6 @@ The underlying `@peerscreen/player` package still loads HLS, verifies segment ha
 
 The verification report and screenshots are in `docs/evidence/product-and-google`. The browser journeys use the production static export with a real Go API, PostgreSQL, Redis, FFmpeg processing, and disposable users. The existing local creator account and uploaded video are preserved.
 
+The generated operator test film is excluded from the normal catalogue and watch endpoint. Isolated test scripts set `EXPOSE_OPERATOR_FIXTURE=true` to exercise the same playback code with that known source. Production configuration rejects that flag. Stored test files are retained; creator records are not changed.
+
 This is local product functionality. Public storage, admission policy, adaptive renditions, captions, and deployment remain their own roadmap work. A browser already buffering a previously public video cannot have those bytes taken back; unpublishing blocks subsequent server requests.

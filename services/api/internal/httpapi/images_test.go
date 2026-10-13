@@ -59,6 +59,10 @@ func TestIntegrationCreatorBannerValidationOwnershipRevisionAndPersistence(t *te
 	channel := createChannel(t, f, owner, "banner-"+uuid.NewString()[:8])
 	path := "/api/v1/channels/" + channel.ID + "/banner"
 	data := imageBytes(t)
+	var oversizedPixels bytes.Buffer
+	if err := png.Encode(&oversizedPixels, image.NewGray(image.Rect(0, 0, 8000, 800))); err != nil {
+		t.Fatal(err)
+	}
 	for _, test := range []struct {
 		name   string
 		client *http.Client
@@ -71,6 +75,7 @@ func TestIntegrationCreatorBannerValidationOwnershipRevisionAndPersistence(t *te
 		{"cross origin", owner, data, "https://other.test", 403},
 		{"SVG", owner, []byte(`<svg><script>bad()</script></svg>`), "http://localhost:3000", 422},
 		{"oversize", owner, make([]byte, maxImageBody+1), "http://localhost:3000", 413},
+		{"too many pixels", owner, oversizedPixels.Bytes(), "http://localhost:3000", 422},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			status, _ := putImage(t, f, test.client, path, 1, test.data, test.origin)

@@ -4,6 +4,89 @@
  */
 
 export interface paths {
+  "/api/v1/auth/options": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["authenticationOptions"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/methods": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["connectedAuthenticationMethods"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/google/start": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Creates a ten-minute browser-bound one-use OAuth flow with state, nonce and S256 PKCE. Requires the configured Origin. Does not auto-link email collisions. */
+    post: operations["startGoogleSignIn"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/google/link": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Requires the current local password. The callback must retain this exact active session; no email-based account merge or provider reassignment. */
+    post: operations["startGoogleConnection"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/google/callback": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Consumes matching state and browser binding once, exchanges code with PKCE, validates signed ID token and nonce, then creates an existing database-backed PeerScreen session or explicitly connects the identity. No provider access or refresh tokens are persisted. */
+    get: operations["finishGoogleAuthentication"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/channels/{id}/banner": {
     parameters: {
       query?: never;
@@ -493,6 +576,18 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    AuthOptions: {
+      google_enabled: boolean;
+      registration_enabled: boolean;
+    };
+    AuthMethods: {
+      password: boolean;
+      google_email: string | null;
+    };
+    OAuthRedirect: {
+      /** Format: uri */
+      authorization_url: string;
+    };
     ThumbnailUpdate: {
       revision: number;
       /** @description Empty after resetting to the generated frame. */
@@ -700,6 +795,128 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  authenticationOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Available authentication methods; never returns client credentials. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AuthOptions"];
+        };
+      };
+    };
+  };
+  connectedAuthenticationMethods: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Current user's sign-in methods. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AuthMethods"];
+        };
+      };
+      401: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  startGoogleSignIn: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: components["requestBodies"]["Empty"];
+    responses: {
+      /** @description Authorization URL plus HttpOnly flow cookie; browser navigates to Google. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OAuthRedirect"];
+        };
+      };
+      400: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      429: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  startGoogleConnection: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          password: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorization URL plus flow cookie. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OAuthRedirect"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      429: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  finishGoogleAuthentication: {
+    parameters: {
+      query: {
+        state: string;
+        code?: string;
+        error?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Fixed same-origin account/settings destination with a product result code. Login sets the existing HttpOnly session cookie. Callback always uses no-store and no-referrer. */
+      303: {
+        headers: {
+          Location?: string;
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
   setBanner: {
     parameters: {
       query?: never;

@@ -28,7 +28,7 @@ func (s *Store) Register(ctx context.Context, user User, passwordHash string, se
 func (s *Store) UserForLogin(ctx context.Context, email string) (User, string, error) {
 	var user User
 	var hash string
-	err := s.Pool.QueryRow(ctx, `SELECT id,email,display_name,role,created_at,password_hash FROM catalog.users WHERE email=$1 AND role <> 'system'`, email).Scan(&user.ID, &user.Email, &user.DisplayName, &user.Role, &user.CreatedAt, &hash)
+	err := s.Pool.QueryRow(ctx, `SELECT id,email,display_name,role,created_at,COALESCE(password_hash,'') FROM catalog.users WHERE email=$1 AND role <> 'system'`, email).Scan(&user.ID, &user.Email, &user.DisplayName, &user.Role, &user.CreatedAt, &hash)
 	return user, hash, translate(err)
 }
 
