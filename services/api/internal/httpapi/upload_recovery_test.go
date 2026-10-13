@@ -395,6 +395,13 @@ func TestIntegrationRealTranscodePrivatePreviewPublicationAndDeletion(t *testing
 	if err != nil || stored.ProcessingState != "ready" || stored.PublicationState != "draft" {
 		t.Fatalf("private result %+v %v", stored, err)
 	}
+	// Existing ready jobs from the user's original migration must be measured before quota settlement.
+	mustExec(t, f, "UPDATE catalog.processing_jobs SET output_bytes=NULL,updated_at=now()-interval '11 minutes' WHERE id=$1", job.ID)
+	f.App.reconcileMedia(ctx)
+	var measured int64
+	if err = f.DB.Pool.QueryRow(ctx, "SELECT output_bytes FROM catalog.processing_jobs WHERE id=$1", job.ID).Scan(&measured); err != nil || measured <= 0 {
+		t.Fatal("legacy output accounting", err)
+	}
 	status, data, _ := request(t, c, f.Server.URL, "GET", "/api/v1/videos/"+u.VideoID+"/preview", nil, nil)
 	if status != 200 {
 		t.Fatalf("preview %d %s", status, data)

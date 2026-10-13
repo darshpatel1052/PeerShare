@@ -2,7 +2,7 @@
 
 A video publishing application with opt-in peer-assisted delivery and verified HTTP fallback. The implementation follows the [project brief](docs/project-brief.md) in tested checkpoints.
 
-**Phase 1 is complete locally:** Go authentication, PostgreSQL-backed accounts/channels/catalogue, Redis authentication limits and connected browser pages. The real Phase 0 HLS/peer player remains working. The published video is an explicitly generated fixture; upload/transcoding and AWS deployment are later phases.
+**Phase 2 is complete locally:** authenticated resumable MP4 uploads, verified source assembly, a durable fenced FFmpeg worker, private previews, owner publishing/editing/deletion, and real HTTP playback. The existing identity/catalogue and verified HLS/peer player remain working. Storage uses persistent local directories or Docker volumes; S3, Kafka/gRPC service extraction and public deployment are later work.
 
 ## Start locally
 
@@ -15,7 +15,7 @@ npm run web-build
 npm run demo
 ```
 
-Open `http://localhost:3000`. Visit **Account** to register, create a channel, edit it, reload and sign out/in. Your channel starts with an empty published-video list. The demo starts real PostgreSQL/Redis, applies the migration, imports the generated video, starts Go and serves the production static frontend with an API proxy.
+Open `http://localhost:3000`. Sign in/create a channel through **Workspace**, then open **Studio**. Select an MP4 up to 250 MiB/10 minutes, add metadata, upload, preview the processed draft, and publish it. It appears on your channel and Explore with a public watch link. For an interrupted upload, reselect the original file and choose **Resume with selected file**. Pause, cancel, bounded retry, metadata edits, unpublish and delete are available. The demo starts real PostgreSQL/Redis, applies migrations, retains the operator fixture, starts Go and serves the exported frontend with an API proxy.
 
 Stop the native demo with Ctrl+C before choosing another mode:
 
@@ -28,6 +28,8 @@ npm run stop            # Stop project containers; preserve the database volume
 Only one app mode can occupy the local ports at a time. Stop app containers before returning to native demo/development. Host ports are web 3000, media 3001, tracker 8000, private API 18080, PostgreSQL 55432 and Redis 56379, all bound to loopback. Container-internal API port is 8080. On this machine Docker's default build bridge was absent; `PEERSCREEN_BUILD_NETWORK=host npm run compose:demo` makes build downloads work while runtime services still use the private Compose bridge.
 
 ## Learn the implementation
+
+The [Phase 2 learning guide](docs/learning/phase-2/README.md) explains upload components, the new tables/transactions, HTTP contracts, Go worker/lease concepts, FFmpeg/HLS, and recovery experiments. See [Phase 2 evidence](docs/evidence/milestone-2.md) for actual byte counts, attempt identities, screenshots, procedures and limits.
 
 The [Phase 1 learning guide](docs/learning/phase-1/README.md) explains what each part does, how the code uses it and why it was chosen:
 
@@ -50,9 +52,10 @@ npm run api:vet
 npm run test:integration
 npm run test:browser
 npm run test:recovery
+npm run test:media-recovery
 ```
 
-Phase 1 verification passed 5 player unit cases, 7 Go unit cases, 8 real PostgreSQL/Redis integration cases and 12 production-browser cases. Go integration uses the race detector. Browser tests use the production export, not development mode. Integration, browser and recovery runners use the same separate disposable `peerscreen-test` project, so run them sequentially. They remove only that project's test volume; normal app data persists. CI recreates these checks and retains raw evidence.
+Phase 2 verification covers 5 named player unit cases, 7 Go unit cases, 15 real PostgreSQL/Redis integration cases and 16 production-browser cases, plus actual API/database/cache and media-process crash recovery. Go integration uses the race detector. Browser tests use the production export, not development mode. Integration, browser and recovery runners use the same separate disposable `peerscreen-test` project, so run them sequentially. They remove only that project's test volume; normal app data persists. CI recreates these checks and retains raw evidence.
 
 ## Try peer delivery
 
@@ -62,7 +65,7 @@ Sharing starts off. Opting in spends upload bandwidth and exposes network addres
 
 ## Current limits
 
-Uploads, processing workers, email verification/password recovery, backups/restore, multi-host failover and public deployment are not implemented in this phase. Runtime database credentials currently own the application's schema; production needs a narrower role split. Behind the local proxy, authentication limits share the proxy TCP-address bucket. Native HLS and other browsers have not been proved equivalent to the Chromium integrity/P2P path.
+The local transport is not S3 multipart storage, and the background executor still runs in the API binary. This phase creates one rendition and lists the latest 30 studio uploads. Kafka/gRPC, independent media-schema ownership, public upload allowlists, email verification/password recovery, backups/restore, multi-host failover and public deployment remain later work. Production-mode new upload admission is disabled pending its admission policy. Native mode stores media under `.local`; container mode retains named volumes. Switching modes does not migrate uploaded media between roots; see [ADR 0003](docs/adr/0003-local-durable-media-pipeline.md). Runtime database credentials currently own the application's schema; production needs a narrower role split. Behind the local proxy, authentication limits share the proxy TCP-address bucket. Native HLS and other browsers have not been proved equivalent to the Chromium integrity/P2P path.
 
 The tracker dependency has a known high advisory through `ip`. UDP/HTTP announces are disabled and this local proof stays on loopback; assess/replace the affected dependency before public exposure. Details are in [progress](docs/progress.md#dependency-finding). AWS resources have not been provisioned.
 
@@ -70,6 +73,6 @@ Phase 0's historical [evidence](docs/evidence/milestone-0.md) and [ADR](docs/adr
 
 ## Product interface
 
-The UI redesign adds a graphite/lime visual identity, a light theme, a media-led catalogue, branded channel pages, a creator workspace and a focused player. Search filters loaded videos; channel tabs, keyboard navigation, copy-link and theme persistence work. Publishing remains explicitly unavailable until its backend workflow is built.
+The UI redesign adds a graphite/lime visual identity, a light theme, a media-led catalogue, branded channel pages, a creator workspace and a focused player. Search filters loaded videos; channel tabs, keyboard navigation, copy-link and theme persistence work. The creator studio now provides actual source upload, private preview and owner publication.
 
 See [the UI learning notes](docs/learning/ui-design.md) for design tokens, component responsibilities and browser state, and [the UI evidence](docs/evidence/ui-redesign.md) for screenshots and actual checks.

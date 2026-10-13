@@ -1,0 +1,43 @@
+{
+  "testedAt": "2026-10-13T17:12:28.357Z",
+  "scope": "Rebuilt normal app, preserving the existing uncharted channel and hi video; anonymous API/media checks plus authenticated in-app studio preview",
+  "observations": [
+    {
+      "path": "/health/ready",
+      "status": 200
+    },
+    {
+      "path": "/studio/",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/uploads",
+      "status": 401
+    }
+  ],
+  "existingVideo": {
+    "id": "853f24f7-c632-4909-8e82-f0b5ba26401b",
+    "channel_id": "a4f9c019-86c3-4a92-abc7-ec9ea2a1d2ad",
+    "title": "hi",
+    "duration_seconds": 356,
+    "accepted_generation_id": "bf770da7-b508-43c4-a0f9-69ea1b20660b",
+    "accepted_attempt_id": "b3231766-370b-4007-9396-84248e4439c2"
+  },
+  "manifest": {
+    "status": 200,
+    "mime": "application/vnd.apple.mpegurl"
+  },
+  "descriptor": {
+    "segments": 44
+  },
+  "verifiedFirstSegment": {
+    "key": "480p/segment-000.ts",
+    "bytes": 188752,
+    "sha256": "ff8843e690c710030cfbe356c18e04ce61c7841db80970207829f027a2e5a568"
+  },
+  "range": {
+    "status": 206,
+    "body": "#EXTM3U"
+  },
+  "authenticatedBrowserObservation": "Existing owner session resolved; hi was Ready · published and Preview ready after reload. No account, title or publication change was made."
+}

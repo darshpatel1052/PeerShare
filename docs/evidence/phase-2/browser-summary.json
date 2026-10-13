@@ -1,0 +1,92 @@
+{
+  "stats": {
+    "startTime": "2026-10-13T17:00:53.992Z",
+    "duration": 112356.14,
+    "expected": 16,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "product theme, catalogue search, channel tools and phone layouts work",
+      "status": "expected",
+      "durationMs": 4286
+    },
+    {
+      "title": "production export supports direct watch/channel links and reload",
+      "status": "expected",
+      "durationMs": 974
+    },
+    {
+      "title": "HTTP playback, seek and quality selection work with no tracker requests",
+      "status": "expected",
+      "durationMs": 4253
+    },
+    {
+      "title": "media origin supplies correct MIME and explicit cross-origin permission",
+      "status": "expected",
+      "durationMs": 656
+    },
+    {
+      "title": "missing videos and integrity failures show useful states",
+      "status": "expected",
+      "durationMs": 1030
+    },
+    {
+      "title": "register, create, reload, edit, sign out and sign in through the production UI",
+      "status": "expected",
+      "durationMs": 2642
+    },
+    {
+      "title": "a second owner is denied and a stale form preserves its unsaved edit",
+      "status": "expected",
+      "durationMs": 2681
+    },
+    {
+      "title": "controlled failed requests preserve channel fields and catalogue retry recovers",
+      "status": "expected",
+      "durationMs": 1801
+    },
+    {
+      "title": "three independent viewers transfer verified peer bytes and recover after peers leave",
+      "status": "expected",
+      "durationMs": 21263
+    },
+    {
+      "title": "corrupted bytes sent on a real data channel are rejected, then HTTP playback succeeds",
+      "status": "expected",
+      "durationMs": 11917
+    },
+    {
+      "title": "sharing off and route departure close real WebRTC connections",
+      "status": "expected",
+      "durationMs": 7553
+    },
+    {
+      "title": "an unavailable tracker leaves verified HTTP playback working",
+      "status": "expected",
+      "durationMs": 5554
+    },
+    {
+      "title": "different trusted media versions stay in separate peer swarms",
+      "status": "expected",
+      "durationMs": 14419
+    },
+    {
+      "title": "upload a real MP4, preview privately, publish, play and revoke public access",
+      "status": "expected",
+      "durationMs": 11437
+    },
+    {
+      "title": "resume a multi-chunk MP4 after a lost connection and reload; reject a different same-size file",
+      "status": "expected",
+      "durationMs": 8910
+    },
+    {
+      "title": "failed source stays private and studio metadata edits and deletion work",
+      "status": "expected",
+      "durationMs": 3882
+    }
+  ]
+}

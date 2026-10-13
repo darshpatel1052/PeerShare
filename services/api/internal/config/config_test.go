@@ -14,7 +14,7 @@ func TestProductionRejectsUnsafeBrowserDefaults(t *testing.T) {
 	t.Setenv("MEDIA_BASE_URL", "https://media.peerscreen.example/")
 	t.Setenv("TRACKER_URL", "wss://peerscreen.example/tracker")
 	cfg, err := Load()
-	if err != nil || !cfg.SecureCookies || cfg.CookieName != "__Host-peerscreen_session" || cfg.RegistrationEnabled {
+	if err != nil || !cfg.SecureCookies || cfg.CookieName != "__Host-peerscreen_session" || cfg.RegistrationEnabled || cfg.UploadsEnabled {
 		t.Fatal("production cookie/admission configuration invalid")
 	}
 	t.Setenv("REGISTRATION_ENABLED", "true")

@@ -2,6 +2,7 @@ import type { components } from "@peerscreen/contracts";
 export type Me = components["schemas"]["Me"];
 export type Channel = components["schemas"]["Channel"];
 export type Video = components["schemas"]["Video"];
+export type VideoPreview = components["schemas"]["VideoPreview"];
 export type VideoDetail = components["schemas"]["VideoDetail"];
 export type VideosPage = components["schemas"]["VideosPage"];
 export type Registration = components["schemas"]["Registration"];

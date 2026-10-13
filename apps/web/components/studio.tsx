@@ -25,6 +25,7 @@ export default function Studio() {
   const [tags, setTags] = useState("");
   const [phase, setPhase] = useState("");
   const transfer = useRef<AbortController | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   const [editing, setEditing] = useState<Upload | null>(null);
   const [deleting, setDeleting] = useState("");
   const [preview, setPreview] = useState("");
@@ -164,6 +165,7 @@ export default function Studio() {
       "Source received. Your video will stay private until you publish it.",
     );
     setFile(null);
+    if (fileInput.current) fileInput.current.value = "";
     setTitle("");
     setDescription("");
     setTags("");
@@ -435,6 +437,7 @@ export default function Studio() {
               MP4 file
               <input
                 type="file"
+                ref={fileInput}
                 accept="video/mp4,.mp4"
                 onChange={(e) => {
                   setFile(e.target.files?.[0] || null);
@@ -442,8 +445,8 @@ export default function Studio() {
                 }}
               />
               <small>
-                Chunks are stored separately so interrupted uploads can resume.
-                For a resume, choose the same file again.
+                Your progress is saved. To resume after leaving, select the
+                original file again.
               </small>
             </label>
             <label className="form-field">
@@ -490,7 +493,7 @@ export default function Studio() {
         <section className="studio-library">
           <div className="settings-heading">
             <div>
-              <h2>Upload queue</h2>
+              <h2>Recent videos</h2>
               <p>
                 Private drafts stay out of public channel pages until you
                 publish.
@@ -531,9 +534,13 @@ export default function Studio() {
                     ? `Processing · ${upload.processing_stage}`
                     : upload.state === "open"
                       ? `${upload.parts.length} of ${Math.ceil(upload.expected_bytes / upload.part_bytes)} chunks stored`
-                      : upload.processing_state === "ready"
-                        ? `Ready · ${upload.publication_state}`
-                        : upload.processing_stage}
+                      : upload.state === "expired"
+                        ? "Upload expired. Start again with your source file."
+                        : upload.state === "aborted"
+                          ? "Upload cancelled."
+                          : upload.processing_state === "ready"
+                            ? `Ready · ${upload.publication_state}`
+                            : upload.processing_stage}
                 </p>
                 {(upload.processing_state === "processing" ||
                   upload.processing_state === "ready") && (

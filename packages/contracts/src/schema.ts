@@ -522,6 +522,18 @@ export interface components {
       tracker_url: string;
       peer_sharing_available: boolean;
     };
+    VideoPreview: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      /** Format: uri */
+      thumbnail_url: string;
+      /** Format: uuid */
+      accepted_generation_id: string;
+      /** Format: uuid */
+      accepted_attempt_id: string;
+      playback: components["schemas"]["Playback"];
+    };
     VideoDetail: components["schemas"]["Video"] & {
       playback: components["schemas"]["Playback"];
     };
@@ -1081,7 +1093,9 @@ export interface operations {
         headers: {
           [name: string]: unknown;
         };
-        content?: never;
+        content: {
+          "application/json": components["schemas"]["VideoPreview"];
+        };
       };
       404: components["responses"]["Error"];
     };

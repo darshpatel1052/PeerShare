@@ -118,6 +118,8 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
       expect(
         (await anonymous.request.get(`/api/v1/videos/${videoID}`)).status(),
       ).toBe(404);
+      await page.setViewportSize({ width: 1365, height: 900 });
+      await page.evaluate(() => window.scrollTo(0, 0));
       const desktop = testInfo.outputPath("studio-desktop.png");
       await page.screenshot({ path: desktop, fullPage: true });
       await testInfo.attach("Creator studio · processed private preview", {
@@ -128,6 +130,7 @@ test("upload a real MP4, preview privately, publish, play and revoke public acce
       expect(
         await page.evaluate(() => document.documentElement.scrollWidth),
       ).toBeLessThanOrEqual(390);
+      await page.evaluate(() => window.scrollTo(0, 0));
       const mobile = testInfo.outputPath("studio-mobile.png");
       await page.screenshot({ path: mobile, fullPage: true });
       await testInfo.attach("Creator studio · mobile", {

@@ -2127,7 +2127,7 @@ video {
 .delete-confirmation {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--line);
 }
 .studio-preview video {
   width: 100%;

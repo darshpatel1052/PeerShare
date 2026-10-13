@@ -14,6 +14,7 @@ import (
 
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	"github.com/jackc/pgx/v5"
 )
 
 type createUploadRequest struct {
@@ -513,7 +514,11 @@ func (a *App) processingVideo(w http.ResponseWriter, r *http.Request) {
 	var uploadID string
 	err := a.Store.Pool.QueryRow(r.Context(), "SELECT id FROM catalog.upload_sessions WHERE video_id=$1 AND owner_id=$2", id, identity(r).ID).Scan(&uploadID)
 	if err != nil {
-		a.error(w, r, 404, "not_found", "This video is unavailable.")
+		if errors.Is(err, pgx.ErrNoRows) {
+			a.error(w, r, 404, "not_found", "This video is unavailable.")
+		} else {
+			a.storeError(w, r, err)
+		}
 		return
 	}
 	u, err := a.Store.Upload(r.Context(), identity(r).ID, uploadID)

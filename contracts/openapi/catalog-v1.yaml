@@ -300,9 +300,10 @@ paths:
       security: [{ session: [] }]
       responses:
         "200":
-          {
-            description: Owner-only ready draft playback; peer sharing disabled.,
-          }
+          description: Owner-only ready draft playback; peer sharing disabled.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/VideoPreview" }
         "404": { $ref: "#/components/responses/Error" }
   /api/v1/videos/{id}/processing:
     parameters: [{ $ref: "#/components/parameters/ResourceID" }]
@@ -595,6 +596,24 @@ components:
         integrity_url: { type: string, format: uri }
         tracker_url: { type: string, format: uri }
         peer_sharing_available: { type: boolean }
+    VideoPreview:
+      type: object
+      required:
+        [
+          id,
+          title,
+          thumbnail_url,
+          accepted_generation_id,
+          accepted_attempt_id,
+          playback,
+        ]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        thumbnail_url: { type: string, format: uri }
+        accepted_generation_id: { type: string, format: uuid }
+        accepted_attempt_id: { type: string, format: uuid }
+        playback: { $ref: "#/components/schemas/Playback" }
     VideoDetail:
       allOf:
         - { $ref: "#/components/schemas/Video" }

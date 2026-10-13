@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Avatar, Icon, LoadingState } from "./ui";
 import WatchSidebar from "./watch-sidebar";
-import { resourceID, type VideoDetail } from "../lib/api";
+import { resourceID, duration, type VideoDetail } from "../lib/api";
 import { useResource } from "../lib/use-resource";
 import {
   createPlayer,
@@ -189,7 +189,7 @@ export default function Watch() {
               <br />
               <span className="muted">
                 {item.source_kind === "fixture" ? "Test film · " : ""}
-                {Math.round(item.duration_seconds / 60)} minute
+                {duration(item.duration_seconds)} runtime
               </span>
             </span>
           </Link>

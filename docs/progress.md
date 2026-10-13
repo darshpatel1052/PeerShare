@@ -49,9 +49,24 @@ See [Phase 1 evidence](evidence/milestone-1.md) for the scenario-by-scenario rec
 
 Backend foundation checkpoint: `7809eb3c8ebb04bf54a2012ea0fde58d1f837f97`, pushed to `main`. The connected-product checkpoint includes browser integration, container images, the recovery runner and expanded teaching/evidence material; its exact revision is in Git history. Remote CI is reported independently of local runs.
 
-## Next: milestone 2 — durable upload admission
+## Completed locally: milestone 2 — durable upload and HTTP video
 
-Explain the upload model and request lifecycle before implementation: ownership, admission/quota reservations, immutable object keys, idempotency, multipart completion, authoritative database transitions, generation/attempt identity and failure recovery. Introduce storage/processing incrementally with concrete local evidence before provisioning cloud resources. Phase 1's fixture importer is an operator tool, not an uploader workflow.
+- Preserved the user's initial studio, upload migration, gateway and worker work; extended the migration without changing its checksum.
+- Owner-scoped resumable 8 MiB chunks, three-request browser batches, ten-minute part permissions, source/part SHA-256, 24-hour expiry and idempotent create/complete/abort.
+- Serialized creator/platform admission and a 20 GiB reservation budget including pending source, assembly, derivatives and retry/staging allowances. Physical cleanup precedes reservation release.
+- Persistent single-slot job queue, 60-second leases, immutable generations/attempts, fenced progress/acceptance, cancellation/deletion precedence, bounded retries and recovery reconciliation.
+- Actual MP4 validation, server-generated duration, one H.264/AAC HLS rendition, JPEG thumbnail and segment integrity descriptor; independent HLS decode/hash verification.
+- Product studio with pause/resume, file identity checking, private verified preview, metadata revisions, publish/unpublish/delete and safe failure recovery.
+- Uploaded media checks publication/deletion and accepted output on both media origins; encoded paths cannot bypass it.
+- Validation: 7 Go unit and 15 real database integration cases with race detection, 5 explicitly named player unit cases and 16 production Chromium cases. Actual multipart/encoder SIGKILL recovery retained the job/generation, replaced the attempt and decoded the recovered output.
+- Implementation checkpoint `22aa729a81af80b5b1ce395efafd1650dbaa3d49` pushed to main. The closing evidence/docs/CI checkpoint follows; exact revision is in Git history.
+- [Detailed Phase 2 guide](learning/phase-2/README.md), [evidence](evidence/milestone-2.md) and [ADR 0003](adr/0003-local-durable-media-pipeline.md) explain procedures and boundaries.
+
+This is the local milestone exit: interrupted upload recovery, actual processed publication and HTTP watch. The filesystem transport is not S3; media processing is still in the API binary/catalog schema. No AWS resources were provisioned.
+
+## Next: milestone 3 — media service and distributed recovery
+
+Extract media-owned jobs/coordinator/worker with separate credentials and versioned gRPC contracts. Add the catalogue submission outbox, media dispatch/lifecycle outboxes, Kafka notifications/inbox deduplication, authenticated RPCs, claim epochs and dispatcher/reaper failure tests. Preserve existing immutable attempts, ownership and deletion precedence. Integrate actual S3-compatible storage deliberately rather than treating local part permissions as S3 evidence.
 
 ## Product UI redesign
 

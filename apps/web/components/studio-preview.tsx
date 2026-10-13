@@ -2,28 +2,22 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPlayer } from "@peerscreen/player";
-import { api } from "../lib/api";
+import { api, type VideoPreview } from "../lib/api";
 
 export default function StudioPreview({ videoID }: { videoID: string }) {
   const video = useRef<HTMLVideoElement>(null);
   const [status, setStatus] = useState("Loading preview…");
   const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
+    setError("");
+    setStatus("Loading preview…");
     let destroy: (() => void) | undefined;
     const load = async () => {
-      const detail = await api<{
-        id: string;
-        title: string;
-        thumbnail_url: string;
-        accepted_generation_id: string;
-        accepted_attempt_id: string;
-        playback: {
-          manifest_url: string;
-          integrity_url: string;
-          tracker_url: string;
-        };
-      }>(`/videos/${videoID}/preview`, { signal: controller.signal });
+      const detail = await api<VideoPreview>(`/videos/${videoID}/preview`, {
+        signal: controller.signal,
+      });
       if (!video.current || controller.signal.aborted) return;
       video.current.poster = detail.thumbnail_url;
       const handle = await createPlayer({
@@ -36,8 +30,12 @@ export default function StudioPreview({ videoID }: { videoID: string }) {
         peerSharing: false,
         authenticatedPreview: true,
         signal: controller.signal,
-        onReady: () => setStatus("Preview ready"),
-        onError: setError,
+        onReady: () => {
+          if (!controller.signal.aborted) setStatus("Preview ready");
+        },
+        onError: (message) => {
+          if (!controller.signal.aborted) setError(message);
+        },
         onStats: () => {},
       });
       if (controller.signal.aborted) handle.destroy();
@@ -53,7 +51,7 @@ export default function StudioPreview({ videoID }: { videoID: string }) {
       controller.abort();
       destroy?.();
     };
-  }, [videoID]);
+  }, [videoID, retry]);
   return (
     <div className="studio-preview">
       <video

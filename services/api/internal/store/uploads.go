@@ -73,6 +73,14 @@ func (s *Store) CreateUpload(ctx context.Context, ownerID, channelID, key, title
 		Size                          int64
 		Checksums                     []string
 	}{channelID, title, description, tags, size, expected})
+	// Preserve the original no-checksum request fingerprint for existing Phase 2 sessions.
+	if len(expected) == 0 {
+		fingerprint, _ = json.Marshal(struct {
+			ChannelID, Title, Description string
+			Tags                          []string
+			Size                          int64
+		}{channelID, title, description, tags, size})
+	}
 	sum := sha256.Sum256(fingerprint)
 	tx, err := s.Pool.Begin(ctx)
 	if err != nil {

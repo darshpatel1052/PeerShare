@@ -124,7 +124,7 @@ try {
   assert.equal((await call("/api/v1/me")).data.channel.id, before.channel.id);
   await mkdir(".local/evidence", { recursive: true });
   await writeFile(
-    ".local/evidence/phase-1-recovery.json",
+    ".local/evidence/phase-2-metadata-recovery.json",
     JSON.stringify(
       {
         testedAt: new Date().toISOString(),

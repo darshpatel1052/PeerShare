@@ -289,7 +289,7 @@ func (s *Store) SettleReservations(ctx context.Context) error {
 	if _, err = tx.Exec(ctx, "SELECT pg_advisory_xact_lock(20061014)"); err != nil {
 		return err
 	}
-	_, err = tx.Exec(ctx, `UPDATE catalog.upload_sessions u SET reserved_bytes=u.expected_bytes+COALESCE(j.output_bytes,0) FROM catalog.processing_jobs j JOIN catalog.videos v ON v.id=j.video_id WHERE u.video_id=j.video_id AND u.state='completed' AND u.parts_cleaned AND NOT u.cleanup_done AND v.deleted_at IS NULL AND j.state IN ('ready','failed','cancelled') AND j.updated_at<now()-interval '10 minutes'`)
+	_, err = tx.Exec(ctx, `UPDATE catalog.upload_sessions u SET reserved_bytes=u.expected_bytes+COALESCE(j.output_bytes,0) FROM catalog.processing_jobs j JOIN catalog.videos v ON v.id=j.video_id WHERE u.video_id=j.video_id AND u.state='completed' AND u.parts_cleaned AND NOT u.cleanup_done AND v.deleted_at IS NULL AND j.state IN ('ready','failed','cancelled') AND (j.state<>'ready' OR j.output_bytes IS NOT NULL) AND j.updated_at<now()-interval '10 minutes'`)
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,23 @@
+{
+  "scope": "Closing Phase 2 implementation file hashes; exact final commit is in Git history. Evidence-only edits can follow without changing these source hashes.",
+  "sha256": {
+    "package.json": "344d090278c057647b783f352ca9255f21d3205d7cbd85a68482e64034eacf22",
+    "package-lock.json": "d0e1faca7a6595a59a4adac499db5edd132177d33ce91afcd0172465d3e6bbd9",
+    "services/api/go.mod": "660d9e6b2f939d422f462d0654689a3e41ed8fcc6bcc58d1f723cfc8db37a693",
+    "services/api/go.sum": "50bd16821e2d7c76d4e7bb4fca7ee4fbdb8329db635ee9a4b5947fc4a731f295",
+    "services/api/internal/store/migrations/0002_uploads.sql": "ec0e7264a976f159383bf962b034a9993b975b0b5d4f60e2aad801c8e044a992",
+    "services/api/internal/store/migrations/0003_upload_recovery.sql": "1c6cf2b199fa959d06a9386c55547731782b4d1ab1b3cef3eb0eb5d76512a309",
+    "services/api/internal/store/uploads.go": "05241ecb552347c26950f7f0f5d27e2e9fe65eb34864dada71a2a3a6f810798a",
+    "services/api/internal/store/jobs.go": "ef3a9bb9249f1eacd936b6d90958c777b24a5a82e6f472879acb7f1802592c2a",
+    "services/api/internal/httpapi/uploads.go": "6363cb7fb229ae6b9176c1b0f1640b5eb469b30e179338009e0207add9ee667e",
+    "services/api/internal/httpapi/worker.go": "c388f127d728407c498ac3fd2a3e8fe2b956180e2daa41796d3c96d282a8e688",
+    "services/api/internal/httpapi/reconcile.go": "c5cb6f117012c81740c531880762cdb197461577481baefa7efe143a6827d6b0",
+    "apps/web/components/studio.tsx": "d5dfec72c81249bc503c5fefec3aaecbbf52ed1d9946d639e0400444a792a736",
+    "packages/player/src/index.ts": "cb7f4bcc57a70f7ab8921cd13f0067dda22f9ae132a4f249dc56a3d6fe792689",
+    "contracts/openapi/catalog-v1.yaml": "06651639493583d307d716d5fa9817146e0961e23cd166b6d7dc45cb304feed1",
+    "tests/browser/upload.spec.ts": "904490bc0892db1039a15e2902a7c44dc35c2606d979d28705062822ee66d0c8",
+    "scripts/media-recovery.mjs": "9aa0d0efff0840195dfeba8547f35e1dc12a7ff1f041424f6464982e3243f6e0",
+    "apps/web/Dockerfile": "1ec5b46407b6a876358cbe7fec0060a688fb5a64f57f36686d9b6daa44b2283e",
+    ".github/workflows/ci.yml": "20a70d3f9b5aebbae8b511bfac9da6982f72cc7b3519fb8eea0d918ff09c2f14"
+  }
+}

@@ -5,7 +5,8 @@ COPY apps/web/package.json apps/web/package.json
 COPY packages/player/package.json packages/player/package.json
 COPY packages/contracts/package.json packages/contracts/package.json
 COPY services/tracker/package.json services/tracker/package.json
-RUN npm ci
+RUN npm ci --include=optional \
+    && node -e "require('lightningcss'); require('@tailwindcss/oxide');"
 COPY apps/web/ apps/web/
 COPY packages/player/ packages/player/
 COPY packages/contracts/src/ packages/contracts/src/

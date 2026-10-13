@@ -19,7 +19,7 @@
     "format:check": "prettier --check .",
     "fixture": "node scripts/generate-fixture.mjs",
     "demo": "node scripts/demo.mjs",
-    "test": "node --experimental-strip-types --test tests/unit/*.test.ts",
+    "test": "node --experimental-strip-types --experimental-test-isolation=none --test tests/unit/*.test.ts",
     "test:browser": "playwright test",
     "contracts:generate": "node packages/contracts/generate.mjs",
     "contracts:check": "node packages/contracts/generate.mjs --check",
@@ -32,6 +32,7 @@
     "seed": "node scripts/go.mjs seed-fixture",
     "test:integration": "node scripts/integration.mjs",
     "test:recovery": "node scripts/recovery.mjs",
+    "test:media-recovery": "node scripts/media-recovery.mjs",
     "compose:demo": "node scripts/compose-demo.mjs",
     "check": "npm run format:check && npm run typecheck && npm test"
   },

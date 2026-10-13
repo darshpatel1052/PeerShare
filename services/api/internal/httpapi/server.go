@@ -161,7 +161,11 @@ func (a *App) storeError(w http.ResponseWriter, r *http.Request, err error) {
 	case errors.Is(err, store.ErrNotOwner):
 		a.error(w, r, 403, "not_owner", "You can only edit your own channel.")
 	case errors.Is(err, store.ErrRevisionConflict):
-		a.error(w, r, 409, "revision_conflict", "These details changed since you opened them. Reload before editing.")
+		subject := "video"
+		if strings.HasPrefix(r.URL.Path, "/api/v1/channels/") {
+			subject = "channel"
+		}
+		a.error(w, r, 409, "revision_conflict", "This "+subject+" changed since you opened it. Reload before editing.")
 	case errors.Is(err, store.ErrUploadLimit):
 		a.error(w, r, 429, "upload_capacity", "Upload capacity is currently full. Finish or cancel an existing upload first.")
 	case errors.Is(err, store.ErrUploadConflict):
