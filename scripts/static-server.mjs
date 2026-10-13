@@ -13,6 +13,7 @@ const mimeTypes = {
   ".ts": "video/mp2t",
   ".jpg": "image/jpeg",
   ".svg": "image/svg+xml",
+  ".ttf": "font/ttf",
 };
 
 export function createStaticServer({

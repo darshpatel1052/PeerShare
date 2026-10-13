@@ -39,6 +39,7 @@ const value = async (page: Page, id: string) =>
 async function start(page: Page) {
   await page.goto("/watch/?v=signal-garden");
   await expect(page.getByTestId("player-status")).toHaveText("Ready to play");
+  await page.getByText("Connection details", { exact: true }).click();
   await page.getByRole("checkbox", { name: "Help share this video" }).check();
   await expect(page.getByTestId("player-status")).toHaveText("Ready to play");
   await page.getByLabel("Video quality").selectOption("360");
@@ -284,9 +285,12 @@ test("sharing off and route departure close real WebRTC connections", async ({
       .getByRole("checkbox", { name: "Help share this video" })
       .check();
     await expect.poll(() => value(viewer, "peer-count")).toBeGreaterThan(0);
-    await viewer.getByRole("link", { name: "Explore", exact: true }).click();
+    await viewer
+      .getByRole("navigation", { name: "Main navigation" })
+      .getByRole("link", { name: "Explore", exact: true })
+      .click();
     await expect(
-      viewer.getByRole("heading", { name: "Good videos. Better together." }),
+      viewer.getByRole("heading", { name: "Explore.", exact: true }),
     ).toBeVisible();
     await expect
       .poll(() =>

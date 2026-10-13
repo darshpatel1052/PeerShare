@@ -85,6 +85,7 @@ try {
     .getByTestId("player-status")
     .filter({ hasText: "Ready to play" })
     .waitFor();
+  await page.getByText("Connection details", { exact: true }).click();
   await page.locator("video").evaluate((v) => {
     v.muted = true;
     void v.play();

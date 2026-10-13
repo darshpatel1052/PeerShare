@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Avatar, Icon, LoadingState } from "./ui";
+import WatchSidebar from "./watch-sidebar";
 import { resourceID, type VideoDetail } from "../lib/api";
 import { useResource } from "../lib/use-resource";
 import {
@@ -98,7 +100,7 @@ export default function Watch() {
     return (
       <main id="main">
         <h1>Video not found</h1>
-        <p className="muted">This video is unavailable in the local preview.</p>
+        <p className="muted">This video is no longer available.</p>
         <Link className="button" href="/">
           Back to explore
         </Link>
@@ -107,7 +109,7 @@ export default function Watch() {
   if (resource.state.status === "loading")
     return (
       <main id="main">
-        <p role="status">Loading video…</p>
+        <LoadingState label="Loading video…" />
       </main>
     );
   if (resource.state.status === "error")
@@ -122,7 +124,14 @@ export default function Watch() {
     );
   const item = resource.state.value;
   return (
-    <main id="main">
+    <main id="main" className="watch-page">
+      <div className="watch-breadcrumb">
+        <Link href="/">Explore</Link>
+        <span>/</span>
+        <Link href={`/channel?id=${item.channel_id}`}>
+          {item.channel_title}
+        </Link>
+      </div>
       <div className="watch-layout">
         <section>
           <div className="player-frame">
@@ -136,7 +145,12 @@ export default function Watch() {
             />
           </div>
           <div className="controls">
-            <span role="status" data-testid="player-status" className="muted">
+            <span
+              role="status"
+              data-testid="player-status"
+              className="player-status"
+            >
+              <span className={ready ? "status-dot ready" : "status-dot"} />
               {ready ? "Ready to play" : "Preparing video…"}
             </span>
             <label>
@@ -169,21 +183,22 @@ export default function Watch() {
           )}
           <h1 className="watch-title">{item.title}</h1>
           <Link className="creator" href={`/channel?id=${item.channel_id}`}>
-            <span className="avatar">PS</span>
+            <Avatar name={item.channel_title} />
             <span>
               <strong>{item.channel_title}</strong>
               <br />
               <span className="muted">
-                {item.source_kind === "fixture" ? "Generated video · " : ""}
+                {item.source_kind === "fixture" ? "Test film · " : ""}
                 {Math.round(item.duration_seconds / 60)} minute
               </span>
             </span>
           </Link>
-          <p className="muted">{item.description}</p>
-          <div className="sharing">
+          <p className="watch-description">{item.description}</p>
+          <div className="sharing" id="peer-sharing">
             <label>
               <input
                 type="checkbox"
+                className="sharing-toggle"
                 checked={sharing}
                 onChange={(event) => setSharing(event.target.checked)}
                 disabled={
@@ -201,8 +216,11 @@ export default function Watch() {
               time.
             </p>
           </div>
-          <details open>
-            <summary>Delivery details</summary>
+          <details className="delivery-details">
+            <summary>
+              <Icon name="signal" />
+              Connection details
+            </summary>
             <dl className="stats">
               <div className="stat">
                 <dt>HTTP media bytes</dt>
@@ -237,15 +255,7 @@ export default function Watch() {
             </p>
           </details>
         </section>
-        <aside className="side-panel">
-          <span className="eyebrow">About this preview</span>
-          <h2>A real delivery test</h2>
-          <p className="muted">
-            Accounts and channels now use persisted data. This video is a
-            generated delivery fixture; uploads and publishing arrive next.
-          </p>
-          <Link href="/">← Explore the lab</Link>
-        </aside>
+        <WatchSidebar video={item} />
       </div>
     </main>
   );

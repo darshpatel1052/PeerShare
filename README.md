@@ -52,7 +52,7 @@ npm run test:browser
 npm run test:recovery
 ```
 
-The final local run passed 5 player unit cases, 7 Go unit cases, 8 real PostgreSQL/Redis integration cases and 12 production-browser cases. Go integration uses the race detector. Browser tests use the production export, not development mode. Integration, browser and recovery runners use the same separate disposable `peerscreen-test` project, so run them sequentially. They remove only that project's test volume; normal app data persists. CI recreates these checks and retains raw evidence.
+Phase 1 verification passed 5 player unit cases, 7 Go unit cases, 8 real PostgreSQL/Redis integration cases and 12 production-browser cases. Go integration uses the race detector. Browser tests use the production export, not development mode. Integration, browser and recovery runners use the same separate disposable `peerscreen-test` project, so run them sequentially. They remove only that project's test volume; normal app data persists. CI recreates these checks and retains raw evidence.
 
 ## Try peer delivery
 
@@ -67,3 +67,9 @@ Uploads, processing workers, email verification/password recovery, backups/resto
 The tracker dependency has a known high advisory through `ip`. UDP/HTTP announces are disabled and this local proof stays on loopback; assess/replace the affected dependency before public exposure. Details are in [progress](docs/progress.md#dependency-finding). AWS resources have not been provisioned.
 
 Phase 0's historical [evidence](docs/evidence/milestone-0.md) and [ADR](docs/adr/0001-static-export-and-verified-peer-delivery.md) remain available. Checkpoint commits are created and pushed after substantial validated progress.
+
+## Product interface
+
+The UI redesign adds a graphite/lime visual identity, a light theme, a media-led catalogue, branded channel pages, a creator workspace and a focused player. Search filters loaded videos; channel tabs, keyboard navigation, copy-link and theme persistence work. Publishing remains explicitly unavailable until its backend workflow is built.
+
+See [the UI learning notes](docs/learning/ui-design.md) for design tokens, component responsibilities and browser state, and [the UI evidence](docs/evidence/ui-redesign.md) for screenshots and actual checks.

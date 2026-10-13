@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Avatar, BrandMark, ChannelCover, Icon, LoadingState } from "./ui";
 import {
   api,
   ApiError,
@@ -140,7 +141,7 @@ export default function Account() {
   if (auth.loading)
     return (
       <main id="main">
-        <p role="status">Loading your account…</p>
+        <LoadingState label="Loading your account…" />
       </main>
     );
   if (auth.error)
@@ -155,175 +156,252 @@ export default function Account() {
     );
   if (!auth.me)
     return (
-      <main id="main" className="account-page">
-        <span className="eyebrow">Your video space</span>
-        <h1>
-          {mode === "login"
-            ? "Welcome back."
-            : "Start something worth sharing."}
-        </h1>
-        <p className="muted">
-          {mode === "login"
-            ? "Sign in to manage your channel."
-            : "Create an account and make a home for your videos."}
-        </p>
-        {feedback}
-        <form
-          onSubmit={signIn}
-          className="account-form"
-          aria-label={mode === "login" ? "Sign in" : "Create account"}
-        >
-          {mode === "register" && (
+      <main id="main" className="auth-page">
+        <aside className="auth-identity">
+          <div className="auth-brand">
+            <BrandMark />
+            PeerScreen
+          </div>
+          <div className="auth-display">
+            YOUR
+            <br />
+            OWN
+            <br />
+            <span>SCREEN.</span>
+          </div>
+          <div className="auth-art" aria-hidden="true">
+            <ChannelCover compact />
+          </div>
+          <p>Your channel starts here.</p>
+          <Link href="/">
+            Explore videos
+            <Icon name="arrow" />
+          </Link>
+        </aside>
+        <section className="auth-card">
+          <span className="eyebrow">
+            {mode === "login" ? "Your workspace" : "Join PeerScreen"}
+          </span>
+          <h1>{mode === "login" ? "Welcome back." : "Create your account."}</h1>
+          <p className="muted">
+            {mode === "login"
+              ? "Sign in to your account and channel."
+              : "Set up your profile. Make a space of your own."}
+          </p>
+          {feedback}
+          <form
+            onSubmit={signIn}
+            className="account-form"
+            aria-label={mode === "login" ? "Sign in" : "Create account"}
+          >
+            {mode === "register" && (
+              <label className="form-field">
+                Display name
+                <input
+                  value={displayName}
+                  onChange={(event) => setDisplayName(event.target.value)}
+                  required
+                  maxLength={80}
+                  autoComplete="name"
+                />
+              </label>
+            )}
             <label className="form-field">
-              Display name
+              Email
               <input
-                value={displayName}
-                onChange={(event) => setDisplayName(event.target.value)}
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 required
-                maxLength={80}
-                autoComplete="name"
+                autoComplete="email"
+                maxLength={254}
               />
             </label>
-          )}
-          <label className="form-field">
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-              autoComplete="email"
-              maxLength={254}
-            />
-          </label>
-          <label className="form-field">
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-              minLength={mode === "register" ? 12 : 1}
-              maxLength={128}
-              autoComplete={
-                mode === "register" ? "new-password" : "current-password"
-              }
-              aria-describedby={
-                mode === "register" ? "password-policy" : undefined
-              }
-            />
-          </label>
-          {mode === "register" && (
-            <p id="password-policy" className="muted">
-              Use at least 12 characters and at most 128 bytes.
-            </p>
-          )}
-          <button disabled={busy} type="submit">
-            {busy
-              ? "Please wait…"
-              : mode === "login"
-                ? "Sign in"
-                : "Create account"}
-          </button>
-        </form>
-        <p className="muted">
-          {mode === "login" ? "New here? " : "Already have an account? "}
-          <button
-            className="text-button"
-            onClick={() => {
-              setMode(mode === "login" ? "register" : "login");
-              setError("");
-            }}
-          >
-            {mode === "login" ? "Create an account" : "Sign in instead"}
-          </button>
-        </p>
-        <p className="notice">
-          Registration is available in this local preview. Public-demo admission
-          will be configured before deployment.
-        </p>
+            <label className="form-field">
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                minLength={mode === "register" ? 12 : 1}
+                maxLength={128}
+                autoComplete={
+                  mode === "register" ? "new-password" : "current-password"
+                }
+                aria-describedby={
+                  mode === "register" ? "password-policy" : undefined
+                }
+              />
+            </label>
+            {mode === "register" && (
+              <p id="password-policy" className="muted">
+                Use at least 12 characters and at most 128 bytes.
+              </p>
+            )}
+            <button disabled={busy} type="submit">
+              {busy
+                ? "Please wait…"
+                : mode === "login"
+                  ? "Sign in"
+                  : "Create account"}
+            </button>
+          </form>
+          <p className="auth-switch">
+            {mode === "login"
+              ? "New to PeerScreen? "
+              : "Already have an account? "}
+            <button
+              className="text-button"
+              onClick={() => {
+                setMode(mode === "login" ? "register" : "login");
+                setError("");
+              }}
+            >
+              {mode === "login" ? "Create an account" : "Sign in instead"}
+            </button>
+          </p>
+        </section>
       </main>
     );
   const channel = auth.me.channel;
   return (
-    <main id="main" className="account-page">
-      <span className="eyebrow">Your account</span>
-      <h1>Hello, {auth.me.user.display_name}.</h1>
-      <p className="muted">{auth.me.user.email}</p>
-      {feedback}
-      <div className="section-title">
-        <h2>{channel ? "Channel settings" : "Create your channel"}</h2>
+    <main id="main" className="workspace-page">
+      <div className="workspace-heading">
+        <div>
+          <span className="eyebrow">Creator workspace</span>
+          <h1>Your workspace</h1>
+          <p className="muted">Your profile, your channel, your settings.</p>
+        </div>
         {channel && (
-          <Link className="button" href={`/channel?id=${channel.id}`}>
+          <Link className="secondary-button" href={`/channel?id=${channel.id}`}>
             View your channel
+            <Icon name="arrow" />
           </Link>
         )}
       </div>
-      <form
-        onSubmit={saveChannel}
-        className="account-form"
-        aria-label={channel ? "Channel settings" : "Create channel"}
-      >
-        <label className="form-field">
-          Channel handle
-          <input
-            value={handle}
-            onChange={(event) => setHandle(event.target.value)}
-            disabled={Boolean(channel)}
-            required
-            pattern="[a-z][a-z0-9-]{1,28}[a-z0-9]"
-            minLength={3}
-            maxLength={30}
-            aria-describedby="handle-policy"
-          />
-        </label>
-        <p id="handle-policy" className="muted">
-          3–30 lowercase letters, numbers, or hyphens. Begin with a letter and
-          end with a letter or number.
-        </p>
-        <label className="form-field">
-          Channel title
-          <input
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            required
-            maxLength={100}
-          />
-        </label>
-        <div className="form-field">
-          <label htmlFor="channel-description">Description</label>
-          <textarea
-            id="channel-description"
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            maxLength={1000}
-            rows={4}
-          />
+      <div className="workspace-grid">
+        <aside className="workspace-sidebar">
+          <Avatar name={auth.me.user.display_name} large />
+          <h2>{auth.me.user.display_name}</h2>
+          <p>{auth.me.user.email}</p>
+          <nav aria-label="Workspace sections">
+            <a className="active" href="#channel-settings">
+              <Icon name="channel" />
+              Channel settings
+            </a>
+            <a href="#account-sessions">
+              <Icon name="settings" />
+              Account & sessions
+            </a>
+          </nav>
+          <Link className="workspace-back" href="/">
+            Back to explore
+            <Icon name="arrow" />
+          </Link>
+        </aside>
+        <div className="workspace-content">
+          {feedback}
+          <section className="settings-panel" id="channel-settings">
+            <div className="settings-heading">
+              <div>
+                <h2>{channel ? "Channel settings" : "Create your channel"}</h2>
+                <p className="muted">
+                  Make it easy for people to recognize you.
+                </p>
+              </div>
+              <Icon name="channel" />
+            </div>
+            <div className="channel-preview">
+              <ChannelCover compact />
+              <div>
+                <Avatar name={title || auth.me.user.display_name} />
+                <span>
+                  <strong>{title || "Your channel name"}</strong>
+                  <small>@{handle || "your-handle"}</small>
+                </span>
+              </div>
+            </div>
+            <form
+              onSubmit={saveChannel}
+              className="account-form"
+              aria-label={channel ? "Channel settings" : "Create channel"}
+            >
+              <label className="form-field">
+                Channel handle
+                <input
+                  value={handle}
+                  onChange={(event) => setHandle(event.target.value)}
+                  disabled={Boolean(channel)}
+                  required
+                  pattern="[a-z][a-z0-9-]{1,28}[a-z0-9]"
+                  minLength={3}
+                  maxLength={30}
+                  aria-describedby="handle-policy"
+                />
+              </label>
+              <p id="handle-policy" className="muted">
+                3–30 lowercase letters, numbers, or hyphens. Begin with a letter
+                and end with a letter or number.
+              </p>
+              <label className="form-field">
+                Channel title
+                <input
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
+                  required
+                  maxLength={100}
+                />
+              </label>
+              <div className="form-field">
+                <label htmlFor="channel-description">Description</label>
+                <textarea
+                  id="channel-description"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  maxLength={1000}
+                  rows={4}
+                />
+              </div>
+              <button disabled={busy} type="submit">
+                {busy ? "Saving…" : channel ? "Save channel" : "Create channel"}
+              </button>
+            </form>
+            <p className="publishing-note">
+              <Icon name="film" />
+              Video publishing is not available yet.
+            </p>
+          </section>
+          <section
+            className="settings-panel session-panel"
+            id="account-sessions"
+          >
+            <div className="settings-heading">
+              <div>
+                <h2>Account & sessions</h2>
+                <p className="muted">Signed in as {auth.me.user.email}.</p>
+              </div>
+              <Icon name="settings" />
+            </div>
+            <div className="session-actions">
+              <button
+                className="secondary-button"
+                disabled={busy}
+                onClick={() => void logout()}
+              >
+                <Icon name="logout" />
+                Sign out
+              </button>
+              <button
+                className="text-button"
+                disabled={busy}
+                onClick={() => void logout(true)}
+              >
+                Sign out everywhere
+              </button>
+            </div>
+          </section>
         </div>
-        <button disabled={busy} type="submit">
-          {busy ? "Saving…" : channel ? "Save channel" : "Create channel"}
-        </button>
-      </form>
-      <p className="notice">
-        {channel
-          ? "Your channel changes are saved. Uploads and video publishing are coming in the next phase."
-          : "Create your channel to get ready to publish. Uploads arrive in the next phase."}
-      </p>
-      <div className="session-actions">
-        <button
-          className="secondary-button"
-          disabled={busy}
-          onClick={() => void logout()}
-        >
-          Sign out
-        </button>
-        <button
-          className="text-button"
-          disabled={busy}
-          onClick={() => void logout(true)}
-        >
-          Sign out everywhere
-        </button>
       </div>
     </main>
   );

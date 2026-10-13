@@ -52,3 +52,9 @@ Backend foundation checkpoint: `7809eb3c8ebb04bf54a2012ea0fde58d1f837f97`, pushe
 ## Next: milestone 2 — durable upload admission
 
 Explain the upload model and request lifecycle before implementation: ownership, admission/quota reservations, immutable object keys, idempotency, multipart completion, authoritative database transitions, generation/attempt identity and failure recovery. Introduce storage/processing incrementally with concrete local evidence before provisioning cloud resources. Phase 1's fixture importer is an operator tool, not an uploader workflow.
+
+## Product UI redesign
+
+The user prioritized a complete interface redesign before uploads. The application now shares one graphite/lime theme and locally served typography across Explore, channels, watch, sign-in and the creator workspace. Development banners and the old build-commentary footer have been removed. Working additions include loaded-video search, light/dark persistence, keyboard channel tabs, canonical copy-link and live channel-title preview. Connection metrics start collapsed; publishing availability stays explicit.
+
+See [the UI learning notes](learning/ui-design.md) and [UI evidence](evidence/ui-redesign.md). This checkpoint retains the existing authentication, ownership, conflict and verified HTTP/peer behavior. It does not implement uploads or invent catalogue content.

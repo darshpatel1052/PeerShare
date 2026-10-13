@@ -1,0 +1,50 @@
+{
+  "initialAccount": {
+    "user": {
+      "id": "80d4fbc7-d1ce-458f-8bbb-309a67e8e9c6",
+      "email": "bd300798-b208-4149-b2a3-ed86be87df80@example.test",
+      "display_name": "Learning creator",
+      "role": "member",
+      "created_at": "2026-10-13T19:22:20.363826+05:30"
+    },
+    "channel": {
+      "id": "22009918-5e5d-4841-8ec6-691b1f5cd601",
+      "handle": "learning-39e2d899",
+      "title": "My learning channel",
+      "description": "Real persisted channel metadata.",
+      "owner_display_name": "Learning creator",
+      "revision": 1,
+      "created_at": "2026-10-13T19:22:20.636065+05:30",
+      "updated_at": "2026-10-13T19:22:20.636065+05:30"
+    }
+  },
+  "afterEdit": {
+    "user": {
+      "id": "80d4fbc7-d1ce-458f-8bbb-309a67e8e9c6",
+      "email": "bd300798-b208-4149-b2a3-ed86be87df80@example.test",
+      "display_name": "Learning creator",
+      "role": "member",
+      "created_at": "2026-10-13T19:22:20.363826+05:30"
+    },
+    "channel": {
+      "id": "22009918-5e5d-4841-8ec6-691b1f5cd601",
+      "handle": "learning-39e2d899",
+      "title": "Updated learning channel",
+      "description": "Real persisted channel metadata.",
+      "owner_display_name": "Learning creator",
+      "revision": 2,
+      "created_at": "2026-10-13T19:22:20.636065+05:30",
+      "updated_at": "2026-10-13T19:22:21.1886+05:30"
+    }
+  },
+  "browserReloadPreservedChannel": true,
+  "loggedOutMeStatus": 401,
+  "loginRestoredChannel": true,
+  "cookie": {
+    "httpOnly": true,
+    "sameSite": "Lax",
+    "secure": false,
+    "path": "/"
+  },
+  "scope": "production export, real Go API and isolated PostgreSQL/Redis; original cookie values/passwords excluded"
+}

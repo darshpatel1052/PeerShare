@@ -1,0 +1,93 @@
+{
+  "capturedAt": "2026-10-13T14:04:18.332Z",
+  "baseCommit": "6e6f208252834cc6316cb68354a14d2cc5627225",
+  "workingTreeChanged": true,
+  "sourceHashes": {
+    "apps/web/AGENTS.md": "063098f6cb31bb44c6f8fbea25b3876de7ee1e5f7d00a50dbab506f6415eb7f0",
+    "apps/web/Dockerfile": "e0a8e064fe9e5ce1e51e3b62252aaf62cff9655ea7411e624038062c9bf65eef",
+    "apps/web/app/account/page.tsx": "5a8d834a6ed33c95765e3bb2acf8e52ccb52afbd8f4ceb5c1a194392bf688442",
+    "apps/web/app/channel/page.tsx": "b7227a68bf43dc1b93147da9fac09c41ca3ad4c08273f2a23d01491d553fa11a",
+    "apps/web/app/globals.css": "68c552dd33032c1a8963664fc67525fa3c9775a2b95107299eca11bd0b44db40",
+    "apps/web/app/layout.tsx": "93e21f62d178ce9c80397a6d910cdbc2db4dc97b3ff5aa28e2681804ffe33095",
+    "apps/web/app/page.tsx": "63169cd7b140dbceffbf189dacc00eae1b6d9291ff21ce08d02449f3f613ce17",
+    "apps/web/app/watch/page.tsx": "9f60ca98a0329219814f669a40a36ee6af4c00d42453ace82f6014c7e8883bc1",
+    "apps/web/components/account.tsx": "d61775c601305563eedeba8bec7c8908544017450134d1fb53988ea33a56e62c",
+    "apps/web/components/auth-provider.tsx": "47271d3b28dd7d5fdcdda7b32490fc317d0ac7e95def4791b57f8dbe32b3f76b",
+    "apps/web/components/channel.tsx": "b0f748c40f81ed4ec0518e8e398b63db9b15b0fd491b850385d4b5f5c4c591a3",
+    "apps/web/components/navigation.tsx": "5cdb4f80d4a7ed0e07b8507668f603ae09eaf953c6a9f386ef2264a9345c1c22",
+    "apps/web/components/theme-toggle.tsx": "96bc73060f17df8edacb610495b7336032a44840200d3956bb26348143c145f3",
+    "apps/web/components/ui.tsx": "f663bff956be32d7e3702eae91e0812ac2bd1515b34d60acd24bb648a78594de",
+    "apps/web/components/video-list.tsx": "aac17e78b8b0b406dc3ebad5cad097720bd20837248bdaf899f6ae0281512110",
+    "apps/web/components/watch-sidebar.tsx": "c35d081651a9d6a62111d19dd2c9c1e58bd33775f896e8f8bd4020c23a4acacc",
+    "apps/web/components/watch.tsx": "168c8ee1b12750ebd6738f44c3f72e3cf0af67bf8817f28da3755ee2ac97494e",
+    "apps/web/lib/api.ts": "b8bfc69fb445f10d08a081b86185efea6cdbf3ceab2c3ad1a82cd067ac9ba1e6",
+    "apps/web/lib/use-resource.ts": "9fccf4abf36f3709d6b161ad5dd824436ea14eec5055f72226b97f03cde15d65",
+    "apps/web/next-env.d.ts": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b",
+    "apps/web/next.config.ts": "a4588a705dbad9f18b646c9bd0ebe7f5981bfd3098f433c554a64ea5e612c09b",
+    "apps/web/package.json": "a1edc52f4c4ad0d0180fff248b666501fa87a376b51501ab8ac4d98f5c2f3d74",
+    "apps/web/postcss.config.mjs": "a1a188221f064d964dd9958c3d48b0c23252fabbeb6099d95ee8e15c764718b0",
+    "apps/web/public/fonts/README.md": "fab9b8c39659209ca21694cb4bd7694721e60f2ad04a1e7fc7ef0279653a62f5",
+    "apps/web/public/fonts/barlow-condensed-OFL.txt": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f",
+    "apps/web/public/fonts/barlow-condensed-bold.ttf": "e476562ec9c1e16cf16475895b511f08c804f438cc9a9f80a44ea50a0eeb5b65",
+    "apps/web/public/fonts/manrope-OFL.txt": "58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b",
+    "apps/web/public/fonts/manrope-variable.ttf": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6",
+    "apps/web/public/icon.svg": "f1ca88a909da48d82236a2d6731a44a04b26a4081d2ca75473b815a0907f9ccc",
+    "apps/web/tsconfig.json": "9265cead8bee475a97e16c4f0df4de99ff2987210b6bf9594393c19a8d8ce9d6",
+    "scripts/api-proxy.mjs": "529b69bbab03dff93b4dad9043563c4e7281a593527feae151c7f1580d013327",
+    "scripts/backend.mjs": "b7a9c0a08bcdce02bd2c406a0a1ab3597e8e6960cfd6f52731cd3122ac63bf09",
+    "scripts/compose-demo.mjs": "3ae56e0c8e32c67d6acb826594e837e05f2eb49b48237286bb4935cedea8c0f0",
+    "scripts/demo.mjs": "9d989781c197a15a126661da6887f6d3ab9f248a9dfbdcd4be2f83e3bb194653",
+    "scripts/dependencies.mjs": "8902907c3615099915807db86e1e093657f382d7c5484c84d19b8d0aecd0390d",
+    "scripts/dev.mjs": "86f12f31b5d4071bd9decbc31cc7ba08f01a1c0bf1743c067558d7e2fdc297b8",
+    "scripts/generate-fixture.mjs": "fce7fdf761b8a126d13e2345a2e92e408fd3df476613d4a59b2d8ab903336f05",
+    "scripts/go.mjs": "9a5f8e36a8a2ddd741d1edaf9ffe38a5335a62bf6d923e982c3040ee14beb0db",
+    "scripts/integration.mjs": "25fb900e4719049eb47803e89983223651d05c8e42a9900250782b01b3447c76",
+    "scripts/local-environment.mjs": "63e0586006b424a31a987df8ba570df94f7fdfafc1c602e4d9006f245be7da01",
+    "scripts/preview-smoke.mjs": "2b4d96b44c873a1ef91ee23726c1f6c2d1666b84534a230de6c9dc37be2b5524",
+    "scripts/recovery.mjs": "b38481a85746b467d5b3f270e3a0f59112aee984d85e267b7bdc574d78ae665b",
+    "scripts/static-server.mjs": "0e9cc146850cf4a8e0a110776c281ae71365756f1dcc2cc578c939b981d03e34",
+    "tests/browser/design.spec.ts": "f5fe5d0c7c5cf2cfa9ddae6ceb1afdf50c991185663b37b51997117b2f0824b9",
+    "tests/browser/http.spec.ts": "904cff7f1d38f5459338542e255dcb20d0b1c0b15166418f88c9296f7fee7992",
+    "tests/browser/identity.spec.ts": "cfe96401a34263668debe27a9a61eca5c1bf1247bd63ec3d64fdb48e00102e70",
+    "tests/browser/peer.spec.ts": "f50abba7f2325a1eed341f09a5b7b9d9f26ed0d7861f41c1989a53e4f03e07d1"
+  },
+  "services": [
+    {
+      "name": "postgres",
+      "status": "running",
+      "health": "healthy",
+      "imageID": "sha256:2e182ed2ff8f5d0835353864264437a26dffc542a9a6c677ec495aa54e491627",
+      "user": "",
+      "readOnly": false
+    },
+    {
+      "name": "redis",
+      "status": "running",
+      "health": "healthy",
+      "imageID": "sha256:4712d69c6daca134968898d2966784bba77b10fe47f1fd0293c592e61fd99030",
+      "user": "",
+      "readOnly": false
+    },
+    {
+      "name": "api",
+      "status": "running",
+      "health": "healthy",
+      "imageID": "sha256:3828a9c48125348e1b451dbcdf4393cd478e022b877ca508cc132350f2d603fd",
+      "user": "10001:10001",
+      "readOnly": true
+    },
+    {
+      "name": "web",
+      "status": "running",
+      "health": "healthy",
+      "imageID": "sha256:20e11bc5f5d7b27fb2ecf0dd3b80c69d58b62a1d65751f914fa33a508388473d",
+      "user": "node",
+      "readOnly": true
+    }
+  ],
+  "notes": [
+    "Hashes include UI, bundled fonts, local scripts and browser tests before the UI checkpoint commit",
+    "Existing Go/database schema/player implementation unchanged",
+    "No container environment or runtime credential values collected"
+  ]
+}

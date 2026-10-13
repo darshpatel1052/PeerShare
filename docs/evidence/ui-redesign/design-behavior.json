@@ -1,0 +1,44 @@
+{
+  "testedAt": "2026-10-13T13:52:12.338Z",
+  "browser": "156.0.8078.4",
+  "scope": "Production export and isolated Go/PostgreSQL/Redis; synthetic test creator, no real user account changed",
+  "checks": {
+    "localFontsLoaded": true,
+    "searchAndClear": true,
+    "themeSurvivesReload": true,
+    "ownerSettingsVisible": true,
+    "aboutTab": true,
+    "canonicalClipboardURL": true,
+    "liveTitlePreview": true,
+    "detailsInitiallyCollapsed": true,
+    "horizontalOverflow": false
+  },
+  "viewports": [
+    {
+      "width": 1365,
+      "height": 900
+    },
+    {
+      "width": 390,
+      "height": 844
+    },
+    {
+      "width": 320,
+      "height": 700
+    }
+  ],
+  "screenshots": [
+    ".local/screenshots/ui-redesign/explore-desktop.png",
+    ".local/screenshots/ui-redesign/explore-light.png",
+    ".local/screenshots/ui-redesign/explore-mobile.png",
+    ".local/screenshots/ui-redesign/channel-desktop.png",
+    ".local/screenshots/ui-redesign/channel-light.png",
+    ".local/screenshots/ui-redesign/channel-mobile.png",
+    ".local/screenshots/ui-redesign/channel-small-mobile.png",
+    ".local/screenshots/ui-redesign/workspace-desktop.png",
+    ".local/screenshots/ui-redesign/workspace-mobile.png",
+    ".local/screenshots/ui-redesign/watch-desktop.png",
+    ".local/screenshots/ui-redesign/watch-mobile.png"
+  ],
+  "excludes": "Session tokens, generated passwords, database/cache credentials"
+}

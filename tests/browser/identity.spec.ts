@@ -18,7 +18,7 @@ async function registerThroughUI(page: Page) {
     .getByRole("button", { name: "Create account", exact: true })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Hello, Learning creator." }),
+    page.getByRole("heading", { name: "Your workspace" }),
   ).toBeVisible();
   return email;
 }

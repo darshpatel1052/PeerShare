@@ -24,6 +24,7 @@ test("HTTP playback, seek and quality selection work with no tracker requests", 
   page.on("websocket", (socket) => sockets.push(socket.url()));
   await page.goto("/watch/?v=signal-garden");
   await expect(page.getByTestId("player-status")).toHaveText("Ready to play");
+  await page.getByText("Connection details", { exact: true }).click();
   await page.locator("video").evaluate((element: HTMLVideoElement) => {
     element.muted = true;
     void element.play();
