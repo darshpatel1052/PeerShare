@@ -1,0 +1,259 @@
+{
+  "config": {
+    "argv": [
+      "/usr/bin/node",
+      "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/node_modules/.bin/playwright",
+      "test",
+      "--grep",
+      "HTTP playback, seek|three independent|corrupted bytes"
+    ],
+    "configFile": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/playwright.config.ts",
+    "rootDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/tests/browser",
+        "testIgnore": [],
+        "testMatch": ["**/*.@(spec|test).?(c|m)[jt]s?(x)"],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/tests/browser",
+        "snapshotDir": "/home/predator-linux/Personal_Projects/PeerScreen/peer-screen/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 60000,
+        "use": {
+          "baseURL": "http://localhost:3000",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "browserName": "chromium",
+          "launchOptions": {
+            "args": ["--autoplay-policy=no-user-gesture-required"]
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      ["list", null],
+      [
+        "html",
+        {
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": ".local/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run demo",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 20000
+    }
+  },
+  "suites": [
+    {
+      "title": "http.spec.ts",
+      "file": "http.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "HTTP playback, seek and quality selection work with no tracker requests",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4409,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-13T08:32:45.390Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ffeaca9d3d6709ce9344-103b9509737c727b8601",
+          "file": "http.spec.ts",
+          "line": 20,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "peer.spec.ts",
+      "file": "peer.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "three independent viewers transfer verified peer bytes and recover after peers leave",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17488,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "buffer": ""
+                    },
+                    {
+                      "buffer": ""
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-10-13T08:32:49.929Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "peer-delivery-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJzb3VyY2UiOiB7CiAgICAiYmFzZUNvbW1pdCI6ICJjMzRkYTRjZTkxYWU4YTc2NjVmZDFlMDhjMDYyYTcyNzQyOGJjN2JlIiwKICAgICJ3b3JraW5nVHJlZUNoYW5nZWQiOiB0cnVlLAogICAgInNvdXJjZUhhc2hlcyI6IHsKICAgICAgInBhY2thZ2VzL3BsYXllci9zcmMvaW5kZXgudHMiOiAiZTU5ZGIyZmRkNDQzYjRmOTlhZWJkZGQyYmVkZWEyNzc3YmQ0NWQ1MTBiZWQ0MzFjY2JlMmJhNTAzMjIyZTY0YSIsCiAgICAgICJwYWNrYWdlcy9wbGF5ZXIvc3JjL2h0dHAtbG9hZGVyLnRzIjogImM1ZmE5MDcxOTUxZTNmMTIwODQ1OWFjNWFkY2Y3MGI3ZjdkYTEzZDliZDJhNzBhMzA0YjZhN2M1OWQ5M2Y1ZjMiLAogICAgICAicGFja2FnZXMvcGxheWVyL3NyYy9pbnRlZ3JpdHkudHMiOiAiY2Y3NjFiN2Q2ZTBkOWVjMmYxMDk5ZDgyMTg5YWI4Yzg1MmNjNTdhODIzZGUwOTI2NGFlOGJiMzNlY2VjYjU3YSIsCiAgICAgICJhcHBzL3dlYi9jb21wb25lbnRzL3dhdGNoLnRzeCI6ICIyY2U5MjdjMjYyY2M5YTY2MjZlYmFmNWQ1ZmFkNmVlZjgzYjUwNTY4ZTI4NmU4NGEwMjI0MzBiZmE0ZjEwMTAxIiwKICAgICAgInRlc3RzL2Jyb3dzZXIvcGVlci5zcGVjLnRzIjogIjA4YTU3Njk4ZjE3OWQ1NTZkZmU4MjM3ZjA2Zjk4MzNlYWZmOTg5MWYzOWViYmYzZjFlMjk4YzhhODFiMTVkYWQiLAogICAgICAicGFja2FnZS1sb2NrLmpzb24iOiAiMGYwMmMyZDZlNzNkNWIzOTFiOGJkNDcyM2I5MWEzZTIzNjcwNmFmYjQ2ZDhjOTZlNTBkOWFkNDMxNTViYjdjMCIKICAgIH0sCiAgICAiaG9zdCI6IHsKICAgICAgInBsYXRmb3JtIjogImxpbnV4IiwKICAgICAgImNwdSI6ICIxM3RoIEdlbiBJbnRlbChSKSBDb3JlKFRNKSBpNy0xMzcwMEhYIiwKICAgICAgImxvZ2ljYWxDUFVzIjogMjQsCiAgICAgICJyYW1CeXRlcyI6IDE2NDY2MDk2MTI4CiAgICB9CiAgfSwKICAidGVzdGVkQXQiOiAiMjAyNi0xMC0xM1QwODozMzowNS4zOTBaIiwKICAiYnJvd3NlciI6ICIxNTYuMC44MDc4LjQiLAogICJzY29wZSI6ICIzIGlzb2xhdGVkIENocm9taXVtIGNvbnRleHRzIG9uIG9uZSBMaW51eCBob3N0LCBsb29wYmFjayBuZXR3b3JrLCBubyBleHRlcm5hbCBTVFVOIiwKICAiZml4dHVyZSI6ICI2MHMgbGF2ZmkgSC4yNjQvQUFDLCAzNjBwIHBlZXJzIHRoZW4gNDgwcCBzZWVrLCA0cyBzZWdtZW50cyIsCiAgImJlZm9yZVBlZXJEZXBhcnR1cmUiOiBbCiAgICB7CiAgICAgICJodHRwQnl0ZXMiOiAyNTk0Nzc2LAogICAgICAicGVlckJ5dGVzIjogMCwKICAgICAgInVwbG9hZGVkQnl0ZXMiOiA0MTcxMTU2LAogICAgICAidmVyaWZpZWRTZWdtZW50cyI6IDUsCiAgICAgICJyZWplY3RlZFNlZ21lbnRzIjogMCwKICAgICAgInBlZXJzIjogMgogICAgfSwKICAgIHsKICAgICAgImh0dHBCeXRlcyI6IDAsCiAgICAgICJwZWVyQnl0ZXMiOiAyNTk0Nzc2LAogICAgICAidXBsb2FkZWRCeXRlcyI6IDEwMTgzOTYsCiAgICAgICJ2ZXJpZmllZFNlZ21lbnRzIjogNSwKICAgICAgInJlamVjdGVkU2VnbWVudHMiOiAwLAogICAgICAicGVlcnMiOiAyCiAgICB9LAogICAgewogICAgICAiaHR0cEJ5dGVzIjogMCwKICAgICAgInBlZXJCeXRlcyI6IDI1OTQ3NzYsCiAgICAgICJ1cGxvYWRlZEJ5dGVzIjogMCwKICAgICAgInZlcmlmaWVkU2VnbWVudHMiOiA1LAogICAgICAicmVqZWN0ZWRTZWdtZW50cyI6IDAsCiAgICAgICJwZWVycyI6IDIKICAgIH0KICBdLAogICJhZnRlclBlZXJEZXBhcnR1cmUiOiB7CiAgICAiaHR0cEJ5dGVzIjogNjM4MzM1MiwKICAgICJwZWVyQnl0ZXMiOiAyNTk0Nzc2LAogICAgInVwbG9hZGVkQnl0ZXMiOiAxMDE4Mzk2LAogICAgInZlcmlmaWVkU2VnbWVudHMiOiAxMywKICAgICJyZWplY3RlZFNlZ21lbnRzIjogMCwKICAgICJwZWVycyI6IDAKICB9LAogICJ0cmFja2VyRGlzY29ubmVjdGVkIjogdHJ1ZQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "17d5188ceb19865dafb3-48b659d3119f305ca60d",
+          "file": "peer.spec.ts",
+          "line": 68,
+          "column": 1
+        },
+        {
+          "title": "corrupted bytes sent on a real data channel are rejected, then HTTP playback succeeds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9673,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "buffer": ""
+                    },
+                    {
+                      "buffer": ""
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-10-13T08:33:07.449Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "tamper-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJicm93c2VyIjogIjE1Ni4wLjgwNzguNCIsCiAgInNvdXJjZSI6IHsKICAgICJiYXNlQ29tbWl0IjogImMzNGRhNGNlOTFhZThhNzY2NWZkMWUwOGMwNjJhNzI3NDI4YmM3YmUiLAogICAgIndvcmtpbmdUcmVlQ2hhbmdlZCI6IHRydWUsCiAgICAic291cmNlSGFzaGVzIjogewogICAgICAicGFja2FnZXMvcGxheWVyL3NyYy9pbmRleC50cyI6ICJlNTlkYjJmZGQ0NDNiNGY5OWFlYmRkZDJiZWRlYTI3NzdiZDQ1ZDUxMGJlZDQzMWNjYmUyYmE1MDMyMjJlNjRhIiwKICAgICAgInBhY2thZ2VzL3BsYXllci9zcmMvaHR0cC1sb2FkZXIudHMiOiAiYzVmYTkwNzE5NTFlM2YxMjA4NDU5YWM1YWRjZjcwYjdmN2RhMTNkOWJkMmE3MGEzMDRiNmE3YzU5ZDkzZjVmMyIsCiAgICAgICJwYWNrYWdlcy9wbGF5ZXIvc3JjL2ludGVncml0eS50cyI6ICJjZjc2MWI3ZDZlMGQ5ZWMyZjEwOTlkODIxODlhYjhjODUyY2M1N2E4MjNkZTA5MjY0YWU4YmIzM2VjZWNiNTdhIiwKICAgICAgImFwcHMvd2ViL2NvbXBvbmVudHMvd2F0Y2gudHN4IjogIjJjZTkyN2MyNjJjYzlhNjYyNmViYWY1ZDVmYWQ2ZWVmODNiNTA1NjhlMjg2ZTg0YTAyMjQzMGJmYTRmMTAxMDEiLAogICAgICAidGVzdHMvYnJvd3Nlci9wZWVyLnNwZWMudHMiOiAiMDhhNTc2OThmMTc5ZDU1NmRmZTgyMzdmMDZmOTgzM2VhZmY5ODkxZjM5ZWJiZjNmMWUyOThjOGE4MWIxNWRhZCIsCiAgICAgICJwYWNrYWdlLWxvY2suanNvbiI6ICIwZjAyYzJkNmU3M2Q1YjM5MWI4YmQ0NzIzYjkxYTNlMjM2NzA2YWZiNDZkOGM5NmU1MGQ5YWQ0MzE1NWJiN2MwIgogICAgfSwKICAgICJob3N0IjogewogICAgICAicGxhdGZvcm0iOiAibGludXgiLAogICAgICAiY3B1IjogIjEzdGggR2VuIEludGVsKFIpIENvcmUoVE0pIGk3LTEzNzAwSFgiLAogICAgICAibG9naWNhbENQVXMiOiAyNCwKICAgICAgInJhbUJ5dGVzIjogMTY0NjYwOTYxMjgKICAgIH0KICB9LAogICJ0ZXN0ZWRBdCI6ICIyMDI2LTEwLTEzVDA4OjMzOjE1LjQ2NFoiLAogICJ0YW1wZXJlZE1lZGlhQ2h1bmtzIjogOSwKICAicmVjZWl2ZXIiOiB7CiAgICAiaHR0cEJ5dGVzIjogMTU2MjY1NiwKICAgICJwZWVyQnl0ZXMiOiAwLAogICAgInVwbG9hZGVkQnl0ZXMiOiAwLAogICAgInZlcmlmaWVkU2VnbWVudHMiOiAzLAogICAgInJlamVjdGVkU2VnbWVudHMiOiAxLAogICAgInBlZXJzIjogMAogIH0sCiAgImluamVjdGlvbiI6ICJ0ZXN0LW9ubHkgbXV0YXRpb24gb2Ygb3V0Z29pbmcgUlRDRGF0YUNoYW5uZWwgbWVkaWEgYnl0ZXM7IHRydXN0ZWQgZGVzY3JpcHRvciBhbmQgSFRUUCBieXRlcyB1bmNoYW5nZWQiCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "17d5188ceb19865dafb3-6267b267d3e01c97bc8d",
+          "file": "peer.spec.ts",
+          "line": 155,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-13T08:32:44.398Z",
+    "duration": 32888.524,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

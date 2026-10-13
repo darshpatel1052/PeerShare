@@ -1,0 +1,8 @@
+{
+  "generated": true,
+  "duration": 60,
+  "source": "FFmpeg lavfi testsrc2 + sine",
+  "recipe": "fixture-v1",
+  "renditions": [360, 480],
+  "mediaVersion": "6b20be989bd0c5d2645b7c1098827dc72cf15ccd41615bea2bc106063a23d5be"
+}

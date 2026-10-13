@@ -6,7 +6,11 @@ export default defineConfig({
   expect: { timeout: 15_000 },
   workers: 1,
   fullyParallel: false,
-  reporter: [["list"], ["html", { open: "never" }]],
+  reporter: [
+    ["list"],
+    ["html", { open: "never" }],
+    ["json", { outputFile: ".local/browser-results.json" }],
+  ],
   use: {
     baseURL: "http://localhost:3000",
     trace: "retain-on-failure",

@@ -23,10 +23,12 @@ export type PlayerOptions = {
   manifestUrl: string;
   integrityUrl: string;
   trackerUrl: string;
+  mediaId: string;
+  acceptedVersionId: string;
   peerSharing: boolean;
   signal: AbortSignal;
   onStats: (stats: PlayerStats) => void;
-  onReady: (qualities: number[]) => void;
+  onReady: (qualities: number[], peerSupported: boolean) => void;
   onError: (message: string) => void;
 };
 export type PlayerHandle = {
@@ -39,14 +41,14 @@ export async function createPlayer(
 ): Promise<PlayerHandle> {
   const descriptor = await fetchDescriptor(
     options.integrityUrl,
-    options.signal,
+    AbortSignal.any([options.signal, AbortSignal.timeout(10_000)]),
   );
   if (options.signal.aborted) throw new DOMException("Aborted", "AbortError");
   if (!Hls.isSupported()) {
     if (!options.video.canPlayType("application/vnd.apple.mpegurl"))
       throw new Error("This browser cannot play HLS video");
     options.video.src = options.manifestUrl;
-    options.onReady([]);
+    options.onReady([], false);
     return {
       destroy: () => {
         options.video.removeAttribute("src");
@@ -65,15 +67,84 @@ export async function createPlayer(
       options.onStats({ ...stats });
     },
   );
-  const hls = new Hls({
+  const peerSupported =
+    typeof RTCPeerConnection !== "undefined" && window.isSecureContext;
+  if (options.peerSharing && !peerSupported)
+    throw new Error("Peer sharing is unavailable in this browser");
+  const hlsConfig = {
     startLevel: 0,
     loader: verifiedHttpLoader(validate, (bytes) => {
       stats.httpBytes += bytes;
       options.onStats({ ...stats });
     }),
-  });
+  };
+  let hls: Hls;
+  if (options.peerSharing) {
+    // Import and instantiate peer networking only after explicit opt-in.
+    const { HlsJsP2PEngine } = await import("p2p-media-loader-hlsjs");
+    if (options.signal.aborted) throw new DOMException("Aborted", "AbortError");
+    const HlsWithP2P = HlsJsP2PEngine.injectMixin(Hls);
+    const assisted = new HlsWithP2P({
+      ...hlsConfig,
+      p2p: {
+        core: {
+          swarmId: `peerscreen:${options.mediaId}:${options.acceptedVersionId}:${descriptor.mediaVersion}`,
+          announceTrackers: [options.trackerUrl],
+          // LAN compatibility proof; external STUN and TLS belong to deployment configuration.
+          rtcConfig: { iceServers: [] },
+          isP2PDisabled: false,
+          isP2PUploadDisabled: false,
+          segmentMemoryStorageLimit: 64,
+          highDemandTimeWindow: 8,
+          httpDownloadTimeWindow: 20,
+          p2pDownloadTimeWindow: 60,
+          httpDownloadInitialTimeoutMs: 1500,
+          p2pMaxPeers: 8,
+          webRtcOffersCount: 4,
+          webRtcIceGatheringTimeoutMs: 1000,
+          validateP2PSegment: validate,
+          validateHTTPSegment: validate,
+        },
+      },
+    });
+    const peers = new Set<string>();
+    assisted.p2pEngine.addEventListener(
+      "onPeerConnect",
+      ({ peerId, infoHash }) => {
+        peers.add(`${infoHash}:${peerId}`);
+        stats.peerCount = peers.size;
+        options.onStats({ ...stats });
+      },
+    );
+    assisted.p2pEngine.addEventListener(
+      "onPeerClose",
+      ({ peerId, infoHash }) => {
+        peers.delete(`${infoHash}:${peerId}`);
+        stats.peerCount = peers.size;
+        options.onStats({ ...stats });
+      },
+    );
+    assisted.p2pEngine.addEventListener(
+      "onSegmentLoaded",
+      ({ bytesLength, downloadSource }) => {
+        if (downloadSource === "p2p") stats.peerBytes += bytesLength;
+        else stats.httpBytes += bytesLength;
+        options.onStats({ ...stats });
+      },
+    );
+    assisted.p2pEngine.addEventListener("onChunkUploaded", (bytes) => {
+      stats.uploadedBytes += bytes;
+      options.onStats({ ...stats });
+    });
+    hls = assisted;
+  } else {
+    hls = new Hls(hlsConfig);
+  }
   hls.on(Hls.Events.MANIFEST_PARSED, (_, data) =>
-    options.onReady(data.levels.map((level) => level.height)),
+    options.onReady(
+      data.levels.map((level) => level.height),
+      peerSupported,
+    ),
   );
   hls.on(Hls.Events.ERROR, (_, data) => {
     if (data.fatal)

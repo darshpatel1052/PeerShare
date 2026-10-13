@@ -13,11 +13,13 @@ export default function Watch() {
   const id = useSearchParams().get("v");
   const video = useRef<HTMLVideoElement>(null);
   const handle = useRef<PlayerHandle | null>(null);
+  const resume = useRef({ time: 0, playing: false });
   const [sharing, setSharing] = useState(false);
   const [stats, setStats] = useState(emptyStats);
   const [qualities, setQualities] = useState<number[]>([]);
   const [quality, setQuality] = useState(0);
   const [ready, setReady] = useState(false);
+  const [peerSupported, setPeerSupported] = useState(false);
   const [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
 
@@ -25,10 +27,8 @@ export default function Watch() {
     if (id !== "signal-garden" || !video.current) return;
     const controller = new AbortController();
     const element = video.current;
-    const resumeAt = Number.isFinite(element.currentTime)
-      ? element.currentTime
-      : 0;
-    const wasPlaying = !element.paused;
+    const resumeAt = resume.current.time;
+    const wasPlaying = resume.current.playing;
     setReady(false);
     setError("");
     setStats(emptyStats());
@@ -44,15 +44,18 @@ export default function Watch() {
       manifestUrl: new URL("master.m3u8", mediaBase).href,
       integrityUrl: new URL("integrity.json", mediaBase).href,
       trackerUrl,
+      mediaId: id,
+      acceptedVersionId: "fixture-v1",
       peerSharing: sharing,
       signal: controller.signal,
       onStats: (value) => {
         if (!controller.signal.aborted) setStats(value);
       },
-      onReady: (heights) => {
+      onReady: (heights, supportsPeer) => {
         if (controller.signal.aborted) return;
         setQualities(heights);
         setReady(true);
+        setPeerSupported(supportsPeer);
         element.currentTime = resumeAt;
         if (wasPlaying) void element.play().catch(() => {});
       },
@@ -73,6 +76,10 @@ export default function Watch() {
           );
       });
     return () => {
+      resume.current = {
+        time: Number.isFinite(element.currentTime) ? element.currentTime : 0,
+        playing: !element.paused,
+      };
       controller.abort();
       handle.current?.destroy();
       handle.current = null;
@@ -155,15 +162,15 @@ export default function Watch() {
                 type="checkbox"
                 checked={sharing}
                 onChange={(event) => setSharing(event.target.checked)}
-                disabled
+                disabled={!ready || !peerSupported}
                 aria-describedby="sharing-description"
               />
               Help share this video
             </label>
             <p id="sharing-description">
               Peer sharing uses your upload bandwidth. Connected peers can
-              discover your network address. The compatibility integration is
-              being verified.
+              discover your network address. You can turn sharing off at any
+              time.
             </p>
           </div>
           <details open>
