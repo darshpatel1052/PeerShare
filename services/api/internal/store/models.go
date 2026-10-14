@@ -47,10 +47,11 @@ type Video struct {
 }
 
 type Playback struct {
-	ManifestURL          string `json:"manifest_url"`
-	IntegrityURL         string `json:"integrity_url"`
-	TrackerURL           string `json:"tracker_url"`
-	PeerSharingAvailable bool   `json:"peer_sharing_available"`
+	STUNURLs             []string `json:"stun_urls"`
+	ManifestURL          string   `json:"manifest_url"`
+	IntegrityURL         string   `json:"integrity_url"`
+	TrackerURL           string   `json:"tracker_url"`
+	PeerSharingAvailable bool     `json:"peer_sharing_available"`
 }
 
 type Me struct {

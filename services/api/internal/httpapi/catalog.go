@@ -165,6 +165,6 @@ func (a *App) decorateVideo(video *store.Video, playback bool) {
 		video.ThumbnailURL = a.creatorImageURL(video.ThumbnailImageID)
 	}
 	if playback {
-		video.Playback = &store.Playback{ManifestURL: objectURL(video.ManifestKey), IntegrityURL: objectURL(video.IntegrityKey), TrackerURL: a.Config.TrackerURL, PeerSharingAvailable: true}
+		video.Playback = &store.Playback{ManifestURL: objectURL(video.ManifestKey), IntegrityURL: objectURL(video.IntegrityKey), TrackerURL: a.Config.TrackerURL, PeerSharingAvailable: true, STUNURLs: a.Config.STUNURLs}
 	}
 }

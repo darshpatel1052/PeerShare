@@ -36,6 +36,28 @@ function sourceRecord() {
 const value = async (page: Page, id: string) =>
   Number(await page.getByTestId(id).innerText());
 
+test("viewers can turn sharing off after player initialization fails", async ({
+  page,
+}) => {
+  await page.goto("/watch/?v=signal-garden");
+  await expect(page.getByTestId("player-status")).toHaveText("Ready to play");
+  await page.route("**/integrity.json", (route) =>
+    route.fulfill({ status: 503, body: "temporarily unavailable" }),
+  );
+  const choice = page.getByRole("checkbox", { name: "Help share this video" });
+  await choice.check();
+  await expect(page.getByTestId("playback-error")).toBeVisible();
+  await expect(choice).toBeEnabled();
+  await choice.uncheck();
+  await expect(choice).not.toBeChecked();
+  await page.unroute("**/integrity.json");
+  await page.getByRole("button", { name: "Retry playback" }).click();
+  await expect(page.getByTestId("player-status")).toHaveText("Ready to play");
+  await page.reload();
+  await expect(page.getByTestId("player-status")).toHaveText("Ready to play");
+  await expect(choice).not.toBeChecked();
+});
+
 async function start(page: Page) {
   await page.goto("/watch/?v=signal-garden");
   await expect(page.getByTestId("player-status")).toHaveText("Ready to play");

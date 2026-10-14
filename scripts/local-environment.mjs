@@ -74,6 +74,9 @@ export async function localEnvironment({ test = false } = {}) {
     DATABASE_URL: `postgres://peerscreen_catalog:${values.CATALOG_DB_PASSWORD}@127.0.0.1:${postgresPort}/peerscreen?sslmode=disable`,
     REDIS_URL: `redis://:${values.REDIS_PASSWORD}@127.0.0.1:${redisPort}/0`,
     APP_ENV: "development",
+    PEER_STUN_URLS: test
+      ? ""
+      : process.env.PEER_STUN_URLS || values.PEER_STUN_URLS || "",
     EXPOSE_OPERATOR_FIXTURE: test
       ? "true"
       : process.env.EXPOSE_OPERATOR_FIXTURE || "false",

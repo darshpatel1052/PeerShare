@@ -1,4 +1,12 @@
 export type IconName =
+  | "plus"
+  | "bookmark"
+  | "list"
+  | "up"
+  | "down"
+  | "chart"
+  | "trash"
+  | "lock"
   | "play"
   | "arrow"
   | "grid"
@@ -20,6 +28,32 @@ export type IconName =
   | "minimize"
   | "chevron";
 const paths: Record<IconName, React.ReactNode> = {
+  plus: <path d="M12 5v14M5 12h14" />,
+  bookmark: <path d="M6 3h12v18l-6-4-6 4V3Z" />,
+  list: (
+    <>
+      <path d="M8 6h13M8 12h13M8 18h13" />
+      <path d="M3 6h.01M3 12h.01M3 18h.01" strokeWidth="3" />
+    </>
+  ),
+  up: <path d="m6 14 6-6 6 6" />,
+  down: <path d="m6 10 6 6 6-6" />,
+  chart: (
+    <>
+      <path d="M4 3v17h17M8 15l4-5 4 2 5-7" />
+    </>
+  ),
+  trash: (
+    <>
+      <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7" />
+    </>
+  ),
+  lock: (
+    <>
+      <rect x="5" y="10" width="14" height="11" rx="2" />
+      <path d="M8 10V6a4 4 0 0 1 8 0v4M12 14v3" />
+    </>
+  ),
   pause: (
     <>
       <path d="M8 5v14M16 5v14" strokeWidth="4" />

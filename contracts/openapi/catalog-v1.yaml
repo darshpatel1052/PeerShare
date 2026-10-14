@@ -853,8 +853,105 @@ paths:
         "409": { $ref: "#/components/responses/Error" }
         "422": { $ref: "#/components/responses/Error" }
         "503": { $ref: "#/components/responses/Error" }
+  /api/v1/playback/sessions:
+    post:
+      operationId: startPlaybackMeasurements
+      description: Public published-video-only two-hour capability, bound to the current generation/attempt. No account identity is attached. Maximum 30 starts per minute per transport address, 20000 retained sessions and 200000 accepted batches globally; 30-day retention.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [video_id, generation_id, attempt_id, measurement_mode]
+              properties:
+                video_id: { type: string, format: uuid }
+                generation_id: { type: string, format: uuid }
+                attempt_id: { type: string, format: uuid }
+                measurement_mode:
+                  { type: string, enum: [verified_hls, native_hls] }
+      responses:
+        "201":
+          description: Ephemeral reporting capability; retain only in player memory. Never use as an account session.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlaybackSession" }
+        "400": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/playback/telemetry:
+    post:
+      operationId: reportPlaybackMeasurements
+      security: [{ playback: [] }]
+      description: Strict cumulative counters, sequence 1–720 and current public generation. Stable session/sequence/body replays once; changed input or regressed counters conflicts. Sequence gaps are allowed; unseen older sequences conflict. Absolute/delta and elapsed-wall-time bounds apply. Native HLS must report unknown payload as zero. At most 40 reports per minute per capability. Accepted metrics, batch hash and Kafka outbox event commit together.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [session_id, sequence, metrics]
+              properties:
+                session_id: { type: string, format: uuid }
+                sequence: { type: integer, minimum: 1, maximum: 720 }
+                metrics: { $ref: "#/components/schemas/PlaybackMetrics" }
+      responses:
+        "200":
+          description: Highest accepted sequence and current qualifying-play state.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlaybackAck" }
+        "400": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/channels/{id}/analytics:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    get:
+      operationId: creatorAnalytics
+      security: [{ session: [] }]
+      description: Owner-only thirty-day browser-reported measurements. Totals cover all nondeleted owned videos, including unpublished ones; detail table is bounded to the latest 200 videos. Qualifying plays count one session reaching 30 seconds, or half a shorter video with a one-second minimum. Not unique viewers, wire bytes or billed savings.
+      responses:
+        "200":
+          description: Consistent totals and per-video observations; zero-denominator ratios and missing startup averages are null.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CreatorAnalytics" }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/videos/{id}/analytics:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    get:
+      operationId: videoAnalytics
+      security: [{ session: [] }]
+      description: Same owner-only measurement contract scoped to one nondeleted video.
+      responses:
+        "200":
+          description: Totals and one video row.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CreatorAnalytics" }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
 components:
   securitySchemes:
+    playback:
+      type: apiKey
+      in: header
+      name: Playback-Token
+      description: Random temporary playback capability, stored only as SHA-256; grants reporting for one public generation, never account permissions.
     session:
       type: apiKey
       in: cookie
@@ -879,6 +976,96 @@ components:
         application/json:
           schema: { $ref: "#/components/schemas/APIError" }
   schemas:
+    PlaybackSession:
+      type: object
+      required: [session_id, token, expires_at, measurement_mode]
+      properties:
+        session_id: { type: string, format: uuid }
+        token: { type: string, minLength: 43, maxLength: 43 }
+        expires_at: { type: string, format: date-time }
+        measurement_mode: { type: string, enum: [verified_hls, native_hls] }
+    PlaybackMetrics:
+      type: object
+      additionalProperties: false
+      required:
+        [
+          played_ms,
+          http_bytes,
+          peer_bytes,
+          uploaded_bytes,
+          rebuffer_ms,
+          rebuffer_count,
+          verified_segments,
+          rejected_segments,
+          quality,
+          peer_sharing,
+          startup_ms,
+        ]
+      properties:
+        played_ms: { type: integer, minimum: 0, maximum: 7200000 }
+        http_bytes: { type: integer, minimum: 0, maximum: 2147483648 }
+        peer_bytes: { type: integer, minimum: 0, maximum: 2147483648 }
+        uploaded_bytes: { type: integer, minimum: 0, maximum: 17179869184 }
+        rebuffer_ms: { type: integer, minimum: 0, maximum: 7200000 }
+        rebuffer_count: { type: integer, minimum: 0, maximum: 10000 }
+        verified_segments: { type: integer, minimum: 0, maximum: 100000 }
+        rejected_segments: { type: integer, minimum: 0, maximum: 100000 }
+        quality: { type: integer, minimum: 0, maximum: 720 }
+        peer_sharing: { type: boolean }
+        startup_ms: { type: [integer, "null"], minimum: 0, maximum: 120000 }
+    PlaybackAck:
+      type: object
+      required: [last_sequence, duplicate, qualified]
+      properties:
+        last_sequence: { type: integer, minimum: 1, maximum: 720 }
+        duplicate: { type: boolean }
+        qualified: { type: boolean }
+    PlaybackTotals:
+      type: object
+      required:
+        [
+          sessions,
+          qualified_plays,
+          played_ms,
+          http_bytes,
+          peer_bytes,
+          uploaded_bytes,
+          rebuffer_ms,
+          rebuffer_count,
+          verified_sessions,
+          native_sessions,
+          startup_average_ms,
+          peer_delivery_share,
+        ]
+      properties:
+        sessions: { type: integer, minimum: 0 }
+        qualified_plays: { type: integer, minimum: 0 }
+        played_ms: { type: integer, minimum: 0 }
+        http_bytes: { type: integer, minimum: 0 }
+        peer_bytes: { type: integer, minimum: 0 }
+        uploaded_bytes: { type: integer, minimum: 0 }
+        rebuffer_ms: { type: integer, minimum: 0 }
+        rebuffer_count: { type: integer, minimum: 0 }
+        verified_sessions: { type: integer, minimum: 0 }
+        native_sessions: { type: integer, minimum: 0 }
+        startup_average_ms: { type: [number, "null"], minimum: 0 }
+        peer_delivery_share: { type: [number, "null"], minimum: 0, maximum: 1 }
+    CreatorAnalytics:
+      type: object
+      required: [period_days, totals, videos]
+      properties:
+        period_days: { type: integer, enum: [30] }
+        totals: { $ref: "#/components/schemas/PlaybackTotals" }
+        videos:
+          type: array
+          maxItems: 200
+          items:
+            type: object
+            required: [video_id, title, totals]
+            properties:
+              video_id: { type: string, format: uuid }
+              title: { type: string }
+              totals: { $ref: "#/components/schemas/PlaybackTotals" }
     Subscription:
       type: object
       required: [following, followers]
@@ -1141,6 +1328,11 @@ components:
         integrity_url: { type: string, format: uri }
         tracker_url: { type: string, format: uri }
         peer_sharing_available: { type: boolean }
+        stun_urls:
+          type: array
+          maxItems: 3
+          items: { type: string }
+          description: Trusted runtime STUN-only URLs; empty by default. Contacted only after explicit sharing consent.
     VideoPreview:
       type: object
       required:

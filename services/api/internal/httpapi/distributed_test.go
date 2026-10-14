@@ -155,6 +155,17 @@ func TestIntegrationDistributedUploadKafkaAcceptanceAndProjection(t *testing.T) 
 	if err != nil || accepted.State != "ready" || accepted.Attempts != 1 {
 		t.Fatal("coordinator did not accept one attempt", err)
 	}
+	// Freeze background projection to exercise a real accepted encode with a
+	// deliberately lagging catalogue, rather than relying on a timing race.
+	cancel()
+	for _, done := range []chan struct{}{appDone, mediaDone, workerDone} {
+		select {
+		case <-done:
+		case <-time.After(10 * time.Second):
+			t.Fatal("background processing did not stop")
+		}
+	}
+	ctx = context.Background()
 	t.Run("accepted-completion-response-replay", func(t *testing.T) {
 		r := &pb.CompleteRequest{Attempt: &pb.Attempt{JobId: accepted.Spec.JobId, AttemptId: accepted.AttemptId, WorkerId: accepted.WorkerId, LeaseEpoch: accepted.LeaseEpoch}, OutputDescriptorKey: "videos/" + accepted.Spec.VideoId + "/" + accepted.Spec.GenerationId + "/" + accepted.AttemptId + "/output.json"}
 		for range 2 {
@@ -198,6 +209,40 @@ func TestIntegrationDistributedUploadKafkaAcceptanceAndProjection(t *testing.T) 
 		current, e := f.DB.Upload(ctx, me.User.ID, upload.ID)
 		if e != nil || current.ProcessingState != "ready" {
 			t.Fatal("replayed event regressed state", e)
+		}
+	})
+	t.Run("completion-wins-late-cancel-and-repairs-seen-snapshot", func(t *testing.T) {
+		mustExec(t, f, "UPDATE catalog.processing_jobs SET state='running',media_version=media_version-1 WHERE id=$1", accepted.Spec.JobId)
+		mustExec(t, f, "UPDATE catalog.videos SET processing_state='processing' WHERE id=$1", upload.VideoID)
+		if e := f.DB.MutateJob(ctx, me.User.ID, upload.VideoID, false); e != nil {
+			t.Fatal(e)
+		}
+		protected, e := f.App.attemptReferenced(ctx, upload.VideoID, accepted.Spec.GenerationId, accepted.AttemptId)
+		if e != nil || !protected {
+			t.Fatal("accepted output was exposed to cleanup", e)
+		}
+		f.App.dispatchSubmissions(ctx)
+		current, e := f.DB.Upload(ctx, me.User.ID, upload.ID)
+		if e != nil || current.ProcessingState != "ready" {
+			t.Fatal("late cancel hid completed video", e)
+		}
+		accepted, e = catalog.GetJob(ctx, &pb.JobRequest{JobId: accepted.Spec.JobId})
+		if e != nil {
+			t.Fatal(e)
+		}
+		// Repair the old bug's persisted state: the same snapshot is already in
+		// the inbox, but a locally queued retry hid it. No re-encode is needed.
+		mustExec(t, f, "UPDATE catalog.processing_jobs SET state='queued' WHERE id=$1", accepted.Spec.JobId)
+		mustExec(t, f, "UPDATE catalog.videos SET processing_state='pending' WHERE id=$1", upload.VideoID)
+		if e = f.DB.ApplyMediaSnapshot(ctx, accepted); e != nil {
+			t.Fatal(e)
+		}
+		current, e = f.DB.Upload(ctx, me.User.ID, upload.ID)
+		if e != nil || current.ProcessingState != "ready" {
+			t.Fatal("seen completion did not repair local retry", e)
+		}
+		if e = f.DB.MutateJob(ctx, me.User.ID, upload.VideoID, true); e != store.ErrUploadConflict {
+			t.Fatal("ready video accepted retry", e)
 		}
 	})
 	status, _, _ = request(t, c, f.Server.URL, "POST", "/api/v1/videos/"+upload.VideoID+"/publish", map[string]any{}, nil)

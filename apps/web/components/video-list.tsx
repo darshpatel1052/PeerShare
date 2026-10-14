@@ -6,7 +6,7 @@ import { useResource } from "../lib/use-resource";
 import { useAuth } from "./auth-provider";
 import { Avatar, Icon, LoadingState } from "./ui";
 
-function VideoCard({
+export function VideoCard({
   item,
   featured = false,
 }: {
@@ -70,50 +70,72 @@ export default function VideoList({
   channelID,
   featured = false,
   owner = false,
+  following = false,
 }: {
   channelID?: string;
   featured?: boolean;
   owner?: boolean;
+  following?: boolean;
 }) {
   const [cursor, setCursor] = useState<string | null>(null);
-  const [items, setItems] = useState<Video[]>([]);
+  const [collection, setCollection] = useState<{
+    scope: string;
+    items: Video[];
+  }>({ scope: "", items: [] });
   const [query, setQuery] = useState("");
+  const [search, setSearch] = useState("");
+  const scope = `${channelID ?? "all"}:${following}:${search}`;
+  const items = collection.scope === scope ? collection.items : [];
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(query.trim());
+      setCursor(null);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [query]);
   const { me } = useAuth();
   const params = new URLSearchParams({ limit: "12" });
   if (channelID) params.set("channel_id", channelID);
   if (cursor) params.set("cursor", cursor);
+  if (search) params.set("q", search);
+  if (following) params.set("feed", "following");
   const { state, retry } = useResource<VideosPage>(`/videos?${params}`);
   useEffect(() => {
-    if (state.status === "ready")
-      setItems((previous) =>
-        cursor
+    if (state.status !== "ready") return;
+    setCollection((previous) => {
+      const old = previous.scope === scope ? previous.items : [];
+      return {
+        scope,
+        items: cursor
           ? [
-              ...previous,
+              ...old,
               ...state.value.items.filter(
-                (item) => !previous.some((old) => old.id === item.id),
+                (item) => !old.some((value) => value.id === item.id),
               ),
             ]
           : state.value.items,
-      );
-  }, [state, cursor]);
-  const matches = items.filter((item) =>
-    `${item.title} ${item.channel_title} ${item.tags.join(" ")}`
-      .toLowerCase()
-      .includes(query.trim().toLowerCase()),
-  );
+      };
+    });
+  }, [state, cursor, scope]);
+  const matches = items;
   return (
     <section
       className="catalogue"
       aria-label="Published videos"
       aria-busy={state.status === "loading"}
     >
-      {featured && (
+      {(featured || following) && (
         <div className="explore-heading">
           <div>
             <h1>
-              Explore<span className="accent-dot">.</span>
+              {following ? "Following" : "Explore"}
+              <span className="accent-dot">.</span>
             </h1>
-            <p className="muted">Discover the latest from creators.</p>
+            <p className="muted">
+              {following
+                ? "The latest from channels you follow."
+                : "Discover the latest from creators."}
+            </p>
           </div>
           <Link
             className="secondary-button"
@@ -124,16 +146,18 @@ export default function VideoList({
           </Link>
         </div>
       )}
-      {(featured || items.length > 0) && (
+      <>
         <div className="catalogue-toolbar">
           <div className="catalogue-label">
             <Icon name="film" />
             <span>
               {query
                 ? "Search results"
-                : channelID
-                  ? "All videos"
-                  : "Latest videos"}
+                : following
+                  ? "Following"
+                  : channelID
+                    ? "All videos"
+                    : "Latest videos"}
             </span>
             <span className="count-badge">
               {query ? matches.length : items.length}
@@ -142,7 +166,8 @@ export default function VideoList({
           <div className="catalogue-search">
             <Icon name="search" />
             <input
-              aria-label="Search loaded videos"
+              aria-label="Search videos"
+              maxLength={120}
               placeholder="Search videos"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -158,7 +183,7 @@ export default function VideoList({
             )}
           </div>
         </div>
-      )}
+      </>
       {state.status === "loading" && (
         <LoadingState
           label={items.length ? "Loading more videos…" : "Loading videos…"}
@@ -170,7 +195,7 @@ export default function VideoList({
           <button onClick={retry}>Retry videos</button>
         </div>
       )}
-      {state.status === "ready" && items.length === 0 && (
+      {state.status === "ready" && items.length === 0 && !search && (
         <div className="empty-channel">
           <div className="empty-frame">
             <Icon name="film" />
@@ -180,7 +205,9 @@ export default function VideoList({
           <p className="muted">
             {channelID
               ? "No videos have been published on this channel yet."
-              : "There are no published videos to explore yet."}
+              : following
+                ? "Follow channels to see their latest videos here."
+                : "There are no published videos to explore yet."}
           </p>
           {owner && (
             <p className="empty-hint">Publish your first video from Studio.</p>
@@ -191,7 +218,7 @@ export default function VideoList({
           </Link>
         </div>
       )}
-      {query && matches.length === 0 && items.length > 0 && (
+      {search && state.status === "ready" && matches.length === 0 && (
         <div className="search-empty">
           <Icon name="search" />
           <h2>No matching videos</h2>
@@ -215,11 +242,6 @@ export default function VideoList({
           Load more
           <Icon name="arrow" />
         </button>
-      )}
-      {query && state.status === "ready" && state.value.next_cursor && (
-        <p className="search-scope muted">
-          Search covers loaded videos. Load more to include the next page.
-        </p>
       )}
     </section>
   );

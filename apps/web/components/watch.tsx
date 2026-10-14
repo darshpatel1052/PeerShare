@@ -1,13 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Avatar, Icon, LoadingState } from "./ui";
 import WatchSidebar from "./watch-sidebar";
 import VideoPlayer from "./video-player";
 import { resourceID, duration, type VideoDetail } from "../lib/api";
 import { useResource } from "../lib/use-resource";
+import { type PlaylistDetail } from "../lib/api";
+import {
+  createPlaybackCapture,
+  type PlaybackCapture,
+} from "../lib/playback-capture";
+import SaveVideo from "./save-video";
+import PlaylistQueue from "./playlist-queue";
 import {
   createPlayer,
   emptyStats,
@@ -15,7 +22,14 @@ import {
 } from "@peerscreen/player";
 
 export default function Watch() {
-  const id = resourceID(useSearchParams().get("v"), "video");
+  const params = useSearchParams();
+  const router = useRouter();
+  const id = resourceID(params.get("v"), "video");
+  const playlistID = resourceID(params.get("playlist"), "playlist");
+  const autoplay = params.get("autoplay") === "1" && Boolean(playlistID);
+  const queue = useResource<PlaylistDetail>(
+    playlistID ? `/playlists/${playlistID}` : null,
+  );
   const resource = useResource<VideoDetail>(id ? `/videos/${id}` : null);
   const metadata =
     resource.state.status === "ready" ? resource.state.value : undefined;
@@ -23,6 +37,8 @@ export default function Watch() {
   const video = useRef<HTMLVideoElement>(null);
   const handle = useRef<PlayerHandle | null>(null);
   const resume = useRef({ time: 0, playing: false });
+  const capture = useRef<PlaybackCapture | null>(null);
+  const autoplayAttempt = useRef("");
   const [sharing, setSharing] = useState(false);
   const [stats, setStats] = useState(emptyStats);
   const [qualities, setQualities] = useState<number[]>([]);
@@ -31,18 +47,60 @@ export default function Watch() {
   const [peerSupported, setPeerSupported] = useState(false);
   const [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
+  const [reporting, setReporting] = useState("Waiting for playback");
+  const [mode, setMode] = useState<"verified_hls" | "native_hls">(
+    "verified_hls",
+  );
+  const consentKey = metadata
+    ? `peerscreen:sharing:${metadata.id}:${metadata.accepted_generation_id}:${metadata.accepted_attempt_id}`
+    : "";
+  useEffect(() => {
+    if (!metadata || !video.current) return;
+    const observer = createPlaybackCapture(
+      video.current,
+      metadata,
+      setReporting,
+    );
+    capture.current = observer;
+    return () => {
+      observer.destroy();
+      if (capture.current === observer) capture.current = null;
+    };
+  }, [metadata]);
+  useEffect(() => {
+    const element = video.current;
+    if (!element || !playlistID || queue.state.status !== "ready" || !metadata)
+      return;
+    const items = queue.state.value.items.flatMap((item) =>
+      item.video ? [item.video] : [],
+    );
+    const index = items.findIndex((item) => item.id === metadata.id);
+    const next = index >= 0 ? items[index + 1] : undefined;
+    const ended = () => {
+      if (next && next.id !== metadata.id)
+        router.push(`/watch?v=${next.id}&playlist=${playlistID}&autoplay=1`);
+    };
+    element.addEventListener("ended", ended);
+    return () => element.removeEventListener("ended", ended);
+  }, [queue.state, metadata, playlistID, router]);
 
   useEffect(() => {
     if (!metadata || !video.current) return;
-    if (activeID.current !== metadata.id) {
-      activeID.current = metadata.id;
+    if (activeID.current !== consentKey) {
+      activeID.current = consentKey;
       resume.current = { time: 0, playing: false };
-      setSharing(false);
+      let remembered = false;
+      try {
+        remembered = sessionStorage.getItem(consentKey) === "true";
+      } catch {}
+      setSharing(remembered);
+      if (remembered !== sharing) return;
     }
     const controller = new AbortController();
     const element = video.current;
     const resumeAt = resume.current.time;
     const wasPlaying = resume.current.playing;
+    capture.current?.beginConnection(sharing);
     setReady(false);
     setError("");
     setStats(emptyStats());
@@ -55,17 +113,26 @@ export default function Watch() {
       mediaId: metadata.id,
       acceptedVersionId: `${metadata.accepted_generation_id}:${metadata.accepted_attempt_id}`,
       peerSharing: sharing,
+      stunUrls: metadata.playback.stun_urls ?? [],
       signal: controller.signal,
       onStats: (value) => {
-        if (!controller.signal.aborted) setStats(value);
+        if (!controller.signal.aborted) {
+          setStats(value);
+          capture.current?.updateStats(value);
+        }
       },
-      onReady: (heights, supportsPeer) => {
+      onReady: (heights, supportsPeer, measurementMode) => {
         if (controller.signal.aborted) return;
         setQualities(heights);
         setReady(true);
         setPeerSupported(supportsPeer);
+        setMode(measurementMode);
+        capture.current?.ready(measurementMode);
         element.currentTime = resumeAt;
-        if (wasPlaying) void element.play().catch(() => {});
+        const startPlaylist =
+          autoplay && autoplayAttempt.current !== metadata.id;
+        if (startPlaylist) autoplayAttempt.current = metadata.id;
+        if (wasPlaying || startPlaylist) void element.play().catch(() => {});
       },
       onError: (message) => {
         if (!controller.signal.aborted) setError(message);
@@ -89,10 +156,11 @@ export default function Watch() {
         playing: !element.paused,
       };
       controller.abort();
+      capture.current?.finishConnection();
       handle.current?.destroy();
       handle.current = null;
     };
-  }, [metadata, sharing, retry]);
+  }, [metadata, sharing, retry, consentKey, autoplay]);
 
   if (
     !id ||
@@ -154,7 +222,11 @@ export default function Watch() {
               className="player-status"
             >
               <span className={ready ? "status-dot ready" : "status-dot"} />
-              {ready ? "Ready to play" : "Preparing video…"}
+              {ready
+                ? "Ready to play"
+                : error
+                  ? "Playback unavailable"
+                  : "Preparing video…"}
             </span>
           </div>
           {error && (
@@ -166,6 +238,7 @@ export default function Watch() {
             </div>
           )}
           <h1 className="watch-title">{item.title}</h1>
+          <SaveVideo videoID={item.id} />
           <Link className="creator" href={`/channel?id=${item.channel_id}`}>
             <Avatar name={item.channel_title} />
             <span>
@@ -184,20 +257,29 @@ export default function Watch() {
                 type="checkbox"
                 className="sharing-toggle"
                 checked={sharing}
-                onChange={(event) => setSharing(event.target.checked)}
+                onChange={(event) => {
+                  setSharing(event.target.checked);
+                  try {
+                    sessionStorage.setItem(
+                      consentKey,
+                      String(event.target.checked),
+                    );
+                  } catch {}
+                }}
                 disabled={
-                  !ready ||
-                  !peerSupported ||
-                  !item.playback.peer_sharing_available
+                  !sharing &&
+                  (!ready ||
+                    !peerSupported ||
+                    !item.playback.peer_sharing_available)
                 }
                 aria-describedby="sharing-description"
               />
               Help share this video
             </label>
             <p id="sharing-description">
-              Peer sharing uses your upload bandwidth. Connected peers can
-              discover your network address. You can turn sharing off at any
-              time.
+              Sharing uses your upload bandwidth. Other viewers and discovery
+              services can see your network address. Your choice is remembered
+              for this video in this tab. You can turn it off at any time.
             </p>
           </div>
           <details className="delivery-details">
@@ -208,7 +290,9 @@ export default function Watch() {
             <dl className="stats">
               <div className="stat">
                 <dt>HTTP media bytes</dt>
-                <dd data-testid="http-bytes">{stats.httpBytes}</dd>
+                <dd data-testid="http-bytes">
+                  {mode === "native_hls" ? "Unavailable" : stats.httpBytes}
+                </dd>
               </div>
               <div className="stat">
                 <dt>Peer media bytes</dt>
@@ -224,9 +308,34 @@ export default function Watch() {
               </div>
             </dl>
             <p className="muted">
-              Completed media payload bytes received since the player last
-              connected. These are not network wire bytes or billed delivery.
+              {mode === "native_hls"
+                ? "This browser's native player does not expose verified media payload measurements."
+                : "Completed media payload bytes received since the player last connected. These are not network wire bytes or billed delivery."}
             </p>
+            <p className="muted" data-testid="reporting-status">
+              {reporting}
+            </p>
+            <button
+              className="secondary-button"
+              disabled={!ready}
+              onClick={() => {
+                const report = capture.current?.report();
+                if (!report) return;
+                const url = URL.createObjectURL(
+                  new Blob([JSON.stringify(report, null, 2)], {
+                    type: "application/json",
+                  }),
+                );
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `peerscreen-${item.id}-playback.json`;
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 2000);
+              }}
+            >
+              Download playback report
+              <Icon name="arrow" />
+            </button>
             <p className="muted">
               Verified segments:{" "}
               <span data-testid="verified-segments">
@@ -239,7 +348,12 @@ export default function Watch() {
             </p>
           </details>
         </section>
-        <WatchSidebar video={item} />
+        <div className="watch-side-column">
+          <WatchSidebar video={item} />
+          {playlistID && (
+            <PlaylistQueue playlistID={playlistID} videoID={item.id} />
+          )}
+        </div>
       </div>
     </main>
   );

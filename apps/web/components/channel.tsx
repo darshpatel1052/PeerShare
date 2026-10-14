@@ -7,6 +7,7 @@ import { useResource } from "../lib/use-resource";
 import { useAuth } from "./auth-provider";
 import { Avatar, ChannelCover, Icon, LoadingState } from "./ui";
 import VideoList from "./video-list";
+import FollowButton from "./follow-button";
 
 export default function ChannelPage() {
   const id = resourceID(useSearchParams().get("id"), "channel");
@@ -77,6 +78,7 @@ export default function ChannelPage() {
           </p>
         </div>
         <div className="channel-actions">
+          <FollowButton channelID={channel.id} owner={isOwner} />
           {isOwner ? (
             <Link className="button" href="/account">
               <Icon name="settings" />

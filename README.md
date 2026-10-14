@@ -1,8 +1,21 @@
 # PeerScreen
 
-A video publishing application with opt-in peer-assisted delivery and verified HTTP fallback. The implementation follows the [project brief](docs/project-brief.md) in tested checkpoints.
+A video platform for publishing films, following creators and building playlists, with opt-in peer delivery and a creator analytics workspace.
 
-**Phase 3 is complete locally:** separate catalogue, media coordinator and worker services use authenticated gRPC, real Kafka notifications, durable outboxes and lease/epoch recovery. Supported new uploads produce 480p/720p HLS. Creator accounts, resumable uploads, private preview, publishing and the verified HTTP/peer player remain working. Storage uses persistent local directories or Docker volumes; S3 and public deployment remain later work.
+Creators upload an MP4, choose artwork, preview it and publish a watch link. Viewers search the catalogue, follow channels, save private or public playlists and play them in order. Creators can see watch time, qualified plays and HTTP/peer delivery in Analytics. Google sign-in and email accounts use the same owned channel and workspace.
+
+The current app runs locally with persistent data. New supported uploads produce 480p/720p HLS. Public hosting, S3 storage and cross-network peer validation remain separate milestones; no AWS resources have been provisioned.
+
+| Build a feature                       | Learn the concepts behind it                                      |
+| ------------------------------------- | ----------------------------------------------------------------- |
+| Follow a creator and browse Following | Many-to-many relationships, uniqueness, filtered SQL queries      |
+| Search videos beyond the current page | PostgreSQL text search, indexes, cursor pagination                |
+| Save and share an ordered playlist    | Parent/child tables, transactions, ownership, revisions           |
+| Watch a playlist with custom controls | React effects, URL state, media events, component composition     |
+| Inspect creator analytics             | Go structs, nullable values, cumulative measurements, aggregation |
+| Receive verified peer video           | HLS, WebRTC, explicit consent, segment hashing, HTTP fallback     |
+
+Start learning with the [Phase 4 feature guide and hands-on exercises](docs/learning/phase-4/README.md).
 
 ## Start locally
 
@@ -16,6 +29,8 @@ npm run demo
 ```
 
 Open `http://localhost:3000`. Sign in/create a channel through **Workspace**, then open **Studio**. Select an MP4 up to 250 MiB/10 minutes, add metadata, upload, preview the processed draft, and publish it. It appears on your channel and Explore with a public watch link. For an interrupted upload, reselect the original file and choose **Resume with selected file**. Pause, cancel, bounded retry, metadata edits, unpublish and delete are available. The demo starts real PostgreSQL/Redis, applies migrations, retains the operator fixture, starts Go and serves the exported frontend with an API proxy.
+
+On another creator's channel, choose **Follow** to populate **Following**. On a watch page, choose **Save** and select a playlist created in **Library**. Open that playlist to reorder videos, change its visibility or choose **Play playlist**. **Workspace → Analytics** shows your channel's last 30 days of playback reports. Empty dashboards stay empty until somebody watches your published videos.
 
 Stop the native demo with Ctrl+C before choosing another mode:
 
@@ -62,13 +77,13 @@ npm run test:distributed-recovery
 npm run test:containers
 ```
 
-Current verification covers 8 named JavaScript unit cases, 43 top-level Go cases (67 including named subcases) and 19 production Chromium cases, plus actual broker/coordinator/worker/API crash recovery and a packaged-container upload check. Go integration uses the race detector and real PostgreSQL/Redis/Kafka/gRPC/FFmpeg. Browser tests use the production export. Integration, browser, recovery and container runners share the separate disposable `peerscreen-test` project, so run them sequentially. They remove only that project's test volumes; normal app data persists. CI recreates these checks and retains raw evidence. Historical Phase 1/2 crash runners explicitly use the development-only legacy executor; Phase 3 browser/recovery/container checks use the separate services.
+The checks protect ownership, publication, uploads and the viewer journeys. Go integration uses real PostgreSQL/Redis/Kafka/gRPC/FFmpeg; browser checks use the production frontend. Run dependency-based suites sequentially: they share the disposable `peerscreen-test` project and remove only its volumes. Normal app data persists. Current results and their scope are in [Phase 4 evidence](docs/evidence/phase-4/README.md); historical service-recovery experiments remain in the Phase 3 record.
 
 ## Try peer delivery
 
-Open the same watch video in three separate browser profiles/contexts, choose 360p and enable **Help share this video** in each. Overlapping playback and cached segments improve the chance of sharing. The details panel shows verified received media bytes by source and uploaded peer payload separately. Peers/network conditions can prevent sharing; HTTP stays available.
+Open the same uploaded video in separate browser profiles, choose the same quality and enable **Help share this video** in each. Overlapping playback and cached segments improve the chance of sharing. **Connection details** shows received HTTP/peer payload and uploaded peer payload. You can download a playback report for a device exercise. Peers/network conditions can prevent sharing; HTTP stays available.
 
-Sharing starts off. Opting in spends upload bandwidth and exposes network addresses to connected peers. Turning it off closes peer connections and keeps HTTP playback. Current peer proof uses loopback, a local tracker and no external STUN. To exercise a separate media origin in the native production demo, use `MEDIA_BASE_URL=http://localhost:3001/ npm run demo`; these URLs now come from the API at runtime.
+Sharing starts off for each video/version in a new tab. Your choice is remembered for that video within the tab. Opting in spends upload bandwidth and exposes network addresses to peers/discovery services. Turning it off closes peer connections and keeps HTTP playback, including after an initialization error. Local automated peer checks use loopback, a local tracker and no external STUN. Optional STUN is described in the [device exercise](docs/learning/phase-4/04-device-exercise.md).
 
 ## Current limits
 
@@ -82,7 +97,7 @@ Phase 0's historical [evidence](docs/evidence/milestone-0.md) and [ADR](docs/adr
 
 ## Product interface
 
-The UI redesign adds a graphite/lime visual identity, a light theme, a media-led catalogue, branded channel pages, a creator workspace and a focused player. Search filters loaded videos; channel tabs, keyboard navigation, copy-link and theme persistence work. The creator studio now provides actual source upload, private preview and owner publication.
+The UI shares graphite/lime colours, a light theme, creator artwork and custom player controls. Catalogue search runs on the server before pagination. Following, Library, playlists and Analytics use the same components and responsive styling. Appearance lives under Workspace Settings.
 
 See [the UI learning notes](docs/learning/ui-design.md) for design tokens, component responsibilities and browser state, and [the UI evidence](docs/evidence/ui-redesign.md) for screenshots and actual checks.
 

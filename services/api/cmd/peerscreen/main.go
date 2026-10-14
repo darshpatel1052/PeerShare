@@ -132,10 +132,16 @@ func run() error {
 	defer workerCancel()
 	workerDone := make(chan struct{})
 	go func() { defer close(workerDone); app.RunMediaWorker(workerCtx) }()
+	playbackDone := make(chan struct{})
+	go func() { defer close(playbackDone); app.RunPlaybackRelay(workerCtx) }()
 	defer func() {
 		workerCancel()
 		select {
 		case <-workerDone:
+		case <-time.After(5 * time.Second):
+		}
+		select {
+		case <-playbackDone:
 		case <-time.After(5 * time.Second):
 		}
 	}()

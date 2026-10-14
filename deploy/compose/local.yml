@@ -1,6 +1,7 @@
 x-api-environment: &api-environment
   GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
   GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+  PEER_STUN_URLS: ${PEER_STUN_URLS:-}
   EXPOSE_OPERATOR_FIXTURE: ${EXPOSE_OPERATOR_FIXTURE:-false}
   APP_ENV: development
   APP_ORIGIN: http://localhost:${PEERSCREEN_WEB_PORT:-3000}
@@ -118,7 +119,7 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command:
       - >-
-        for topic in peerscreen.media.dispatch.v1 peerscreen.media.lifecycle.v1 peerscreen.events.dlq.v1; do
+        for topic in peerscreen.media.dispatch.v1 peerscreen.media.lifecycle.v1 peerscreen.playback.telemetry.v1 peerscreen.events.dlq.v1; do
         /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic "$$topic" --partitions 3 --replication-factor 1 --config retention.ms=86400000 --config retention.bytes=67108864 || exit 1;
         done
     depends_on: { kafka: { condition: service_healthy } }

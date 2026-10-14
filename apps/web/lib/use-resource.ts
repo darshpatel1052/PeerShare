@@ -6,31 +6,40 @@ type Resource<T> =
   | { status: "ready"; value: T }
   | { status: "error"; error: ApiError };
 export function useResource<T>(path: string | null) {
-  const [state, setState] = useState<Resource<T>>({ status: "loading" });
+  const [resource, setResource] = useState<{
+    path: string | null;
+    state: Resource<T>;
+  }>({ path: null, state: { status: "loading" } });
   const [revision, setRevision] = useState(0);
   useEffect(() => {
     if (!path) return;
     const controller = new AbortController();
-    setState({ status: "loading" });
+    setResource({ path, state: { status: "loading" } });
     api<T>(path, { signal: controller.signal })
       .then((value) => {
-        if (!controller.signal.aborted) setState({ status: "ready", value });
+        if (!controller.signal.aborted)
+          setResource({ path, state: { status: "ready", value } });
       })
       .catch((cause: unknown) => {
         if (!controller.signal.aborted)
-          setState({
-            status: "error",
-            error:
-              cause instanceof ApiError
-                ? cause
-                : new ApiError(
-                    0,
-                    "request_failed",
-                    "The request could not be completed.",
-                  ),
+          setResource({
+            path,
+            state: {
+              status: "error",
+              error:
+                cause instanceof ApiError
+                  ? cause
+                  : new ApiError(
+                      0,
+                      "request_failed",
+                      "The request could not be completed.",
+                    ),
+            },
           });
       });
     return () => controller.abort();
   }, [path, revision]);
+  const state: Resource<T> =
+    resource.path === path ? resource.state : { status: "loading" };
   return { state, retry: () => setRevision((value) => value + 1) };
 }

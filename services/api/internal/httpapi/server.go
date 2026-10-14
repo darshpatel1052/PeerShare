@@ -94,6 +94,7 @@ func (a *App) Handler() http.Handler {
 	a.registerImages(mux)
 	a.registerGoogle(mux)
 	a.registerLibrary(mux)
+	a.registerPlayback(mux)
 	for path, allowed := range map[string]string{"/api/v1/auth/register": "POST", "/api/v1/auth/login": "POST", "/api/v1/auth/logout": "POST", "/api/v1/auth/logout-all": "POST", "/api/v1/me": "GET, HEAD", "/api/v1/channels": "POST", "/api/v1/channels/{id}": "GET, HEAD, PATCH", "/api/v1/videos": "GET, HEAD", "/api/v1/videos/{id}": "GET, HEAD, PATCH, DELETE"} {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Allow", allowed)
@@ -191,6 +192,12 @@ func (a *App) storeError(w http.ResponseWriter, r *http.Request, err error) {
 		a.error(w, r, 422, "library_capacity", "Your library has reached its limit. Remove an item before adding another.")
 	case errors.Is(err, store.ErrLibraryConflict):
 		a.error(w, r, 409, "library_conflict", "This request conflicts with the saved playlist. Reload before trying again.")
+	case errors.Is(err, store.ErrPlaybackConflict):
+		a.error(w, r, 409, "telemetry_conflict", "This playback batch conflicts with an accepted sequence or cumulative counter.")
+	case errors.Is(err, store.ErrPlaybackInvalid):
+		a.error(w, r, 422, "invalid_telemetry", "Measurements exceed this playback session's limits or expected state.")
+	case errors.Is(err, store.ErrPlaybackCapacity):
+		a.error(w, r, 429, "telemetry_capacity", "Playback measurement capacity is currently full.")
 	case errors.Is(err, store.ErrUploadLimit):
 		a.error(w, r, 429, "upload_capacity", "Upload capacity is currently full. Finish or cancel an existing upload first.")
 	case errors.Is(err, store.ErrUploadConflict):

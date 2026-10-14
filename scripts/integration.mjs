@@ -40,7 +40,8 @@ try {
     );
     for (const line of error.output.trim().split("\n")) {
       const event = JSON.parse(line);
-      if (event.Action === "output") process.stderr.write(event.Output);
+      if (event.Action === "output" || event.Action === "build-output")
+        process.stderr.write(event.Output);
     }
   }
   console.error(error.message);

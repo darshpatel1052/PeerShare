@@ -701,10 +701,134 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/playback/sessions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Public published-video-only two-hour capability, bound to the current generation/attempt. No account identity is attached. Maximum 30 starts per minute per transport address, 20000 retained sessions and 200000 accepted batches globally; 30-day retention. */
+    post: operations["startPlaybackMeasurements"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/playback/telemetry": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Strict cumulative counters, sequence 1–720 and current public generation. Stable session/sequence/body replays once; changed input or regressed counters conflicts. Sequence gaps are allowed; unseen older sequences conflict. Absolute/delta and elapsed-wall-time bounds apply. Native HLS must report unknown payload as zero. At most 40 reports per minute per capability. Accepted metrics, batch hash and Kafka outbox event commit together. */
+    post: operations["reportPlaybackMeasurements"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/channels/{id}/analytics": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    /** @description Owner-only thirty-day browser-reported measurements. Totals cover all nondeleted owned videos, including unpublished ones; detail table is bounded to the latest 200 videos. Qualifying plays count one session reaching 30 seconds, or half a shorter video with a one-second minimum. Not unique viewers, wire bytes or billed savings. */
+    get: operations["creatorAnalytics"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/videos/{id}/analytics": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    /** @description Same owner-only measurement contract scoped to one nondeleted video. */
+    get: operations["videoAnalytics"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    PlaybackSession: {
+      /** Format: uuid */
+      session_id: string;
+      token: string;
+      /** Format: date-time */
+      expires_at: string;
+      /** @enum {string} */
+      measurement_mode: "verified_hls" | "native_hls";
+    };
+    PlaybackMetrics: {
+      played_ms: number;
+      http_bytes: number;
+      peer_bytes: number;
+      uploaded_bytes: number;
+      rebuffer_ms: number;
+      rebuffer_count: number;
+      verified_segments: number;
+      rejected_segments: number;
+      quality: number;
+      peer_sharing: boolean;
+      startup_ms: number | null;
+    };
+    PlaybackAck: {
+      last_sequence: number;
+      duplicate: boolean;
+      qualified: boolean;
+    };
+    PlaybackTotals: {
+      sessions: number;
+      qualified_plays: number;
+      played_ms: number;
+      http_bytes: number;
+      peer_bytes: number;
+      uploaded_bytes: number;
+      rebuffer_ms: number;
+      rebuffer_count: number;
+      verified_sessions: number;
+      native_sessions: number;
+      startup_average_ms: number | null;
+      peer_delivery_share: number | null;
+    };
+    CreatorAnalytics: {
+      /** @enum {integer} */
+      period_days: 30;
+      totals: components["schemas"]["PlaybackTotals"];
+      videos: {
+        /** Format: uuid */
+        video_id: string;
+        title: string;
+        totals: components["schemas"]["PlaybackTotals"];
+      }[];
+    };
     Subscription: {
       following: boolean;
       followers: number;
@@ -870,6 +994,8 @@ export interface components {
       /** Format: uri */
       tracker_url: string;
       peer_sharing_available: boolean;
+      /** @description Trusted runtime STUN-only URLs; empty by default. Contacted only after explicit sharing consent. */
+      stun_urls?: string[];
     };
     VideoPreview: {
       /** Format: uuid */
@@ -2315,6 +2441,133 @@ export interface operations {
       404: components["responses"]["Error"];
       409: components["responses"]["Error"];
       422: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  startPlaybackMeasurements: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uuid */
+          video_id: string;
+          /** Format: uuid */
+          generation_id: string;
+          /** Format: uuid */
+          attempt_id: string;
+          /** @enum {string} */
+          measurement_mode: "verified_hls" | "native_hls";
+        };
+      };
+    };
+    responses: {
+      /** @description Ephemeral reporting capability; retain only in player memory. Never use as an account session. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PlaybackSession"];
+        };
+      };
+      400: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      429: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  reportPlaybackMeasurements: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uuid */
+          session_id: string;
+          sequence: number;
+          metrics: components["schemas"]["PlaybackMetrics"];
+        };
+      };
+    };
+    responses: {
+      /** @description Highest accepted sequence and current qualifying-play state. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PlaybackAck"];
+        };
+      };
+      400: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      429: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  creatorAnalytics: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Consistent totals and per-video observations; zero-denominator ratios and missing startup averages are null. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CreatorAnalytics"];
+        };
+      };
+      400: components["responses"]["Error"];
+      401: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  videoAnalytics: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Totals and one video row. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CreatorAnalytics"];
+        };
+      };
+      400: components["responses"]["Error"];
+      401: components["responses"]["Error"];
+      404: components["responses"]["Error"];
       503: components["responses"]["Error"];
     };
   };

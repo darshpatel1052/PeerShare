@@ -22,6 +22,8 @@ export function createStaticServer({
   allowedOrigin = "http://localhost:3000",
   apiTarget,
 }) {
+  const delivery = new Map();
+  const testRuntime = process.env.PEERSCREEN_TEST_RUNTIME === "true";
   return createServer(async (request, response) => {
     let pathname;
     try {
@@ -42,6 +44,30 @@ export function createStaticServer({
       return;
     }
     const origin = request.headers.origin;
+    if (
+      testRuntime &&
+      pathname === "/__peerscreen-test/delivery" &&
+      request.method === "GET"
+    ) {
+      const id = new URL(request.url, "http://localhost").searchParams.get(
+        "video",
+      );
+      response.writeHead(200, {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+      });
+      response.end(
+        JSON.stringify(
+          delivery.get(id) ?? {
+            responseBodyBytes: 0,
+            completedSegmentBytes: 0,
+            completedResponses: 0,
+            abortedResponses: 0,
+          },
+        ),
+      );
+      return;
+    }
     if (origin === allowedOrigin) {
       response.setHeader("Access-Control-Allow-Origin", allowedOrigin);
       response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
@@ -59,7 +85,34 @@ export function createStaticServer({
     ) {
       const prefix = webRoot ? "/media/" : "/";
       const mediaPath = pathname.slice(prefix.length);
-      proxyAPI(request, response, apiTarget, `/api/v1/media/${mediaPath}`);
+      const videoID = mediaPath.split("/")[1];
+      const observe =
+        testRuntime && request.method === "GET" && mediaPath.endsWith(".ts")
+          ? (result) => {
+              if (result.status !== 200 && result.status !== 206) return;
+              if (!delivery.has(videoID) && delivery.size >= 32)
+                delivery.delete(delivery.keys().next().value);
+              const record = delivery.get(videoID) ?? {
+                responseBodyBytes: 0,
+                completedSegmentBytes: 0,
+                completedResponses: 0,
+                abortedResponses: 0,
+              };
+              record.responseBodyBytes += result.bytes;
+              if (result.complete) {
+                record.completedSegmentBytes += result.bytes;
+                record.completedResponses++;
+              } else record.abortedResponses++;
+              delivery.set(videoID, record);
+            }
+          : undefined;
+      proxyAPI(
+        request,
+        response,
+        apiTarget,
+        `/api/v1/media/${mediaPath}`,
+        observe,
+      );
       return;
     }
     if (

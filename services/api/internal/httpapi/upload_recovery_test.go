@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -94,6 +95,66 @@ func claim(t *testing.T, f *testApp) store.Job {
 		t.Fatalf("claim %+v %v", job, err)
 	}
 	return job
+}
+
+func TestIntegrationPartAdmissionKeepsDatabaseAvailable(t *testing.T) {
+	f := setup(t)
+	c := client()
+	me, _, _ := registerUser(t, f, c)
+	channel := createChannel(t, f, c, "streams-"+uuid.NewString()[:8])
+	u, _, err := f.DB.CreateUpload(context.Background(), me.User.ID, channel.ID, uuid.NewString(), "Concurrent source", "", []string{}, 16*8*1024*1024)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tokens := make([]string, 16)
+	for i := range tokens {
+		tokens[i] = partToken(t, f, c, u, i+1)
+	}
+	var requests sync.WaitGroup
+	results := make(chan int, 16)
+	readers := make([]*io.PipeReader, 16)
+	writers := make([]*io.PipeWriter, 16)
+	for i := range readers {
+		readers[i], writers[i] = io.Pipe()
+		r := httptest.NewRequest("PUT", "/api/v1/uploads/"+u.ID+"/parts/"+stringNumber(i+1), readers[i])
+		r.SetPathValue("id", u.ID)
+		r.SetPathValue("number", stringNumber(i+1))
+		r.Header.Set("Content-Type", "application/octet-stream")
+		r.Header.Set("Upload-Token", tokens[i])
+		r.ContentLength = 8 * 1024 * 1024
+		r = r.WithContext(context.WithValue(r.Context(), identityKey{}, me.User))
+		requests.Add(1)
+		go func() {
+			defer requests.Done()
+			w := httptest.NewRecorder()
+			f.App.putUploadPart(w, r)
+			results <- w.Code
+		}()
+	}
+	t.Cleanup(func() {
+		for i := range readers {
+			readers[i].Close()
+			writers[i].Close()
+		}
+		requests.Wait()
+	})
+	// Sixteen distinct slow request bodies used to acquire all sixteen pool
+	// connections and wait for more. Four must now be rejected promptly.
+	for range 4 {
+		select {
+		case status := <-results:
+			if status != 429 {
+				t.Fatalf("overflow stream status %d", status)
+			}
+		case <-time.After(3 * time.Second):
+			t.Fatal("upload overflow stalled")
+		}
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	if err = f.DB.Pool.Ping(ctx); err != nil {
+		t.Fatal("uploads exhausted catalogue connections", err)
+	}
 }
 
 func TestIntegrationConcurrentUploadAdmissionAndReservation(t *testing.T) {

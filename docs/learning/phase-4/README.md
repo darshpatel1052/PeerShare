@@ -1,10 +1,17 @@
 # Phase 4: viewer library, analytics and uploaded-media peer journeys
 
-Status: implementation in progress. Phase 3's closing [CI run passed](https://github.com/darshpatel1052/Peer-Screen/actions/runs/38533968360). This guide grows with verified behavior; plans below are not claims of completed product or cross-network proof.
+The viewer features are implemented locally: Following, server search, private/public playlists with playback queues, browser reporting and creator Analytics. The two-device, two-network exercise remains pending. This guide focuses on building and understanding those features.
 
 Phase 4 connects the existing publishing pipeline to everyday viewer actions: follow channels, find videos beyond the loaded catalogue page, save an ordered playlist, and inspect creator playback measurements. It keeps the current theme, custom player, explicit sharing consent, accounts and service boundaries.
 
-Start with [the library data model and HTTP contracts](01-library-and-search.md). The first backend slice contains subscriptions, PostgreSQL search and owned private/public playlists. UI integration, telemetry/analytics, actual uploaded-video peer measurements and the two-network device exercise follow.
+Read the chapters in this order:
+
+1. [Library data model and HTTP APIs](01-library-and-search.md): subscriptions, PostgreSQL search, owned playlists, revisions and transactions.
+2. [Playback and Analytics](02-playback-and-analytics.md): the watch-to-dashboard journey, measurement tables, Go types and aggregation.
+3. [Components and hands-on exercises](03-components-and-hands-on.md): React state/effects, static routes, forms, queues and a practical feature-extension exercise.
+4. [Two-network device exercise](04-device-exercise.md): how to collect a real network result once private device access is ready.
+
+Try the complete product journey first, then trace its component, API method and SQL. The [current evidence](../../evidence/phase-4/README.md) records what was observed without making test scenarios the main product demonstration.
 
 ## The complete request journeys
 
@@ -18,8 +25,8 @@ flowchart LR
  Watch --> HTTP[Verified HTTP segments]
  Watch --> Consent[Explicit sharing choice]
  Consent --> Peers[WebRTC peer segments]
- Watch -. planned .-> Measurements[Bounded playback batches]
- Measurements -. planned .-> Creator[Owner analytics]
+ Watch --> Measurements[Playback batches]
+ Measurements --> Creator[Owner analytics]
 ```
 
 Product relationships stay in the catalogue service. Neither a playlist nor a subscription grants access to private video media. Processing jobs and accepted outputs remain owned by the Phase 3 protocols.

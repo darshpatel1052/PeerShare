@@ -2,14 +2,17 @@ package config
 
 import (
 	"errors"
+	"net"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
 )
 
 type Config struct {
+	STUNURLs              []string
 	MediaAddress          string
 	CatalogRPCToken       string
 	KafkaServers          string
@@ -44,6 +47,18 @@ func Load() (Config, error) {
 	cfg.MediaAddress = os.Getenv("MEDIA_GRPC_ADDR")
 	cfg.CatalogRPCToken = os.Getenv("CATALOG_RPC_TOKEN")
 	cfg.KafkaServers = os.Getenv("KAFKA_BOOTSTRAP_SERVERS")
+	cfg.STUNURLs = make([]string, 0)
+	if raw := os.Getenv("PEER_STUN_URLS"); raw != "" {
+		for _, value := range strings.Split(raw, ",") {
+			value = strings.TrimSpace(value)
+			host, port, err := net.SplitHostPort(strings.TrimPrefix(value, "stun:"))
+			number, parseErr := strconv.Atoi(port)
+			if !strings.HasPrefix(value, "stun:") || err != nil || parseErr != nil || number < 1 || number > 65535 || !regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9.-]{0,252}$`).MatchString(host) || len(cfg.STUNURLs) >= 3 {
+				return cfg, errors.New("PEER_STUN_URLS requires up to three STUN hostname:port URLs without credentials or query parameters")
+			}
+			cfg.STUNURLs = append(cfg.STUNURLs, value)
+		}
+	}
 	if cfg.MediaAddress != "" && (len(cfg.CatalogRPCToken) != 64 || cfg.KafkaServers == "") {
 		return cfg, errors.New("distributed media requires internal RPC authentication and Kafka configuration")
 	}

@@ -18,7 +18,13 @@ const stripped = new Set([
   "x-forwarded-proto",
   "x-user-id",
 ]);
-export function proxyAPI(request, response, target, path = request.url) {
+export function proxyAPI(
+  request,
+  response,
+  target,
+  path = request.url,
+  observeBody,
+) {
   const fail = (status, code, message) => {
     if (response.headersSent) {
       response.destroy();
@@ -89,7 +95,25 @@ export function proxyAPI(request, response, target, path = request.url) {
         ),
       );
       response.writeHead(incoming.statusCode || 502, returnedHeaders);
-      incoming.pipe(response);
+      if (observeBody) {
+        let bytes = 0,
+          reported = false;
+        const observed = new Transform({
+          transform(chunk, encoding, done) {
+            bytes += chunk.length;
+            done(null, chunk);
+          },
+        });
+        const report = (complete) => {
+          if (reported) return;
+          reported = true;
+          observeBody({ status: incoming.statusCode, bytes, complete });
+        };
+        response.once("finish", () => report(true));
+        response.once("close", () => report(response.writableFinished));
+        observed.on("error", () => response.destroy());
+        incoming.pipe(observed).pipe(response);
+      } else incoming.pipe(response);
       incoming.on("error", () => response.destroy());
     },
   );

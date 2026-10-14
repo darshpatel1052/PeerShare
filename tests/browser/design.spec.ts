@@ -34,9 +34,7 @@ test("product theme, catalogue search, channel tools and phone layouts work", as
     ),
   ).toBe(true);
   await capture("explore-desktop");
-  await page
-    .getByLabel("Search loaded videos")
-    .fill("nothing-matches-this-title");
+  await page.getByLabel("Search videos").fill("nothing-matches-this-title");
   await expect(
     page.getByRole("heading", { name: "No matching videos" }),
   ).toBeVisible();

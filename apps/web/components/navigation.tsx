@@ -73,9 +73,36 @@ export default function Navigation() {
             Explore
           </Link>
           <Link
+            href="/following"
+            className={
+              pathname.startsWith("/following") ? "nav-link active" : "nav-link"
+            }
+            aria-current={
+              pathname.startsWith("/following") ? "page" : undefined
+            }
+          >
+            <Icon name="play" />
+            Following
+          </Link>
+          <Link
+            href="/library"
+            className={
+              pathname.startsWith("/library") ||
+              pathname.startsWith("/playlist")
+                ? "nav-link active"
+                : "nav-link"
+            }
+            aria-current={pathname.startsWith("/library") ? "page" : undefined}
+          >
+            <Icon name="bookmark" />
+            Library
+          </Link>
+          <Link
             href={channelHref}
             className={
-              pathname.startsWith("/channel") ? "nav-link active" : "nav-link"
+              pathname.startsWith("/channel")
+                ? "nav-link creator-nav active"
+                : "nav-link creator-nav"
             }
           >
             <Icon name="channel" />
@@ -85,7 +112,9 @@ export default function Navigation() {
             <Link
               href="/studio"
               className={
-                pathname.startsWith("/studio") ? "nav-link active" : "nav-link"
+                pathname.startsWith("/studio")
+                  ? "nav-link creator-nav active"
+                  : "nav-link creator-nav"
               }
             >
               <Icon name="film" />
@@ -127,6 +156,16 @@ export default function Navigation() {
                         Creator studio
                       </Link>
                     )}
+                    {me.channel && (
+                      <Link href="/analytics">
+                        <Icon name="chart" />
+                        Analytics
+                      </Link>
+                    )}
+                    <Link href="/library">
+                      <Icon name="bookmark" />
+                      Your library
+                    </Link>
                     <Link href="/settings">
                       <Icon name="settings" />
                       Settings

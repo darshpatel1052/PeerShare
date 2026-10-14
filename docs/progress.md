@@ -80,15 +80,23 @@ This is the local milestone exit: interrupted upload recovery, actual processed 
 
 The current adapter remains the local filesystem with paired volumes. S3-compatible operations and public deployment require their own explicit verification; no AWS resources were provisioned.
 
-## In progress: milestone 4 — viewer library, analytics and peer journeys
+## Implemented locally: milestone 4 product — network exercise pending
 
 The pre-build explanation covered subscriptions as unique relationships, transactional ordered playlists, optimistic revisions, PostgreSQL search, bounded telemetry capabilities and retry deduplication. The [Phase 4 learning guide](learning/phase-4/README.md) records the data/API implementation as it becomes verified.
 
-The first backend slice adds account-scoped follows and a Following feed, metadata search before pagination, private/public playlists, keyed creation, owned edits, atomic complete-permutation reordering and current-video visibility. Three new real-database scenarios exercise replay, concurrent requests, ownership and publication revocation. UI, telemetry/creator analytics and actual uploaded-video peer measurements remain in progress.
+Following, server catalogue/channel search, Library and private/public playlists now have connected screens. Viewers can follow channels, save videos, reorder/remove entries, edit visibility, share a public collection and play its queue with automatic advancement. Unavailable video entries can be removed by owners and are hidden from public readers.
+
+The watch page reports actual active playback and verified payload into bounded anonymous playback sessions. Creator Analytics displays channel/video plays, watch time, startup, rebuffering and HTTP/peer attribution for the last 30 days. One logical watch session survives sharing/retry reconnections. Optional STUN configuration is available but disabled by default; no TURN or external network service was provisioned.
+
+The five supplied review findings are fixed: completed coordinator output wins late cancellation, upload-stream admission precedes database acquisition, peer opt-out remains usable after initialization failure, search remains mounted for loading/empty results, and thumbnail responses affect only their selected video. The normal containers have been upgraded with preserved data. The original video segment, thumbnail and channel banner bytes are unchanged; Google remains configured. Live Google sign-in remains user-reported, rather than re-exercised here.
+
+Verification: 53 top-level Go cases (78 including subcases) with the race detector passed. The production browser pass passed 23 of 25 cases; mobile channel wrapping and a thumbnail-test selector were corrected, then all five affected product cases passed. The distinct workflows cover all 25 cases. A further small mobile Analytics heading adjustment is recorded separately in current evidence. Builds, types and eight JavaScript cases passed. Actual uploaded-video WebRTC transferred verified payload among three local browser contexts, then continued via HTTP with a 720p seek after opt-out. The short comparison showed lower HTTP during the measured peer interval but no overall saving after consent setup; no billing or cross-network claim is made.
+
+The README now presents the product and learning features first. The Phase 4 guide teaches the end-to-end data/API/component journeys and includes hands-on exercises. Existing service-recovery evidence is retained; no new speculative crash matrix was added during this product checkpoint.
 
 Regression verification exposed a concurrent media-submission unique-index race and stale profiled test containers joining a later Kafka consumer group. Submission locking and complete profiled teardown passed the full 46-case (70 including subcases) suite and the actual-image library/upload check. The Phase 3 closing [CI run succeeded](https://github.com/darshpatel1052/Peer-Screen/actions/runs/38533968360).
 
-The user confirmed two devices/networks can be used for the real cross-network exercise. Local results will remain labelled as single-host until that device measurement is recorded. No AWS resources have been provisioned.
+The library foundation checkpoint `6b1a9c9` passed [CI](https://github.com/darshpatel1052/Peer-Screen/actions/runs/38542338598). The connected-product/review-fix checkpoint follows; Git history gives its exact revision. The user confirmed two devices/networks can be used for the real cross-network exercise. Local results remain single-host until that measurement is recorded, so the full milestone exit remains pending. No AWS resources have been provisioned.
 
 ## Product and Google identity follow-up
 

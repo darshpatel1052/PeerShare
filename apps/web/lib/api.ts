@@ -16,6 +16,15 @@ export type CreateUpload = components["schemas"]["CreateUpload"];
 export type PartGrants = components["schemas"]["PartGrants"];
 export type VideoEdit = components["schemas"]["VideoEdit"];
 export type Upload = components["schemas"]["Upload"];
+export type Subscription = components["schemas"]["Subscription"];
+export type Subscriptions = components["schemas"]["Subscriptions"];
+export type Playlist = components["schemas"]["Playlist"];
+export type Playlists = components["schemas"]["Playlists"];
+export type PlaylistDetail = components["schemas"]["PlaylistDetail"];
+export type CreatorAnalytics = components["schemas"]["CreatorAnalytics"];
+export type PlaybackSession = components["schemas"]["PlaybackSession"];
+export type PlaybackMetrics = components["schemas"]["PlaybackMetrics"];
+export type PlaybackAck = components["schemas"]["PlaybackAck"];
 
 export class ApiError extends Error {
   constructor(
@@ -90,7 +99,10 @@ export async function api<T>(
 }
 export const fixtureChannelID = "00000000-0000-4000-8000-000000000002";
 export const fixtureVideoID = "00000000-0000-4000-8000-000000000003";
-export function resourceID(raw: string | null, kind: "video" | "channel") {
+export function resourceID(
+  raw: string | null,
+  kind: "video" | "channel" | "playlist",
+) {
   if (kind === "video" && raw === "signal-garden") return fixtureVideoID;
   if (kind === "channel" && raw === "peerscreen-lab") return fixtureChannelID;
   return raw &&

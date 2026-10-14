@@ -188,8 +188,8 @@ func (a *App) attemptReferenced(ctx context.Context, video, generation, attempt 
 		return referenced, err
 	}
 	var id string
-	var live, cancelled bool
-	err = a.Store.Pool.QueryRow(ctx, "SELECT j.id,v.deleted_at IS NULL,EXISTS(SELECT 1 FROM catalog.media_submissions s WHERE s.job_id=j.id AND s.command='cancel') FROM catalog.processing_jobs j JOIN catalog.videos v ON v.id=j.video_id WHERE j.video_id=$1 AND j.generation_id=$2 AND j.distributed", video, generation).Scan(&id, &live, &cancelled)
+	var live bool
+	err = a.Store.Pool.QueryRow(ctx, "SELECT j.id,v.deleted_at IS NULL FROM catalog.processing_jobs j JOIN catalog.videos v ON v.id=j.video_id WHERE j.video_id=$1 AND j.generation_id=$2 AND j.distributed", video, generation).Scan(&id, &live)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return false, nil
 	}
@@ -206,7 +206,7 @@ func (a *App) attemptReferenced(ctx context.Context, video, generation, attempt 
 	if job.State == "running" || job.State == "cancel_requested" {
 		return job.LeaseExpiresUnixMs > time.Now().UnixMilli(), nil
 	}
-	return live && !cancelled && job.State == "ready", nil
+	return live && job.State == "ready", nil
 }
 func (a *App) cleanupQuiesced(ctx context.Context, c store.Cleanup) bool {
 	if a.Media == nil || !c.Deleted {

@@ -1,0 +1,19 @@
+{
+  "run": "final mobile Analytics heading adjustment, actual playback and desktop/mobile capture",
+  "stats": {
+    "startTime": "2026-10-14T13:22:45.263Z",
+    "duration": 42814.042,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "name": "real playback qualifies once across sharing changes and owner analytics report actual payload",
+      "file": "library-analytics.spec.ts",
+      "status": "expected",
+      "durationMS": 21292
+    }
+  ]
+}

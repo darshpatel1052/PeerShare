@@ -63,6 +63,7 @@ for (const scenario of [
           ...process.env,
           GOOGLE_CLIENT_ID: scenario.process ? "process-id" : "",
           GOOGLE_CLIENT_SECRET: scenario.process ? "process-secret" : "",
+          PEER_STUN_URLS: "stun:stun.cloudflare.com:3478",
         };
         delete environment.NODE_TEST_CONTEXT;
         const result = await run(
@@ -79,6 +80,7 @@ for (const scenario of [
           secretMatches:normal.GOOGLE_CLIENT_SECRET===${JSON.stringify(scenario.expected + "-secret")},
           isolatedIdEmpty:isolated.GOOGLE_CLIENT_ID==="",
           isolatedSecretEmpty:isolated.GOOGLE_CLIENT_SECRET===""
+						,isolatedSTUNEmpty:isolated.PEER_STUN_URLS===""
         }));
       `,
           ],
@@ -92,6 +94,7 @@ for (const scenario of [
           secretMatches: true,
           isolatedIdEmpty: true,
           isolatedSecretEmpty: true,
+          isolatedSTUNEmpty: true,
         });
       } finally {
         await rm(directory, { recursive: true, force: true });

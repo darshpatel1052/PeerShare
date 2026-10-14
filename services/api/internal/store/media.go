@@ -74,7 +74,10 @@ func (s *Store) MediaSubmissionDeferred(ctx context.Context, id string) error {
 	return err
 }
 func (s *Store) DistributedJobs(ctx context.Context) ([]string, error) {
-	rows, err := s.Pool.Query(ctx, "SELECT id FROM catalog.processing_jobs WHERE distributed AND state NOT IN('ready','failed','cancelled') ORDER BY updated_at LIMIT 30")
+	rows, err := s.Pool.Query(ctx, `SELECT j.id FROM catalog.processing_jobs j JOIN catalog.videos v ON v.id=j.video_id
+ WHERE j.distributed AND v.deleted_at IS NULL AND (j.state NOT IN('ready','failed','cancelled')
+ OR EXISTS(SELECT 1 FROM catalog.media_submissions s WHERE s.job_id=j.id AND s.command='cancel'))
+ ORDER BY j.updated_at LIMIT 30`)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +116,10 @@ func (s *Store) ApplyMediaSnapshot(ctx context.Context, job *pb.JobSnapshot) err
 	if err != nil {
 		return err
 	}
-	if tag.RowsAffected() == 0 || job.Version <= version || generation != job.Spec.GenerationId || videoID != job.Spec.VideoId {
+	// A locally requested cancel/retry is not an authoritative media decision.
+	// Reapply an already-seen ready snapshot if that local intent hid completion.
+	reconcileReady := job.State == "ready" && state != "ready" && job.Version == version
+	if ((tag.RowsAffected() == 0 || job.Version == version) && !reconcileReady) || job.Version < version || generation != job.Spec.GenerationId || videoID != job.Spec.VideoId {
 		return tx.Commit(ctx)
 	}
 	var live bool
@@ -126,6 +132,15 @@ func (s *Store) ApplyMediaSnapshot(ctx context.Context, job *pb.JobSnapshot) err
 	var cancellation bool
 	if err = tx.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM catalog.media_submissions WHERE job_id=$1 AND command='cancel')", job.Spec.JobId).Scan(&cancellation); err != nil {
 		return err
+	}
+	if job.State == "ready" || job.State == "cancelled" {
+		// The coordinator serializes completion and cancellation under its job
+		// lock. A completed encode wins a late cancellation; deletion still wins
+		// above. Retire the resolved command so reconciliation can stop.
+		if _, err = tx.Exec(ctx, "UPDATE catalog.media_submissions SET command='',command_id=NULL,command_sent_at=NULL WHERE job_id=$1", job.Spec.JobId); err != nil {
+			return err
+		}
+		cancellation = false
 	}
 	mediaState, processing := job.State, "processing"
 	switch job.State {

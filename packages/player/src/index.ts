@@ -27,9 +27,14 @@ export type PlayerOptions = {
   acceptedVersionId: string;
   peerSharing: boolean;
   authenticatedPreview?: boolean;
+  stunUrls?: string[];
   signal: AbortSignal;
   onStats: (stats: PlayerStats) => void;
-  onReady: (qualities: number[], peerSupported: boolean) => void;
+  onReady: (
+    qualities: number[],
+    peerSupported: boolean,
+    mode: "verified_hls" | "native_hls",
+  ) => void;
   onError: (message: string) => void;
 };
 export type PlayerHandle = {
@@ -50,7 +55,7 @@ export async function createPlayer(
     if (!options.video.canPlayType("application/vnd.apple.mpegurl"))
       throw new Error("This browser cannot play HLS video");
     options.video.src = options.manifestUrl;
-    options.onReady([], false);
+    options.onReady([], false, "native_hls");
     return {
       destroy: () => {
         options.video.removeAttribute("src");
@@ -92,8 +97,9 @@ export async function createPlayer(
         core: {
           swarmId: `peerscreen:${options.mediaId}:${options.acceptedVersionId}:${descriptor.mediaVersion}`,
           announceTrackers: [options.trackerUrl],
-          // LAN compatibility proof; external STUN and TLS belong to deployment configuration.
-          rtcConfig: { iceServers: [] },
+          rtcConfig: {
+            iceServers: (options.stunUrls ?? []).map((urls) => ({ urls })),
+          },
           isP2PDisabled: false,
           isP2PUploadDisabled: false,
           segmentMemoryStorageLimit: 64,
@@ -103,7 +109,7 @@ export async function createPlayer(
           httpDownloadInitialTimeoutMs: 1500,
           p2pMaxPeers: 8,
           webRtcOffersCount: 4,
-          webRtcIceGatheringTimeoutMs: 1000,
+          webRtcIceGatheringTimeoutMs: options.stunUrls?.length ? 5000 : 1000,
           validateP2PSegment: validate,
           validateHTTPSegment: validate,
         },
@@ -146,6 +152,7 @@ export async function createPlayer(
     options.onReady(
       data.levels.map((level) => level.height),
       peerSupported,
+      "verified_hls",
     ),
   );
   hls.on(Hls.Events.ERROR, (_, data) => {

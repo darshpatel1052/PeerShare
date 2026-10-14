@@ -1,0 +1,123 @@
+{
+  "checkedAt": "2026-10-14T13:17:20.312Z",
+  "baseCommit": "6b1a9c956a6970e30c8842f23ad8b7c78926cb59",
+  "workingTreeChanged": true,
+  "sourceHashes": {
+    "packages/player/src/index.ts": "99b688ab3724c8558b8c1a5bc5c48b2b322b4ded5d4c739dcd3c572cbe8d096d",
+    "packages/player/src/integrity.ts": "31d488875c661c456772b09b872dfdc7df27c69f565c4bd6c225d8d20e29fadb",
+    "apps/web/lib/playback-capture.ts": "da461145067674c68e6733b4b0b49dc7ec1dda4d1e7a6d3a86ce021a01f2ea4c",
+    "apps/web/components/watch.tsx": "58aec63f6e7e82f909695eac68785b5f36fbfc316fd3be9d2a97f4d70161766d",
+    "scripts/static-server.mjs": "26d3011b2ffae0793e0ab6650aa5e44156227015b833c4dd82d252313784def0",
+    "scripts/api-proxy.mjs": "1312c70e7c1afcf4a6f0114f77beeb51e2b5a525ed48eaa4166b4a26fcb22077",
+    "tests/browser/uploaded-peer.spec.ts": "b3d7562dca5bf4d503b950c408af6693130d438dd43c44946d7ffae18d0d066d"
+  },
+  "scope": "one Linux host; independent Chromium contexts; loopback tracker; STUN disabled; actual owned uploaded 32s 720p source; 480p measured then 720p seek/HTTP fallback",
+  "browser": "156.0.8078.4",
+  "host": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+    "logicalCPUs": 24,
+    "ramBytes": 16466096128
+  },
+  "sourceBytes": 29864541,
+  "cacheState": "Chromium HTTP cache disabled; fresh contexts per round; explicit per-video consent visit followed by route exit before measured peer run",
+  "metricDefinitions": {
+    "client": "completed verified media payload, not wire bytes",
+    "server": "test-only gateway-observed media response bodies, including bytes before abort; excludes manifests, descriptors and protocol overhead",
+    "consentSetup": "reported separately and excluded from measured-run bytes; does not represent total visitor cost"
+  },
+  "rounds": [
+    {
+      "repeat": 1,
+      "mode": "http-only",
+      "quality": 480,
+      "viewerCount": 3,
+      "consentSetupServerBodyBytes": 0,
+      "totalRunMS": 15615,
+      "observationWindowMS": 8149,
+      "gatewayResponseBodyBytes": 11010596,
+      "gatewayCompletedSegmentBytes": 11010596,
+      "gatewayCompletedResponses": 28,
+      "gatewayAbortedResponses": 0,
+      "samples": [
+        {
+          "http": 5027308,
+          "peer": 0,
+          "uploaded": 0,
+          "verified": 11,
+          "rejected": 0,
+          "peers": 0,
+          "playhead": 14.5869
+        },
+        {
+          "http": 2820000,
+          "peer": 0,
+          "uploaded": 0,
+          "verified": 8,
+          "rejected": 0,
+          "peers": 0,
+          "playhead": 10.1483
+        },
+        {
+          "http": 3163288,
+          "peer": 0,
+          "uploaded": 0,
+          "verified": 9,
+          "rejected": 0,
+          "peers": 0,
+          "playhead": 10.1063
+        }
+      ]
+    },
+    {
+      "repeat": 1,
+      "mode": "peer-assisted",
+      "quality": 480,
+      "viewerCount": 3,
+      "consentSetupServerBodyBytes": 9440984,
+      "totalRunMS": 16807,
+      "observationWindowMS": 8124,
+      "gatewayResponseBodyBytes": 2820000,
+      "gatewayCompletedSegmentBytes": 2820000,
+      "gatewayCompletedResponses": 8,
+      "gatewayAbortedResponses": 0,
+      "samples": [
+        {
+          "http": 2101464,
+          "peer": 718536,
+          "uploaded": 3500560,
+          "verified": 8,
+          "rejected": 0,
+          "peers": 2,
+          "playhead": 15.103
+        },
+        {
+          "http": 718536,
+          "peer": 2101464,
+          "uploaded": 1437072,
+          "verified": 8,
+          "rejected": 0,
+          "peers": 2,
+          "playhead": 9.9096
+        },
+        {
+          "http": 0,
+          "peer": 2820000,
+          "uploaded": 702368,
+          "verified": 8,
+          "rejected": 0,
+          "peers": 2,
+          "playhead": 9.9568
+        }
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "repeat": 1,
+      "httpOnlyServerBytes": 11010596,
+      "peerRunServerBytes": 2820000,
+      "measuredServerBodyDifference": 8190596,
+      "includingConsentSetupDifference": -1250388
+    }
+  ]
+}

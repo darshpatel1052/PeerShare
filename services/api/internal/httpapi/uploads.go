@@ -210,6 +210,15 @@ func (a *App) putUploadPart(w http.ResponseWriter, r *http.Request) {
 		a.error(w, r, 400, "invalid_part", "Choose a valid chunk number.")
 		return
 	}
+	// Admit before any database work. Each accepted stream later holds a lock
+	// connection and briefly uses another connection for catalogue queries.
+	select {
+	case a.partSlots <- struct{}{}:
+		defer func() { <-a.partSlots }()
+	default:
+		a.error(w, r, 429, "upload_busy", "Upload connections are busy. Retry this chunk shortly.")
+		return
+	}
 	u, err := a.Store.Upload(r.Context(), identity(r).ID, id)
 	if err != nil {
 		a.storeError(w, r, err)
@@ -291,13 +300,6 @@ func (a *App) putUploadPart(w http.ResponseWriter, r *http.Request) {
 	u, err = a.Store.Upload(r.Context(), identity(r).ID, id)
 	if err != nil {
 		a.storeError(w, r, err)
-		return
-	}
-	select {
-	case a.partSlots <- struct{}{}:
-		defer func() { <-a.partSlots }()
-	default:
-		a.error(w, r, 429, "upload_busy", "Upload connections are busy. Retry this chunk shortly.")
 		return
 	}
 	dir := filepath.Join(a.Config.UploadDir, id)

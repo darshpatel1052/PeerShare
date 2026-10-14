@@ -1,0 +1,43 @@
+{
+  "run": "focused follow-up on the rebuilt product after mobile channel wrapping and thumbnail-test selector corrections",
+  "stats": {
+    "startTime": "2026-10-14T13:18:17.973Z",
+    "duration": 106436.27900000001,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "name": "product theme, catalogue search, channel tools and phone layouts work",
+      "file": "design.spec.ts",
+      "status": "expected",
+      "durationMS": 9136
+    },
+    {
+      "name": "a delayed thumbnail save keeps the newly selected video editor intact",
+      "file": "library-analytics.spec.ts",
+      "status": "expected",
+      "durationMS": 11990
+    },
+    {
+      "name": "viewer follows, searches unloaded videos, saves and reorders a private playlist, then shares it",
+      "file": "library-analytics.spec.ts",
+      "status": "expected",
+      "durationMS": 27348
+    },
+    {
+      "name": "a lost playlist creation response retries one logical request and stale edits preserve the form",
+      "file": "library-analytics.spec.ts",
+      "status": "expected",
+      "durationMS": 1810
+    },
+    {
+      "name": "real playback qualifies once across sharing changes and owner analytics report actual payload",
+      "file": "library-analytics.spec.ts",
+      "status": "expected",
+      "durationMS": 17925
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-10-14T13:21:38.839Z",
+  "videoID": "853f24f7-c632-4909-8e82-f0b5ba26401b",
+  "channelID": "a4f9c019-86c3-4a92-abc7-ec9ea2a1d2ad",
+  "qualities": [480],
+  "segmentSHA256": "ff8843e690c710030cfbe356c18e04ce61c7841db80970207829f027a2e5a568",
+  "thumbnailSHA256": "7e743d6bed5c542d03dbf7bf30cfab140e4a485c6aeb69784a6fe40ef8498ff1",
+  "bannerSHA256": null,
+  "googleEnabled": true,
+  "unchanged": true,
+  "metadataSnapshot": true,
+  "fullBackupRestoreTest": false
+}

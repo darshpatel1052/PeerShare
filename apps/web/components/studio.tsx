@@ -759,7 +759,7 @@ export default function Studio() {
                             `/uploads/${upload.id}`,
                           );
                           setEditing((current) =>
-                            current
+                            current?.id === upload.id
                               ? {
                                   ...current,
                                   revision: updated.revision,
@@ -767,7 +767,7 @@ export default function Studio() {
                                   has_custom_thumbnail:
                                     updated.has_custom_thumbnail,
                                 }
-                              : null,
+                              : current,
                           );
                           await refresh();
                         }}
@@ -831,7 +831,11 @@ export default function Studio() {
                                 const current = await api<Upload>(
                                   `/uploads/${upload.id}`,
                                 );
-                                setEditing(current);
+                                setEditing((selected) =>
+                                  selected?.id === upload.id
+                                    ? current
+                                    : selected,
+                                );
                                 setError("");
                               } catch (cause) {
                                 report(cause);

@@ -3,8 +3,11 @@ import Link from "next/link";
 import type { Channel, VideoDetail } from "../lib/api";
 import { useResource } from "../lib/use-resource";
 import { Avatar, ChannelCover, Icon } from "./ui";
+import FollowButton from "./follow-button";
+import { useAuth } from "./auth-provider";
 
 export default function WatchSidebar({ video }: { video: VideoDetail }) {
+  const { me } = useAuth();
   const { state } = useResource<Channel>(`/channels/${video.channel_id}`);
   return (
     <aside className="watch-sidebar">
@@ -34,6 +37,10 @@ export default function WatchSidebar({ video }: { video: VideoDetail }) {
             Visit channel
             <Icon name="arrow" />
           </Link>
+          <FollowButton
+            channelID={video.channel_id}
+            owner={me?.channel?.id === video.channel_id}
+          />
         </div>
       </section>
       <section className="peer-panel">
