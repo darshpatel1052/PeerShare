@@ -199,6 +199,11 @@ func (s *Store) Submit(ctx context.Context, spec *pb.JobSpec) (*pb.JobSnapshot, 
 	}
 	defer tx.Rollback(ctx)
 	job := &pb.JobSnapshot{Spec: spec, State: "queued", Stage: "queued", Attempts: spec.PriorAttempts, Version: 1, EventId: uuid.NewString()}
+	// Serialize equivalent submissions before either unique index is checked.
+	// ON CONFLICT(id) alone does not arbitrate the video/generation index.
+	if _, err = tx.Exec(ctx, "SELECT pg_advisory_xact_lock(hashtextextended($1,2026101403))", spec.JobId); err != nil {
+		return nil, err
+	}
 	if spec.PriorAttempts == 3 {
 		job.State = "failed"
 		job.Stage = "failed"

@@ -93,6 +93,7 @@ func (a *App) Handler() http.Handler {
 	a.registerUploads(mux)
 	a.registerImages(mux)
 	a.registerGoogle(mux)
+	a.registerLibrary(mux)
 	for path, allowed := range map[string]string{"/api/v1/auth/register": "POST", "/api/v1/auth/login": "POST", "/api/v1/auth/logout": "POST", "/api/v1/auth/logout-all": "POST", "/api/v1/me": "GET, HEAD", "/api/v1/channels": "POST", "/api/v1/channels/{id}": "GET, HEAD, PATCH", "/api/v1/videos": "GET, HEAD", "/api/v1/videos/{id}": "GET, HEAD, PATCH, DELETE"} {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Allow", allowed)
@@ -182,7 +183,14 @@ func (a *App) storeError(w http.ResponseWriter, r *http.Request, err error) {
 		if strings.HasPrefix(r.URL.Path, "/api/v1/channels/") {
 			subject = "channel"
 		}
+		if strings.HasPrefix(r.URL.Path, "/api/v1/playlists/") {
+			subject = "playlist"
+		}
 		a.error(w, r, 409, "revision_conflict", "This "+subject+" changed since you opened it. Reload before editing.")
+	case errors.Is(err, store.ErrLibraryLimit):
+		a.error(w, r, 422, "library_capacity", "Your library has reached its limit. Remove an item before adding another.")
+	case errors.Is(err, store.ErrLibraryConflict):
+		a.error(w, r, 409, "library_conflict", "This request conflicts with the saved playlist. Reload before trying again.")
 	case errors.Is(err, store.ErrUploadLimit):
 		a.error(w, r, 429, "upload_capacity", "Upload capacity is currently full. Finish or cancel an existing upload first.")
 	case errors.Is(err, store.ErrUploadConflict):

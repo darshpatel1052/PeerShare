@@ -105,6 +105,7 @@ func TestIntegrationDistributedUploadKafkaAcceptanceAndProjection(t *testing.T) 
 		time.Sleep(50 * time.Millisecond)
 	}
 	if quarantined != 2 {
+		t.Logf("quarantined=%d, consumer diagnostics=%s", quarantined, f.Logs.text())
 		t.Fatal("poison lifecycle records blocked projection")
 	}
 	c := client()

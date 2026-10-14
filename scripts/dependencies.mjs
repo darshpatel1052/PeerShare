@@ -2,6 +2,10 @@ import { spawn } from "node:child_process";
 import { localEnvironment } from "./local-environment.mjs";
 
 export async function compose(args, { test = false, quiet = false } = {}) {
+  // Teardown must include profiled app services as well as dependencies.
+  // Otherwise old API/worker consumers can survive and contaminate a new test.
+  if (args[0] === "down" || args[0] === "stop")
+    args = ["--profile", "app", ...args];
   // Wait for long-lived dependencies, then run bounded setup tasks to completion.
   // Compose --wait treats an exited top-level setup container as a failure, even on exit 0.
   if (

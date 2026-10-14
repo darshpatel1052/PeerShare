@@ -80,6 +80,16 @@ This is the local milestone exit: interrupted upload recovery, actual processed 
 
 The current adapter remains the local filesystem with paired volumes. S3-compatible operations and public deployment require their own explicit verification; no AWS resources were provisioned.
 
+## In progress: milestone 4 — viewer library, analytics and peer journeys
+
+The pre-build explanation covered subscriptions as unique relationships, transactional ordered playlists, optimistic revisions, PostgreSQL search, bounded telemetry capabilities and retry deduplication. The [Phase 4 learning guide](learning/phase-4/README.md) records the data/API implementation as it becomes verified.
+
+The first backend slice adds account-scoped follows and a Following feed, metadata search before pagination, private/public playlists, keyed creation, owned edits, atomic complete-permutation reordering and current-video visibility. Three new real-database scenarios exercise replay, concurrent requests, ownership and publication revocation. UI, telemetry/creator analytics and actual uploaded-video peer measurements remain in progress.
+
+Regression verification exposed a concurrent media-submission unique-index race and stale profiled test containers joining a later Kafka consumer group. Submission locking and complete profiled teardown passed the full 46-case (70 including subcases) suite and the actual-image library/upload check. The Phase 3 closing [CI run succeeded](https://github.com/darshpatel1052/Peer-Screen/actions/runs/38533968360).
+
+The user confirmed two devices/networks can be used for the real cross-network exercise. Local results will remain labelled as single-host until that device measurement is recorded. No AWS resources have been provisioned.
+
 ## Product and Google identity follow-up
 
 Creator banners/thumbnails, Workspace Settings, custom player controls and separate Drafts/Published/Unpublished states are implemented and verified. Google OIDC supports explicit connection to an existing account and retains PeerScreen sessions/ownership. Shared-file credential loading was fixed in `b46f180`, whose complete [CI run passed](https://github.com/darshpatel1052/Peer-Screen/actions/runs/38462247614). On 14 October 2026, the user reported that live Google sign-in worked; this is user-reported validation, distinct from automated signed-provider tests. See [the implementation learning guide](learning/product-and-google/README.md).

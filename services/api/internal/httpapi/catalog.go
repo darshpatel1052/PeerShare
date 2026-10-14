@@ -88,6 +88,24 @@ func canonicalID(raw string) (string, bool) {
 	return raw, err == nil && id.String() == raw
 }
 func (a *App) listVideos(w http.ResponseWriter, r *http.Request) {
+	query := cleanText(r.URL.Query().Get("q"))
+	if !validText(query, 0, 120) {
+		a.error(w, r, 400, "invalid_query", "Search must contain at most 120 characters.")
+		return
+	}
+	feed := r.URL.Query().Get("feed")
+	if feed != "" && feed != "following" {
+		a.error(w, r, 400, "invalid_feed", "Choose the following feed or leave feed empty.")
+		return
+	}
+	userID := ""
+	if feed == "following" {
+		var ok bool
+		userID, ok = a.viewerID(w, r, true)
+		if !ok {
+			return
+		}
+	}
 	limit := 12
 	if raw := r.URL.Query().Get("limit"); raw != "" {
 		parsed, err := strconv.Atoi(raw)
@@ -111,7 +129,7 @@ func (a *App) listVideos(w http.ResponseWriter, r *http.Request) {
 		a.error(w, r, 400, "invalid_cursor", "The pagination cursor is invalid.")
 		return
 	}
-	page, err := a.Store.Videos(r.Context(), limit, channelID, cursor, a.Config.ExposeOperatorFixture)
+	page, err := a.Store.SearchVideos(r.Context(), limit, channelID, cursor, a.Config.ExposeOperatorFixture, query, userID)
 	if err != nil {
 		a.storeError(w, r, err)
 		return

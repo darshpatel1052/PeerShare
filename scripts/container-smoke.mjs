@@ -148,6 +148,34 @@ try {
   const video = await call(`/api/v1/videos/${upload.video_id}`);
   assert.equal(video.status, 200);
   assert.deepEqual(video.data.qualities, [480, 720]);
+  const follow = await call(
+    `/api/v1/channels/${channel.data.id}/subscription`,
+    { method: "POST", body: {} },
+  );
+  assert.equal(follow.status, 200);
+  assert.equal(follow.data.following, true);
+  const feed = await call("/api/v1/videos?feed=following&q=video");
+  assert.equal(feed.status, 200);
+  assert.equal(feed.data.items[0].id, upload.video_id);
+  const playlist = await call("/api/v1/playlists", {
+    method: "POST",
+    headers: { "Idempotency-Key": randomUUID() },
+    body: { title: "Watch later", visibility: "private" },
+  });
+  assert.equal(playlist.status, 201);
+  const saved = await call(`/api/v1/playlists/${playlist.data.id}/items`, {
+    method: "POST",
+    body: { video_id: upload.video_id, revision: playlist.data.revision },
+  });
+  assert.equal(saved.status, 200);
+  assert.equal(saved.data.items[0].video_id, upload.video_id);
+  const ownerCookie = cookie;
+  cookie = "";
+  assert.equal(
+    (await call(`/api/v1/playlists/${playlist.data.id}`)).status,
+    404,
+  );
+  cookie = ownerCookie;
   const manifest = await fetch(video.data.playback.manifest_url);
   assert.equal(manifest.status, 200);
   const master = await manifest.text();
@@ -176,6 +204,7 @@ try {
     actualWorkerProcessing: true,
     renditions: [480, 720],
     publishedManifestAndSegments: true,
+    viewerLibrary: true,
     observations,
   };
   await mkdir(".local/evidence", { recursive: true });
@@ -196,5 +225,18 @@ try {
       process.exitCode = 1;
     },
   );
+  try {
+    const remaining = await compose(
+      ["--profile", "app", "ps", "--all", "--format", "json"],
+      { test: true, quiet: true },
+    );
+    assert.ok(
+      remaining.trim() === "" || remaining.trim() === "[]",
+      "Disposable app containers survived cleanup",
+    );
+  } catch (error) {
+    console.error(error.message);
+    process.exitCode = 1;
+  }
   await rm(directory, { recursive: true, force: true });
 }

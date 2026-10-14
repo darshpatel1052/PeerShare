@@ -11,6 +11,7 @@ import (
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
 	"github.com/jackc/pgx/v5"
+	"github.com/twmb/franz-go/pkg/kerr"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -114,6 +115,14 @@ func (a *App) consumeMediaEvents(ctx context.Context) {
 			return
 		}
 		if len(fetched.Errors()) > 0 {
+			for _, failure := range fetched.Errors() {
+				var protocol *kerr.Error
+				if errors.As(failure.Err, &protocol) {
+					a.Logger.Warn("media_projection_fetch_deferred", "kafka_code", protocol.Code, "kafka_error", protocol.Message)
+				} else {
+					a.Logger.Warn("media_projection_fetch_deferred", "topic", failure.Topic, "partition", failure.Partition)
+				}
+			}
 			consumer.AllowRebalance()
 			if !waitDistributed(ctx, time.Second) {
 				return

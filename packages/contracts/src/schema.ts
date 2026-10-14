@@ -572,10 +572,195 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/channels/{id}/subscription": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    /** @description Public follower count; following reflects a valid current cookie session when present. */
+    get: operations["channelSubscription"];
+    put?: never;
+    /** @description Idempotent pair; at most 500 followed channels per account. */
+    post: operations["followChannel"];
+    delete: operations["unfollowChannel"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/subscriptions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["followedChannels"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/playlists": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["ownPlaylists"];
+    put?: never;
+    /** @description Stable actor/key/input returns the existing logical playlist; changed input conflicts. Deleted keys cannot recreate the playlist. At most 50 playlists and 500 retained creation keys per account. */
+    post: operations["createPlaylist"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/playlists/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    /** @description Public playlists show only currently published videos. Private playlists require their owner. Only the owner sees unavailable video IDs with null video metadata, enabling removal. */
+    get: operations["getPlaylist"];
+    put?: never;
+    post?: never;
+    delete: operations["deletePlaylist"];
+    options?: never;
+    head?: never;
+    patch: operations["editPlaylist"];
+    trace?: never;
+  };
+  "/api/v1/playlists/{id}/items": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Adds a published video once, at the end. At most 200 items; current revision required. */
+    post: operations["addPlaylistVideo"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/playlists/{id}/items/{video_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+        video_id: string;
+      };
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations["removePlaylistVideo"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/playlists/{id}/order": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    get?: never;
+    /** @description Full permutation of saved video IDs and current revision; row lock and deferred unique positions make the reorder atomic. */
+    put: operations["reorderPlaylist"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    Subscription: {
+      following: boolean;
+      followers: number;
+    };
+    Subscriptions: {
+      items: components["schemas"]["Channel"][];
+    };
+    Playlist: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      /** @enum {string} */
+      visibility: "private" | "public";
+      revision: number;
+      item_count: number;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    Playlists: {
+      items: components["schemas"]["Playlist"][];
+    };
+    PlaylistDetail: {
+      playlist: components["schemas"]["Playlist"];
+      is_owner: boolean;
+      items: {
+        /** Format: uuid */
+        video_id: string;
+        position: number;
+        video: components["schemas"]["Video"] | null;
+      }[];
+    };
+    PlaylistCreate: {
+      title: string;
+      /** @enum {string} */
+      visibility: "private" | "public";
+    };
+    PlaylistEdit: {
+      title: string;
+      /** @enum {string} */
+      visibility: "private" | "public";
+      revision: number;
+    };
+    PlaylistRevision: {
+      revision: number;
+    };
+    PlaylistItemAdd: {
+      /** Format: uuid */
+      video_id: string;
+      revision: number;
+    };
+    PlaylistOrder: {
+      video_ids: string[];
+      revision: number;
+    };
     AuthOptions: {
       google_enabled: boolean;
       registration_enabled: boolean;
@@ -1298,6 +1483,10 @@ export interface operations {
         limit?: number;
         cursor?: string;
         channel_id?: string;
+        /** @description PostgreSQL word/phrase search over titles, tags and descriptions, plus literal creator-name matching. Results remain chronological. */
+        q?: string;
+        /** @description Requires a current cookie session; includes only followed channels. */
+        feed?: "following";
       };
       header?: never;
       path?: never;
@@ -1789,6 +1978,344 @@ export interface operations {
         };
         content?: never;
       };
+    };
+  };
+  channelSubscription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Current relationship and count. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Subscription"];
+        };
+      };
+      400: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  followChannel: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: components["requestBodies"]["Empty"];
+    responses: {
+      /** @description Followed relationship. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Subscription"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  unfollowChannel: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Unfollowed relationship; repeated removal is safe. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Subscription"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  followedChannels: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Account's complete bounded list, at most 500 channels. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Subscriptions"];
+        };
+      };
+      401: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  ownPlaylists: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Own playlists, at most 50; item_count includes unavailable saved items. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Playlists"];
+        };
+      };
+      401: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  createPlaylist: {
+    parameters: {
+      query?: never;
+      header: {
+        "Idempotency-Key": string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlaylistCreate"];
+      };
+    };
+    responses: {
+      /** @description Created or safely replayed playlist. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Playlist"];
+        };
+      };
+      400: components["responses"]["Error"];
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  getPlaylist: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Consistent playlist snapshot, at most 200 items. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PlaylistDetail"];
+        };
+      };
+      400: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  deletePlaylist: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlaylistRevision"];
+      };
+    };
+    responses: {
+      /** @description Deleted; a later read/removal returns 404. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  editPlaylist: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlaylistEdit"];
+      };
+    };
+    responses: {
+      /** @description Updated playlist snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PlaylistDetail"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  addPlaylistVideo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlaylistItemAdd"];
+      };
+    };
+    responses: {
+      /** @description Updated snapshot; already-saved item remains unchanged. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PlaylistDetail"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  removePlaylistVideo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+        video_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlaylistRevision"];
+      };
+    };
+    responses: {
+      /** @description Updated snapshot with contiguous positions. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PlaylistDetail"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      503: components["responses"]["Error"];
+    };
+  };
+  reorderPlaylist: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlaylistOrder"];
+      };
+    };
+    responses: {
+      /** @description Reordered snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PlaylistDetail"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
+      422: components["responses"]["Error"];
+      503: components["responses"]["Error"];
     };
   };
 }

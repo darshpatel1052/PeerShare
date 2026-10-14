@@ -1,0 +1,22 @@
+{
+  "contracts/openapi/catalog-v1.yaml": "c462dc97c1bcf42f66b082326b7e98f55ba49bdf6de0a197b5265a6c8daa6dbf",
+  "docs/evidence/phase-4/README.md": "8dc5e41ce30fc54cb1b601fa0117b15058c0ca18c69625e8cf0c4899e76836f7",
+  "docs/evidence/phase-4/library-backend.json": "c437f605afb2d8e2a29b56695d754b4968d04295fa1d78760f4588d70dfd45b2",
+  "docs/evidence/phase-4/library-containers.json": "00ee822ce9907c31ff24b85f064cdbdf4cbdedf22e17ca1a7941bf261de3aeb4",
+  "docs/learning/phase-4/01-library-and-search.md": "1306f6532e80dde53a4ad7cdd5d101c6bbd28e7001f858ed0afa8af0172b41ab",
+  "docs/learning/phase-4/README.md": "860691778be09b3000fb06f33a3606e99ad76e9684422d2e4b3ea9cdfc5151db",
+  "docs/progress.md": "f6541874a76197cd738ec2ddfca5ff2f7b33d250908c97c6d11b24561f7fae20",
+  "packages/contracts/src/schema.ts": "2b5e417e1cc61bfce8a8a2f89f3af486544364df9f5f42ed0ef079acec90496e",
+  "scripts/container-smoke.mjs": "bb9a6c4ebd200db4b93c870fe77742098b29e32be459b3baae711de3f09bca68",
+  "scripts/dependencies.mjs": "e71a969b4455de2689ac91ee15d334c5f0fe45d7c44ca40fcc0b49c9365b161c",
+  "services/api/internal/httpapi/catalog.go": "dce5c932dbb7259e9124336cc60f937a0848e341b24d6fcdf306e0cff810dbe5",
+  "services/api/internal/httpapi/distributed.go": "ecf141de0c6f7eaaa489f36bbe72274bf5c4eda8fe74650c5f3b6ec66e766fde",
+  "services/api/internal/httpapi/distributed_test.go": "5ad6f4f77b12f21bc221153ffd6ee2e707c5f3480beb6a6bceec1edfdf330cad",
+  "services/api/internal/httpapi/library.go": "cf4d69ce550307a62c82683cf0a4ceba2689addf1317399c58683595a631167d",
+  "services/api/internal/httpapi/library_test.go": "821f8f381d979475906f1485de12f14908c05b3f3539263373409a87416b8462",
+  "services/api/internal/httpapi/server.go": "5b65afba2bcfdd1626bf0a23bd8faeb6398701315b6a5440884be844ce5bf2d9",
+  "services/api/internal/mediasvc/store.go": "5f3a69f0c2fcbacad50a1162f09a6eafd079f97a3c5d45fa4879ff935dbc3dab",
+  "services/api/internal/store/library.go": "3833adc92b68dabb81c54810ceb894a70cdfa91758cea907c59b1e73a5a42b12",
+  "services/api/internal/store/migrations/0007_viewer_library.sql": "3204b55c0c458ec564b02a80fbd6d94dd8aee7c4efc3ce0b625323d2397f9346",
+  "services/api/internal/store/videos.go": "6116f73381150079ce0675231b8dcae60a81d597919a4e5ab86fddd98316d0f6"
+}

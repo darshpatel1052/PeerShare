@@ -352,6 +352,14 @@ paths:
         - name: channel_id
           in: query
           schema: { type: string, format: uuid }
+        - name: q
+          in: query
+          schema: { type: string, maxLength: 120 }
+          description: PostgreSQL word/phrase search over titles, tags and descriptions, plus literal creator-name matching. Results remain chronological.
+        - name: feed
+          in: query
+          schema: { type: string, enum: [following] }
+          description: Requires a current cookie session; includes only followed channels.
       responses:
         "200":
           description: Bounded page with a nullable cursor for the next page.
@@ -629,6 +637,222 @@ paths:
       responses:
         "200": { description: PostgreSQL and Redis are reachable. }
         "503": { description: A required dependency is unavailable. }
+  /api/v1/channels/{id}/subscription:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    get:
+      operationId: channelSubscription
+      description: Public follower count; following reflects a valid current cookie session when present.
+      responses:
+        "200":
+          description: Current relationship and count.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Subscription" }
+        "400": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+    post:
+      operationId: followChannel
+      security: [{ session: [] }]
+      description: Idempotent pair; at most 500 followed channels per account.
+      requestBody: { $ref: "#/components/requestBodies/Empty" }
+      responses:
+        "200":
+          description: Followed relationship.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Subscription" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: unfollowChannel
+      security: [{ session: [] }]
+      responses:
+        "200":
+          description: Unfollowed relationship; repeated removal is safe.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Subscription" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/subscriptions:
+    get:
+      operationId: followedChannels
+      security: [{ session: [] }]
+      responses:
+        "200":
+          description: Account's complete bounded list, at most 500 channels.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Subscriptions" }
+        "401": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/playlists:
+    get:
+      operationId: ownPlaylists
+      security: [{ session: [] }]
+      responses:
+        "200":
+          description: Own playlists, at most 50; item_count includes unavailable saved items.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Playlists" }
+        "401": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+    post:
+      operationId: createPlaylist
+      security: [{ session: [] }]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: { type: string, format: uuid }
+      description: Stable actor/key/input returns the existing logical playlist; changed input conflicts. Deleted keys cannot recreate the playlist. At most 50 playlists and 500 retained creation keys per account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PlaylistCreate" }
+      responses:
+        "201":
+          description: Created or safely replayed playlist.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Playlist" }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/playlists/{id}:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    get:
+      operationId: getPlaylist
+      description: Public playlists show only currently published videos. Private playlists require their owner. Only the owner sees unavailable video IDs with null video metadata, enabling removal.
+      responses:
+        "200":
+          description: Consistent playlist snapshot, at most 200 items.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlaylistDetail" }
+        "400": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+    patch:
+      operationId: editPlaylist
+      security: [{ session: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PlaylistEdit" }
+      responses:
+        "200":
+          description: Updated playlist snapshot.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlaylistDetail" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deletePlaylist
+      security: [{ session: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PlaylistRevision" }
+      responses:
+        "204": { description: Deleted; a later read/removal returns 404. }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/playlists/{id}/items:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    post:
+      operationId: addPlaylistVideo
+      security: [{ session: [] }]
+      description: Adds a published video once, at the end. At most 200 items; current revision required.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PlaylistItemAdd" }
+      responses:
+        "200":
+          description: Updated snapshot; already-saved item remains unchanged.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlaylistDetail" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/playlists/{id}/items/{video_id}:
+    parameters:
+      - { $ref: "#/components/parameters/ResourceID" }
+      - name: video_id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    delete:
+      operationId: removePlaylistVideo
+      security: [{ session: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PlaylistRevision" }
+      responses:
+        "200":
+          description: Updated snapshot with contiguous positions.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlaylistDetail" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
+  /api/v1/playlists/{id}/order:
+    parameters: [{ $ref: "#/components/parameters/ResourceID" }]
+    put:
+      operationId: reorderPlaylist
+      security: [{ session: [] }]
+      description: Full permutation of saved video IDs and current revision; row lock and deferred unique positions make the reorder atomic.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PlaylistOrder" }
+      responses:
+        "200":
+          description: Reordered snapshot.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlaylistDetail" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
+        "503": { $ref: "#/components/responses/Error" }
 components:
   securitySchemes:
     session:
@@ -655,6 +879,104 @@ components:
         application/json:
           schema: { $ref: "#/components/schemas/APIError" }
   schemas:
+    Subscription:
+      type: object
+      required: [following, followers]
+      properties:
+        following: { type: boolean }
+        followers: { type: integer, minimum: 0 }
+    Subscriptions:
+      type: object
+      required: [items]
+      properties:
+        items:
+          {
+            type: array,
+            maxItems: 500,
+            items: { $ref: "#/components/schemas/Channel" },
+          }
+    Playlist:
+      type: object
+      required:
+        [id, title, visibility, revision, item_count, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        visibility: { type: string, enum: [private, public] }
+        revision: { type: integer, minimum: 1 }
+        item_count: { type: integer, minimum: 0, maximum: 200 }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    Playlists:
+      type: object
+      required: [items]
+      properties:
+        items:
+          {
+            type: array,
+            maxItems: 50,
+            items: { $ref: "#/components/schemas/Playlist" },
+          }
+    PlaylistDetail:
+      type: object
+      required: [playlist, is_owner, items]
+      properties:
+        playlist: { $ref: "#/components/schemas/Playlist" }
+        is_owner: { type: boolean }
+        items:
+          type: array
+          maxItems: 200
+          items:
+            type: object
+            required: [video_id, position, video]
+            properties:
+              video_id: { type: string, format: uuid }
+              position: { type: integer, minimum: 0, maximum: 199 }
+              video:
+                anyOf:
+                  - { $ref: "#/components/schemas/Video" }
+                  - { type: "null" }
+    PlaylistCreate:
+      type: object
+      additionalProperties: false
+      required: [title, visibility]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 100 }
+        visibility: { type: string, enum: [private, public] }
+    PlaylistEdit:
+      type: object
+      additionalProperties: false
+      required: [title, visibility, revision]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 100 }
+        visibility: { type: string, enum: [private, public] }
+        revision: { type: integer, minimum: 1 }
+    PlaylistRevision:
+      type: object
+      additionalProperties: false
+      required: [revision]
+      properties:
+        revision: { type: integer, minimum: 1 }
+    PlaylistItemAdd:
+      type: object
+      additionalProperties: false
+      required: [video_id, revision]
+      properties:
+        video_id: { type: string, format: uuid }
+        revision: { type: integer, minimum: 1 }
+    PlaylistOrder:
+      type: object
+      additionalProperties: false
+      required: [video_ids, revision]
+      properties:
+        video_ids:
+          {
+            type: array,
+            maxItems: 200,
+            uniqueItems: true,
+            items: { type: string, format: uuid },
+          }
+        revision: { type: integer, minimum: 1 }
     AuthOptions:
       type: object
       required: [google_enabled, registration_enabled]
