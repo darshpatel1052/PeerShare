@@ -1,0 +1,56 @@
+# Local production-mode rehearsal. It reuses the selected project's volumes,
+# removes backend host ports and exposes only TLS + loopback operator metrics.
+services:
+  api:
+    ports: !reset []
+    environment:
+      APP_ENV: production
+      APP_ORIGIN: ${PEERSCREEN_GATEWAY_ORIGIN:-https://localhost:3443}
+      MEDIA_BASE_URL: ${PEERSCREEN_GATEWAY_ORIGIN:-https://localhost:3443}/media/
+      TRACKER_URL: ${PEERSCREEN_GATEWAY_WS_ORIGIN:-wss://localhost:3443}/tracker
+      REGISTRATION_ENABLED: "false"
+      EXPOSE_OPERATOR_FIXTURE: "false"
+      TRUSTED_PROXY_CIDRS: 172.29.241.10/32
+      API_REPLICA_DIAGNOSTICS: ${API_REPLICA_DIAGNOSTICS:-false}
+    deploy:
+      replicas: 2
+  web:
+    ports: !reset []
+    environment:
+      APP_ORIGIN: ${PEERSCREEN_GATEWAY_ORIGIN:-https://localhost:3443}
+  postgres:
+    ports: !reset []
+  redis:
+    ports: !reset []
+  kafka:
+    ports: !reset []
+  gateway:
+    profiles: [app]
+    image: envoyproxy/envoy:v1.39.4@sha256:74bd4eb5629708d3fadca1a5e6b85d208f338d7bb54e06b69565905c5294cc01
+    user: ${PEERSCREEN_GATEWAY_UID:-1000}:${PEERSCREEN_GATEWAY_GID:-1000}
+    command:
+      [envoy, -c, /config/envoy.json, --concurrency, "2", --log-level, warning]
+    volumes:
+      - ../../.local/gateway/envoy.json:/config/envoy.json:ro
+      - ../../.local/gateway/cert.pem:/tls/cert.pem:ro
+      - ../../.local/gateway/key.pem:/tls/key.pem:ro
+    ports:
+      - 127.0.0.1:${PEERSCREEN_GATEWAY_PORT:-3443}:8443
+      - 127.0.0.1:${PEERSCREEN_GATEWAY_ADMIN_PORT:-19901}:9901
+    networks:
+      default:
+        ipv4_address: 172.29.241.10
+    depends_on:
+      api: { condition: service_healthy }
+      web: { condition: service_healthy }
+    read_only: true
+    tmpfs: [/tmp:size=32m]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    cpus: 1
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.29.241.0/24

@@ -11,4 +11,7 @@ test-results/
 coverage/
 *.tfstate*
 .terraform/
+*.tfvars
+!example.tfvars
+*.tfplan
 __pycache__/

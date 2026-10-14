@@ -11,7 +11,7 @@ try {
   console.error("Run npm run fixture first.");
   process.exit(1);
 }
-const tracker = createTracker();
+const tracker = createTracker({ allowedOrigins: ["http://localhost:3000"] });
 const backend = await startBackend({
   origin: "http://localhost:3000",
   trackerUrl: "ws://localhost:8000",

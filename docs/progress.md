@@ -19,9 +19,9 @@ The implementation follows [the supplied brief](project-brief.md). This file rec
 - See [the phase 0 evidence](evidence/milestone-0.md) and [ADR 0001](adr/0001-static-export-and-verified-peer-delivery.md).
 - AWS resources: none provisioned. Preserve the Free plan and the stated credit constraint.
 
-## Dependency finding
+## Resolved tracker dependency finding
 
-`npm audit` reports two high findings: `bittorrent-tracker` via `ip` and the `ip` SSRF classification advisory (GHSA-2p57-rm9w-gvfp). The installed tracker imports `ip` in its UDP parser. This proof disables UDP and HTTP announces, binds only loopback, and uses WebSocket signalling. Do not expose this local server publicly without assessing/replacing the affected dependency and implementing the deployment controls. Do not apply npm's suggested downgrade to tracker 0.7.3; it would change the compatibility target substantially.
+Earlier checkpoints reported two high findings through the old `bittorrent-tracker` server and its `ip` dependency (GHSA-2p57-rm9w-gvfp). The Phase 5 networking checkpoint replaces that server with bounded WebSocket-only signalling over pinned `ws`. The dependency chain is removed and the current audit reports zero findings. Historical evidence retains its earlier findings. Public TLS, resource bounds and deployment admission remain separate controls; an audit result does not establish complete production security.
 
 ## Checkpoints
 
@@ -97,6 +97,20 @@ The README now presents the product and learning features first. The Phase 4 gui
 Regression verification exposed a concurrent media-submission unique-index race and stale profiled test containers joining a later Kafka consumer group. Submission locking and complete profiled teardown passed the full 46-case (70 including subcases) suite and the actual-image library/upload check. The Phase 3 closing [CI run succeeded](https://github.com/darshpatel1052/Peer-Screen/actions/runs/38533968360).
 
 The library foundation checkpoint `6b1a9c9` passed [CI](https://github.com/darshpatel1052/Peer-Screen/actions/runs/38542338598). The connected-product/review-fix checkpoint follows; Git history gives its exact revision. The user confirmed two devices/networks can be used for the real cross-network exercise. Local results remain single-host until that measurement is recorded, so the full milestone exit remains pending. No AWS resources have been provisioned.
+
+## Started: milestone 5 — networking and deployment foundation
+
+- Free Cloudflare STUN is enabled in normal runtime after explicit opt-in; it can be disabled with `PEER_STUN_URLS=off`. Routine tests remain offline.
+- A real running-browser check observed a server-reflexive candidate without retaining addresses or SDP, and no connection before opt-in. Two-network media verification remains pending.
+- WebSocket-only tracker, same-origin HTTPS/WSS Envoy routing, two catalogue replicas, shared secure sessions and current DNS endpoint discovery.
+- Private Go request-duration/pool/runtime measurements, tracker counters and Envoy health statistics. Trusted client-address headers are accepted only from the configured direct gateway.
+- Packaged HTTPS rehearsal served actual uploaded media and exchanged 1,046,596 peer payload bytes, retained a secure session across both replicas, and routed through the healthy endpoint after one API stopped. The initial idle health interval is explicit to avoid its default sixty-second first timer.
+- API runtime reduced to approximately 611 MB and web to 230 MB by retaining compilers/build dependencies in build stages. Normal app containers upgraded with original media/artwork and Google configuration preserved.
+- Backend verification passed 55 top-level cases (80 including subcases) with race detection. The new tracker passed all 25 production browser cases; the packaged rehearsal additionally exercised the newer committed player UI.
+- Terraform 1.16.6 / AWS provider 6.68.0 starter validated locally, with encrypted bounded disks, private buckets, retained release repositories and bounded log retention. No AWS plan/apply, DNS edit, image push to AWS or paid-plan upgrade occurred.
+- User selected `peerscreen.darshpatel.dev` and AWS preparation within Free-plan credits. Current credits/expiry, existing usage and demo duration remain unconfirmed; the official-rate 24-hour core subtotal is about USD 2.75 before variable delivery/services and credits.
+
+See [the Phase 5 learning guide](learning/phase-5/README.md) and [current evidence](evidence/phase-5/README.md). This is the first deployment foundation checkpoint, not completion of Phase 5. S3 application transport/revocation, creator admission, certificates, scoped IAM/image delivery, backup/restore, broader observability, account-specific cost/plan and public/two-network validation remain required before provisioning the final product.
 
 ## Product and Google identity follow-up
 

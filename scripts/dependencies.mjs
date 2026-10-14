@@ -1,7 +1,10 @@
 import { spawn } from "node:child_process";
 import { localEnvironment } from "./local-environment.mjs";
 
-export async function compose(args, { test = false, quiet = false } = {}) {
+export async function compose(
+  args,
+  { test = false, quiet = false, overlays = [] } = {},
+) {
   // Teardown must include profiled app services as well as dependencies.
   // Otherwise old API/worker consumers can survive and contaminate a new test.
   if (args[0] === "down" || args[0] === "stop")
@@ -16,14 +19,17 @@ export async function compose(args, { test = false, quiet = false } = {}) {
     const output = await compose([...args, "postgres", "redis", "kafka"], {
       test,
       quiet,
+      overlays,
     });
     await compose(["run", "--rm", "--no-deps", "media-bootstrap"], {
       test,
       quiet,
+      overlays,
     });
     await compose(["run", "--rm", "--no-deps", "kafka-topics"], {
       test,
       quiet,
+      overlays,
     });
     return output;
   }
@@ -40,6 +46,7 @@ export async function compose(args, { test = false, quiet = false } = {}) {
         ".local/local.env",
         "-f",
         "deploy/compose/local.yml",
+        ...overlays.flatMap((path) => ["-f", path]),
         ...args,
       ],
       {

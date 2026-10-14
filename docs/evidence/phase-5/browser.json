@@ -1,0 +1,138 @@
+{
+  "scope": "native production export with new tracker, offline STUN; newer player UI is also exercised by packaged gateway rehearsal",
+  "stats": {
+    "startTime": "2026-10-14T13:56:30.167Z",
+    "duration": 269231.386,
+    "expected": 25,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "name": "product theme, catalogue search, channel tools and phone layouts work",
+      "status": "expected",
+      "file": "design.spec.ts"
+    },
+    {
+      "name": "Google availability is honest and callback errors explain account linking",
+      "status": "expected",
+      "file": "google-settings.spec.ts"
+    },
+    {
+      "name": "Workspace settings contain Appearance and password-confirmed Google connection",
+      "status": "expected",
+      "file": "google-settings.spec.ts"
+    },
+    {
+      "name": "production export supports direct watch/channel links and reload",
+      "status": "expected",
+      "file": "http.spec.ts"
+    },
+    {
+      "name": "HTTP playback, seek and quality selection work with no tracker requests",
+      "status": "expected",
+      "file": "http.spec.ts"
+    },
+    {
+      "name": "media origin supplies correct MIME and explicit cross-origin permission",
+      "status": "expected",
+      "file": "http.spec.ts"
+    },
+    {
+      "name": "missing videos and integrity failures show useful states",
+      "status": "expected",
+      "file": "http.spec.ts"
+    },
+    {
+      "name": "register, create, reload, edit, sign out and sign in through the production UI",
+      "status": "expected",
+      "file": "identity.spec.ts"
+    },
+    {
+      "name": "a second owner is denied and a stale form preserves its unsaved edit",
+      "status": "expected",
+      "file": "identity.spec.ts"
+    },
+    {
+      "name": "controlled failed requests preserve channel fields and catalogue retry recovers",
+      "status": "expected",
+      "file": "identity.spec.ts"
+    },
+    {
+      "name": "a delayed thumbnail save keeps the newly selected video editor intact",
+      "status": "expected",
+      "file": "library-analytics.spec.ts"
+    },
+    {
+      "name": "viewer follows, searches unloaded videos, saves and reorders a private playlist, then shares it",
+      "status": "expected",
+      "file": "library-analytics.spec.ts"
+    },
+    {
+      "name": "a lost playlist creation response retries one logical request and stale edits preserve the form",
+      "status": "expected",
+      "file": "library-analytics.spec.ts"
+    },
+    {
+      "name": "real playback qualifies once across sharing changes and owner analytics report actual payload",
+      "status": "expected",
+      "file": "library-analytics.spec.ts"
+    },
+    {
+      "name": "viewers can turn sharing off after player initialization fails",
+      "status": "expected",
+      "file": "peer.spec.ts"
+    },
+    {
+      "name": "three independent viewers transfer verified peer bytes and recover after peers leave",
+      "status": "expected",
+      "file": "peer.spec.ts"
+    },
+    {
+      "name": "corrupted bytes sent on a real data channel are rejected, then HTTP playback succeeds",
+      "status": "expected",
+      "file": "peer.spec.ts"
+    },
+    {
+      "name": "sharing off and route departure close real WebRTC connections",
+      "status": "expected",
+      "file": "peer.spec.ts"
+    },
+    {
+      "name": "an unavailable tracker leaves verified HTTP playback working",
+      "status": "expected",
+      "file": "peer.spec.ts"
+    },
+    {
+      "name": "different trusted media versions stay in separate peer swarms",
+      "status": "expected",
+      "file": "peer.spec.ts"
+    },
+    {
+      "name": "PeerScreen controls play, pause, seek, mute, adjust volume and enter fullscreen",
+      "status": "expected",
+      "file": "player-controls.spec.ts"
+    },
+    {
+      "name": "upload adaptive media, preview privately, publish, switch quality and revoke access",
+      "status": "expected",
+      "file": "upload.spec.ts"
+    },
+    {
+      "name": "resume a multi-chunk MP4 after a lost connection and reload; reject a different same-size file",
+      "status": "expected",
+      "file": "upload.spec.ts"
+    },
+    {
+      "name": "failed source stays private and studio metadata edits and deletion work",
+      "status": "expected",
+      "file": "upload.spec.ts"
+    },
+    {
+      "name": "three viewers exchange verified uploaded media with measured HTTP baseline and gateway bytes",
+      "status": "expected",
+      "file": "uploaded-peer.spec.ts"
+    }
+  ]
+}

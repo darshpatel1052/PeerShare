@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-10-14T14:41:50.982Z",
+  "scope": "real running player, one host, public STUN; address discovery only",
+  "browser": "156.0.8078.4",
+  "noConnectionsBeforeOptIn": true,
+  "stunConfigured": true,
+  "candidateTypes": ["host", "srflx"],
+  "gatheringCompleted": 0,
+  "timedOut": false,
+  "publicAddressDiscovered": true,
+  "crossNetworkMediaVerified": false
+}

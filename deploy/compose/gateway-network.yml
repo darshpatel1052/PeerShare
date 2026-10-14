@@ -1,0 +1,6 @@
+# Used for the disposable bootstrap before applying production-mode settings.
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.29.241.0/24

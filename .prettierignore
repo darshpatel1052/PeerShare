@@ -6,3 +6,4 @@ out
 .local
 test-results
 playwright-report
+.terraform

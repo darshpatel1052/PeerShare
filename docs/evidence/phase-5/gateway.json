@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-14T14:38:27.067Z",
+  "scope": "actual Docker images, self-signed localhost HTTPS/WSS, two replicas, owned upload; STUN offline in rehearsal",
+  "apiReplicasObserved": 2,
+  "sharedSession": true,
+  "secureCookieAttributes": true,
+  "publicRegistrationClosed": true,
+  "httpsMedia": true,
+  "wssTracker": true,
+  "peerBytes": 1046596,
+  "uploadedBytes": 1046596,
+  "secureContext": true,
+  "metricsPrivate": true,
+  "healthyReplicaAfterStop": true,
+  "awsResourcesCreated": 0,
+  "publicDeployment": false
+}

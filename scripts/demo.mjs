@@ -16,7 +16,7 @@ try {
 const port = Number(process.env.DEMO_PORT || 3000);
 const mediaPort = Number(process.env.MEDIA_PORT || 3001);
 const trackerPort = Number(process.env.TRACKER_PORT || 8000);
-const allowedOrigin = `http://localhost:${port}`;
+const allowedOrigin = process.env.APP_ORIGIN || `http://localhost:${port}`;
 const bindHost = process.env.DEMO_BIND_HOST || "127.0.0.1";
 const backend = await startBackend({
   origin: allowedOrigin,
@@ -35,7 +35,7 @@ const media = createStaticServer({
   allowedOrigin,
   apiTarget: backend.target,
 });
-const tracker = createTracker();
+const tracker = createTracker({ allowedOrigins: [allowedOrigin] });
 const listen = (server, listeningPort) =>
   new Promise((accept, reject) => {
     server.once("error", reject);

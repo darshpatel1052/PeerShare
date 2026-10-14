@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"net"
+	"net/netip"
 	"net/url"
 	"os"
 	"regexp"
@@ -12,6 +13,8 @@ import (
 )
 
 type Config struct {
+	TrustedProxies        []netip.Prefix
+	ReplicaDiagnostics    bool
 	STUNURLs              []string
 	MediaAddress          string
 	CatalogRPCToken       string
@@ -37,6 +40,8 @@ type Config struct {
 	MediaDir              string
 }
 
+const DefaultSTUNURL = "stun:stun.cloudflare.com:3478"
+
 func Load() (Config, error) {
 	cfg := Config{GoogleClientID: os.Getenv("GOOGLE_CLIENT_ID"), GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"), DatabaseURL: os.Getenv("DATABASE_URL"), RedisURL: os.Getenv("REDIS_URL"),
 		ListenAddr: value("API_LISTEN_ADDR", "127.0.0.1:18080"), AppOrigin: value("APP_ORIGIN", "http://localhost:3000"),
@@ -47,8 +52,22 @@ func Load() (Config, error) {
 	cfg.MediaAddress = os.Getenv("MEDIA_GRPC_ADDR")
 	cfg.CatalogRPCToken = os.Getenv("CATALOG_RPC_TOKEN")
 	cfg.KafkaServers = os.Getenv("KAFKA_BOOTSTRAP_SERVERS")
+	if raw := os.Getenv("TRUSTED_PROXY_CIDRS"); raw != "" {
+		for _, item := range strings.Split(raw, ",") {
+			prefix, err := netip.ParsePrefix(strings.TrimSpace(item))
+			if err != nil || prefix.Bits() == 0 || len(cfg.TrustedProxies) >= 4 {
+				return cfg, errors.New("TRUSTED_PROXY_CIDRS requires up to four explicit proxy network prefixes")
+			}
+			cfg.TrustedProxies = append(cfg.TrustedProxies, prefix)
+		}
+	}
+	cfg.ReplicaDiagnostics = os.Getenv("API_REPLICA_DIAGNOSTICS") == "true"
 	cfg.STUNURLs = make([]string, 0)
-	if raw := os.Getenv("PEER_STUN_URLS"); raw != "" {
+	raw, configured := os.LookupEnv("PEER_STUN_URLS")
+	if !configured {
+		raw = DefaultSTUNURL
+	}
+	if raw != "" && raw != "off" {
 		for _, value := range strings.Split(raw, ",") {
 			value = strings.TrimSpace(value)
 			host, port, err := net.SplitHostPort(strings.TrimPrefix(value, "stun:"))

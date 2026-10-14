@@ -1,0 +1,25 @@
+#!/bin/bash
+set -euo pipefail
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y docker.io docker-compose-v2 ffmpeg git ca-certificates
+systemctl stop docker
+disk=/dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_${volume_id}
+for count in $(seq 1 120); do
+  if [ -b "$disk" ]; then break; fi
+  sleep 1
+done
+test -b "$disk"
+if ! blkid "$disk" >/dev/null 2>&1; then mkfs.ext4 "$disk"; fi
+mkdir -p /srv/peerscreen/data
+disk_uuid=$(blkid -s UUID -o value "$disk")
+if ! grep -q "$disk_uuid" /etc/fstab; then
+  echo "UUID=$disk_uuid /srv/peerscreen/data ext4 defaults,nofail 0 2" >> /etc/fstab
+fi
+mount /srv/peerscreen/data
+mkdir -p /etc/docker /srv/peerscreen/data/docker
+cat >/etc/docker/daemon.json <<'JSON'
+{"data-root":"/srv/peerscreen/data/docker","log-driver":"json-file","log-opts":{"max-size":"10m","max-file":"3"}}
+JSON
+systemctl enable --now docker
+echo 'PeerScreen host prepared. Application deployment and TLS issuance remain operator steps.'

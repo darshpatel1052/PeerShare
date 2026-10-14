@@ -44,6 +44,11 @@ export function createStaticServer({
       return;
     }
     const origin = request.headers.origin;
+    if (request.method === "GET" && pathname === "/health/live") {
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end('{"status":"ok"}');
+      return;
+    }
     if (
       testRuntime &&
       pathname === "/__peerscreen-test/delivery" &&

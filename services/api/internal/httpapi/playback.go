@@ -3,7 +3,6 @@ package httpapi
 import (
 	"context"
 	"errors"
-	"net"
 	"net/http"
 	"strconv"
 	"time"
@@ -39,10 +38,7 @@ func (a *App) playbackCapacity(w http.ResponseWriter, r *http.Request, key strin
 	return true
 }
 func (a *App) startPlayback(w http.ResponseWriter, r *http.Request) {
-	address, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		address = r.RemoteAddr
-	}
+	address := a.clientAddress(r)
 	if !a.playbackCapacity(w, r, address, 30) {
 		return
 	}

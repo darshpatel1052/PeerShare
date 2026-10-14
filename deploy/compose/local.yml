@@ -1,7 +1,7 @@
 x-api-environment: &api-environment
   GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
   GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-  PEER_STUN_URLS: ${PEER_STUN_URLS:-}
+  PEER_STUN_URLS: ${PEER_STUN_URLS-stun:stun.cloudflare.com:3478}
   EXPOSE_OPERATOR_FIXTURE: ${EXPOSE_OPERATOR_FIXTURE:-false}
   APP_ENV: development
   APP_ORIGIN: http://localhost:${PEERSCREEN_WEB_PORT:-3000}
@@ -250,7 +250,7 @@ services:
           CMD,
           node,
           -e,
-          "fetch('http://127.0.0.1:3000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+          "fetch('http://127.0.0.1:3000/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
         ]
       interval: 3s
       timeout: 4s

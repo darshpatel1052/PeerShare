@@ -76,7 +76,9 @@ export async function localEnvironment({ test = false } = {}) {
     APP_ENV: "development",
     PEER_STUN_URLS: test
       ? ""
-      : process.env.PEER_STUN_URLS || values.PEER_STUN_URLS || "",
+      : (process.env.PEER_STUN_URLS ??
+        values.PEER_STUN_URLS ??
+        "stun:stun.cloudflare.com:3478"),
     EXPOSE_OPERATOR_FIXTURE: test
       ? "true"
       : process.env.EXPOSE_OPERATOR_FIXTURE || "false",

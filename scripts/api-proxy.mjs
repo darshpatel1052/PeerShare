@@ -17,6 +17,7 @@ const stripped = new Set([
   "x-forwarded-host",
   "x-forwarded-proto",
   "x-user-id",
+  "x-peerscreen-client-ip",
 ]);
 export function proxyAPI(
   request,

@@ -1,15 +1,24 @@
 package config
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
-func TestSTUNConfigurationIsBoundedAndDisabledByDefault(t *testing.T) {
+func TestSTUNConfigurationDefaultOptOutAndBounds(t *testing.T) {
 	t.Setenv("DATABASE_URL", "postgres://example")
 	t.Setenv("REDIS_URL", "redis://localhost:6379")
 	t.Setenv("APP_ENV", "development")
 	t.Setenv("PEER_STUN_URLS", "")
+	os.Unsetenv("PEER_STUN_URLS")
 	cfg, err := Load()
+	if err != nil || len(cfg.STUNURLs) != 1 || cfg.STUNURLs[0] != DefaultSTUNURL {
+		t.Fatal("default STUN discovery is missing")
+	}
+	t.Setenv("PEER_STUN_URLS", "off")
+	cfg, err = Load()
 	if err != nil || len(cfg.STUNURLs) != 0 {
-		t.Fatal("STUN must be disabled by default")
+		t.Fatal("explicit STUN opt-out did not disable discovery")
 	}
 	t.Setenv("PEER_STUN_URLS", "stun:stun.cloudflare.com:3478")
 	cfg, err = Load()

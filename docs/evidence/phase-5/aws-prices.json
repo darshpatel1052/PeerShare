@@ -1,0 +1,73 @@
+{
+  "fetchedOn": "2026-10-14",
+  "source": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/ap-south-1/index.json",
+  "publicationDate": "2026-10-12T19:39:25Z",
+  "selected": [
+    {
+      "sku": "D7RMW443YWTMZ4V5",
+      "attributes": {
+        "servicecode": "AmazonEC2",
+        "location": "Asia Pacific (Mumbai)",
+        "locationType": "AWS Region",
+        "storageMedia": "SSD-backed",
+        "volumeType": "General Purpose",
+        "maxVolumeSize": "64 TiB",
+        "maxIopsvolume": "80000",
+        "maxThroughputvolume": "2000 MiB/s",
+        "usagetype": "APS3-EBS:VolumeUsage.gp3",
+        "operation": "",
+        "regionCode": "ap-south-1",
+        "servicename": "Amazon Elastic Compute Cloud",
+        "volumeApiName": "gp3"
+      },
+      "description": "$0.0912 per GB-month of General Purpose (gp3) provisioned storage - Asia Pacific (Mumbai)",
+      "unit": "GB-Mo",
+      "usd": "0.0912000000"
+    },
+    {
+      "sku": "B93FA56DAR3KQ3FC",
+      "attributes": {
+        "servicecode": "AmazonEC2",
+        "location": "Asia Pacific (Mumbai)",
+        "locationType": "AWS Region",
+        "instanceType": "m7i-flex.large",
+        "currentGeneration": "Yes",
+        "instanceFamily": "General purpose",
+        "vcpu": "2",
+        "physicalProcessor": "Intel Xeon Scalable (Sapphire Rapids)",
+        "clockSpeed": "3.5 GHz",
+        "memory": "8 GiB",
+        "storage": "EBS only",
+        "networkPerformance": "Up to 12500 Megabit",
+        "processorArchitecture": "64-bit",
+        "tenancy": "Shared",
+        "operatingSystem": "Linux",
+        "licenseModel": "No License required",
+        "usagetype": "APS3-BoxUsage:m7i-flex.large",
+        "operation": "RunInstances",
+        "availabilityzone": "NA",
+        "capacitystatus": "Used",
+        "classicnetworkingsupport": "false",
+        "dedicatedEbsThroughput": "Up to 10000 Mbps",
+        "dedicatedEbsThroughputDescription": "312 Mbps",
+        "ecu": "NA",
+        "enhancedNetworkingSupported": "Yes",
+        "gpuMemory": "NA",
+        "instanceFamilyCategory": "General Purpose",
+        "intelAvxAvailable": "Yes",
+        "intelAvx2Available": "Yes",
+        "intelTurboAvailable": "Yes",
+        "marketoption": "OnDemand",
+        "normalizationSizeFactor": "4",
+        "preInstalledSw": "NA",
+        "processorFeatures": "Intel AVX; Intel AVX2; Intel AVX512; Intel Turbo; Intel AMX",
+        "regionCode": "ap-south-1",
+        "servicename": "Amazon Elastic Compute Cloud",
+        "vpcnetworkingsupport": "true"
+      },
+      "description": "$0.10075 per On Demand Linux m7i-flex.large Instance Hour",
+      "unit": "Hrs",
+      "usd": "0.1007500000"
+    }
+  ]
+}

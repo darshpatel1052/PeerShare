@@ -83,7 +83,7 @@ The checks protect ownership, publication, uploads and the viewer journeys. Go i
 
 Open the same uploaded video in separate browser profiles, choose the same quality and enable **Help share this video** in each. Overlapping playback and cached segments improve the chance of sharing. **Connection details** shows received HTTP/peer payload and uploaded peer payload. You can download a playback report for a device exercise. Peers/network conditions can prevent sharing; HTTP stays available.
 
-Sharing starts off for each video/version in a new tab. Your choice is remembered for that video within the tab. Opting in spends upload bandwidth and exposes network addresses to peers/discovery services. Turning it off closes peer connections and keeps HTTP playback, including after an initialization error. Local automated peer checks use loopback, a local tracker and no external STUN. Optional STUN is described in the [device exercise](docs/learning/phase-4/04-device-exercise.md).
+Sharing starts off for each video/version in a new tab. Your choice is remembered for that video within the tab. Opting in spends upload bandwidth and exposes network addresses to peers/discovery services. Turning it off closes peer connections and keeps HTTP playback, including after an initialization error. Normal playback now defaults to Cloudflare's free STUN discovery after opt-in. A real browser check observed a server-reflexive candidate without retaining addresses. Routine tests remain offline; see the [device exercise](docs/learning/phase-4/04-device-exercise.md) and [Phase 5 guide](docs/learning/phase-5/README.md).
 
 ## Current limits
 
@@ -91,7 +91,7 @@ The normal local runtime uses separate catalogue, media coordinator and worker p
 
 The local transport remains filesystem storage. S3 multipart operations, public upload allowlists, email verification/password recovery, backups/restore, multi-host failover and public deployment require later work. Production-mode new upload admission remains disabled pending its policy. Native mode stores media under `.local`; container mode retains named volumes. Switching modes does not migrate uploaded media between roots. Each runtime database credential owns only its service schema; a production deployment still needs a separate restricted migration/runtime-role split. Behind the local proxy, authentication limits share the proxy TCP-address bucket. Native HLS and other browsers have not been proved equivalent to the Chromium integrity/P2P path.
 
-The tracker dependency has a known high advisory through `ip`. UDP/HTTP announces are disabled and this local proof stays on loopback; assess/replace the affected dependency before public exposure. Details are in [progress](docs/progress.md#dependency-finding). AWS resources have not been provisioned.
+The tracker now uses a bounded WebSocket-only implementation; removing the old server dependency removed its vulnerable `ip` chain. The current dependency audit reports zero findings. AWS resources have not been provisioned.
 
 Phase 0's historical [evidence](docs/evidence/milestone-0.md) and [ADR](docs/adr/0001-static-export-and-verified-peer-delivery.md) remain available. Checkpoint commits are created and pushed after substantial validated progress.
 
@@ -100,6 +100,10 @@ Phase 0's historical [evidence](docs/evidence/milestone-0.md) and [ADR](docs/adr
 The UI shares graphite/lime colours, a light theme, creator artwork and custom player controls. Catalogue search runs on the server before pagination. Following, Library, playlists and Analytics use the same components and responsive styling. Appearance lives under Workspace Settings.
 
 See [the UI learning notes](docs/learning/ui-design.md) for design tokens, component responsibilities and browser state, and [the UI evidence](docs/evidence/ui-redesign.md) for screenshots and actual checks.
+
+## Deployment preparation
+
+Phase 5 has started with STUN discovery, an HTTPS/WSS Envoy gateway rehearsal, two catalogue replicas, private operational metrics and smaller runtime images. The AWS starter targets **peerscreen.darshpatel.dev** in Mumbai; it has been validated locally and has not created resources. Read the [Phase 5 learning and deployment guide](docs/learning/phase-5/README.md) for the resource model, current cost example and remaining deployment work. The local gateway rehearsal is available through `npm run test:gateway`; intentional public STUN discovery through `npm run check:stun`.
 
 ## Creator settings and Google sign-in
 

@@ -1,13 +1,14 @@
 import { access } from "node:fs/promises";
 import { compose } from "./dependencies.mjs";
 
-export async function startContainerApp({ test = false } = {}) {
+export async function startContainerApp({ test = false, overlays = [] } = {}) {
+  const options = { test, overlays };
   await access(".local/media/fixture/fixture.json");
   // Build before interrupting playback. Stop writers before migration/seed tasks
   // import unfinished work; an old executor must not race that import.
-  await compose(["--profile", "app", "build", "web", "migrate"], { test });
+  await compose(["--profile", "app", "build", "web", "migrate"], options);
   await compose(["--profile", "app", "stop", "web", "api", "worker", "media"], {
-    test,
+    ...options,
   });
   await compose(
     [
@@ -22,7 +23,7 @@ export async function startContainerApp({ test = false } = {}) {
       "web",
       "worker",
     ],
-    { test },
+    options,
   );
 }
 

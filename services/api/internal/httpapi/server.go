@@ -7,7 +7,6 @@ import (
 	"io"
 	"log/slog"
 	"mime"
-	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -33,6 +32,7 @@ type App struct {
 	Hasher     *auth.Hasher
 	Limiter    *ratelimit.Limiter
 	Logger     *slog.Logger
+	metrics    requestMetrics
 	dummyHash  string
 	partSlots  chan struct{}
 	imageSlots chan struct{}
@@ -77,6 +77,7 @@ func New(ctx context.Context, cfg config.Config, db *store.Store, cache *redis.C
 
 func (a *App) Handler() http.Handler {
 	mux := http.NewServeMux()
+	mux.HandleFunc("GET /metrics", a.operationalMetrics)
 	mux.HandleFunc("GET /health/live", func(w http.ResponseWriter, r *http.Request) { writeJSON(w, 200, map[string]string{"status": "ok"}) })
 	mux.HandleFunc("GET /health/ready", a.ready)
 	mux.HandleFunc("POST /api/v1/auth/register", a.register)
@@ -120,6 +121,10 @@ func (a *App) requestScope(next http.Handler) http.Handler {
 		r = r.WithContext(ctx)
 		w.Header().Set("X-Request-ID", id)
 		w.Header().Set("X-Content-Type-Options", "nosniff")
+		if a.Config.ReplicaDiagnostics {
+			name, _ := os.Hostname()
+			w.Header().Set("X-PeerScreen-Replica", name)
+		}
 		w.Header().Set("Cache-Control", "no-store")
 		tracked := &responseWriter{ResponseWriter: w, status: 200}
 		defer func() {
@@ -128,6 +133,9 @@ func (a *App) requestScope(next http.Handler) http.Handler {
 				a.Logger.Error("handler_panic", "request_id", id)
 			}
 			a.Logger.Info("http_request", "request_id", id, "method", r.Method, "route", r.Pattern, "status", tracked.status, "duration_ms", time.Since(started).Milliseconds())
+			if r.URL.Path != "/metrics" {
+				a.metrics.observe(r.Method, r.Pattern, tracked.status, time.Since(started).Seconds())
+			}
 		}()
 		if r.Method != "GET" && r.Method != "HEAD" && r.Method != "OPTIONS" && r.Header.Get("Origin") != a.Config.AppOrigin {
 			a.error(tracked, r, 403, "origin_not_allowed", "The request must come from the configured application origin.")
@@ -240,10 +248,7 @@ func (a *App) ready(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, map[string]string{"status": "ok"})
 }
 func (a *App) authCapacity(w http.ResponseWriter, r *http.Request) bool {
-	address, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		address = r.RemoteAddr
-	}
+	address := a.clientAddress(r)
 	allowed, retry, err := a.Limiter.Check(r.Context(), address)
 	if err != nil {
 		a.error(w, r, 503, "limits_unavailable", "Sign-in protection is temporarily unavailable. Please retry.")
