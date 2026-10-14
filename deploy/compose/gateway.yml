@@ -10,7 +10,7 @@ services:
       TRACKER_URL: ${PEERSCREEN_GATEWAY_WS_ORIGIN:-wss://localhost:3443}/tracker
       REGISTRATION_ENABLED: "false"
       EXPOSE_OPERATOR_FIXTURE: "false"
-      TRUSTED_PROXY_CIDRS: 172.29.241.10/32
+      TRUSTED_PROXY_CIDRS: 172.29.241.250/32
       API_REPLICA_DIAGNOSTICS: ${API_REPLICA_DIAGNOSTICS:-false}
     deploy:
       replicas: 2
@@ -41,7 +41,7 @@ services:
       - 127.0.0.1:${PEERSCREEN_GATEWAY_ADMIN_PORT:-19901}:9901
     networks:
       default:
-        ipv4_address: 172.29.241.10
+        ipv4_address: 172.29.241.250
     depends_on:
       api: { condition: service_healthy }
       web: { condition: service_healthy }

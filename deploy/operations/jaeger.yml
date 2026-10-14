@@ -1,0 +1,36 @@
+# Minimal release-matched Jaeger 2 configuration; private, bounded RAM storage.
+service:
+  extensions: [jaeger_storage, jaeger_query, healthcheckv2]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [jaeger_storage_exporter]
+  telemetry:
+    logs: { level: warn }
+extensions:
+  healthcheckv2:
+    use_v2: true
+    http: { endpoint: "0.0.0.0:13133" }
+  jaeger_query:
+    storage: { traces: bounded }
+    http: { endpoint: "0.0.0.0:16686" }
+  jaeger_storage:
+    backends:
+      bounded:
+        memory: { max_traces: 1000 }
+receivers:
+  otlp:
+    protocols:
+      grpc: { endpoint: "0.0.0.0:4317" }
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 128
+    spike_limit_mib: 16
+  batch:
+    send_batch_size: 64
+    send_batch_max_size: 128
+    timeout: 1s
+exporters:
+  jaeger_storage_exporter: { trace_storage: bounded }

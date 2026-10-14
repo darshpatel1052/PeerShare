@@ -46,7 +46,9 @@ resource "aws_cloudfront_origin_request_policy" "application" {
   query_strings_config { query_string_behavior = "all" }
   headers_config {
     header_behavior = "whitelist"
-    headers { items = ["Accept", "Content-Type", "Origin", "Idempotency-Key", "If-Match", "Upload-Token", "Playback-Token", "Cache-Control", "CloudFront-Viewer-Address", "Sec-WebSocket-Key", "Sec-WebSocket-Version", "Sec-WebSocket-Protocol", "Sec-WebSocket-Extensions"] }
+    # Stay within the default ten-header quota. The tracker uses no subprotocol
+    # or compression extension; cookies/query strings are forwarded separately.
+    headers { items = ["Content-Type", "Origin", "Idempotency-Key", "If-Match", "Upload-Token", "Playback-Token", "Cache-Control", "CloudFront-Viewer-Address", "Sec-WebSocket-Key", "Sec-WebSocket-Version"] }
   }
 }
 resource "aws_cloudfront_function" "static_routes" {
@@ -141,13 +143,18 @@ resource "aws_cloudfront_distribution" "frontend" {
   }
 }
 resource "aws_s3_bucket_policy" "storage" {
-  for_each = aws_s3_bucket.storage
+  for_each = { for key, bucket in aws_s3_bucket.storage : key => bucket if key != "frontend" }
   bucket   = each.value.id
-  policy = jsonencode({ Version = "2012-10-17", Statement = concat([
+  policy = jsonencode({ Version = "2012-10-17", Statement = [
     { Effect = "Deny", Principal = "*", Action = "s3:*", Resource = [each.value.arn, "${each.value.arn}/*"], Condition = { Bool = { "aws:SecureTransport" = "false" } } }
-    ], each.key == "frontend" ? [
-    { Effect = "Allow", Principal = { Service = "cloudfront.amazonaws.com" }, Action = "s3:GetObject", Resource = ["${each.value.arn}/releases/*", "${each.value.arn}/assets/*"], Condition = { StringEquals = { "AWS:SourceArn" = aws_cloudfront_distribution.frontend.arn } } }
-  ] : []) })
+  ] })
+}
+resource "aws_s3_bucket_policy" "frontend" {
+  bucket = aws_s3_bucket.storage["frontend"].id
+  policy = jsonencode({ Version = "2012-10-17", Statement = [
+    { Effect = "Deny", Principal = "*", Action = "s3:*", Resource = [aws_s3_bucket.storage["frontend"].arn, "${aws_s3_bucket.storage["frontend"].arn}/*"], Condition = { Bool = { "aws:SecureTransport" = "false" } } },
+    { Effect = "Allow", Principal = { Service = "cloudfront.amazonaws.com" }, Action = "s3:GetObject", Resource = ["${aws_s3_bucket.storage["frontend"].arn}/releases/*", "${aws_s3_bucket.storage["frontend"].arn}/assets/*"], Condition = { StringEquals = { "AWS:SourceArn" = aws_cloudfront_distribution.frontend.arn } } }
+  ] })
 }
 resource "aws_s3_bucket_lifecycle_configuration" "backups" {
   bucket = aws_s3_bucket.storage["backups"].id

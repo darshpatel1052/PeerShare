@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-10-14T21:09:20.425Z",
+  "scope": "actual Docker images, self-signed localhost HTTPS/WSS, two replicas, owned upload; STUN offline in rehearsal",
+  "apiReplicasObserved": 2,
+  "sharedSession": true,
+  "secureCookieAttributes": true,
+  "publicRegistrationClosed": true,
+  "httpsMedia": true,
+  "wssTracker": true,
+  "peerBytes": 701428,
+  "uploadedBytes": 1046596,
+  "secureContext": true,
+  "metricsPrivate": true,
+  "healthyReplicaAfterStop": true,
+  "awsResourcesCreated": 0,
+  "publicDeployment": false,
+  "operations": {
+    "scrapedReplicas": 2,
+    "grafanaPanels": 8,
+    "realWorkerCoordinatorTrace": true,
+    "jaegerQueryAPI": "v3",
+    "traceHasEmailOrPassword": false,
+    "syntheticRequestLoad": false
+  }
+}

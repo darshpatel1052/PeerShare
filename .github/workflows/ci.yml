@@ -43,7 +43,7 @@ jobs:
       - run: npm run test:distributed-recovery
       - run: npm run test:containers
       - run: npm run test:s3
-      - run: npm run test:gateway
+      - run: npm run test:operations
       - run: npm run test:origin
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         if: always()

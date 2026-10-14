@@ -13,6 +13,7 @@ import (
 	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
+	"github.com/darshpatel1052/Peer-Screen/services/api/internal/telemetry"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -77,6 +78,11 @@ func run() error {
 	if command != "serve" {
 		return errors.New("supported media commands: serve, migrate")
 	}
+	closeTracing, err := telemetry.Init(setup, "peerscreen-coordinator")
+	if err != nil {
+		return err
+	}
+	defer closeTracing()
 	server, err := mediasvc.NewServer(store, os.Getenv("CATALOG_RPC_TOKEN"), os.Getenv("WORKER_RPC_TOKEN"))
 	if err != nil {
 		return err

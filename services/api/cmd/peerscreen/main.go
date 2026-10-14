@@ -17,6 +17,7 @@ import (
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/config"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	"github.com/darshpatel1052/Peer-Screen/services/api/internal/telemetry"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
@@ -128,6 +129,11 @@ func run() error {
 	default:
 		return errors.New("supported commands: serve, migrate, seed-fixture, healthcheck")
 	}
+	closeTracing, err := telemetry.Init(ctx, "peerscreen-catalogue")
+	if err != nil {
+		return err
+	}
+	defer closeTracing()
 	options, err := redis.ParseURL(cfg.RedisURL)
 	if err != nil {
 		return errors.New("invalid REDIS_URL")

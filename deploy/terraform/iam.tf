@@ -65,8 +65,10 @@ resource "aws_iam_openid_connect_provider" "github" {
 resource "aws_iam_role" "build" {
   name = "${var.name}-github-build"
   assume_role_policy = jsonencode({ Version = "2012-10-17", Statement = [{
-    Effect    = "Allow", Action = "sts:AssumeRoleWithWebIdentity", Principal = { Federated = aws_iam_openid_connect_provider.github.arn },
-    Condition = { StringEquals = { "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com", "token.actions.githubusercontent.com:sub" = "repo:darshpatel1052/Peer-Screen:ref:refs/heads/main" } }
+    Effect = "Allow", Action = "sts:AssumeRoleWithWebIdentity", Principal = { Federated = aws_iam_openid_connect_provider.github.arn },
+    # This repository uses GitHub's immutable subject format. IDs are verified
+    # through its OIDC customization endpoint; name-only subjects are rejected.
+    Condition = { StringEquals = { "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com", "token.actions.githubusercontent.com:sub" = "repo:darshpatel1052@147577241/Peer-Screen@1416673812:ref:refs/heads/main" } }
   }] })
 }
 resource "aws_iam_role_policy" "build" {

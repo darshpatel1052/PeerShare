@@ -8,6 +8,7 @@ import (
 	"time"
 
 	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -89,7 +90,7 @@ func NewServer(store *Store, catalogToken, workerToken string) (*grpc.Server, er
 		defer cancel()
 		return handler(bounded, req)
 	}
-	server := grpc.NewServer(grpc.UnaryInterceptor(interceptor), grpc.MaxRecvMsgSize(2*1024*1024), grpc.MaxSendMsgSize(2*1024*1024))
+	server := grpc.NewServer(grpc.StatsHandler(otelgrpc.NewServerHandler()), grpc.UnaryInterceptor(interceptor), grpc.MaxRecvMsgSize(2*1024*1024), grpc.MaxSendMsgSize(2*1024*1024))
 	pb.RegisterMediaCoordinatorServer(server, &Server{Store: store})
 	return server, nil
 }
@@ -103,7 +104,7 @@ func Dial(target, token string) (*Client, error) {
 	if target == "" || len(token) != 64 {
 		return nil, errors.New("media target and private service credential required")
 	}
-	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(2*1024*1024), grpc.MaxCallSendMsgSize(2*1024*1024)), grpc.WithUnaryInterceptor(func(ctx context.Context, method string, req, reply any, connection *grpc.ClientConn, invoke grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	conn, err := grpc.NewClient(target, grpc.WithStatsHandler(otelgrpc.NewClientHandler()), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(2*1024*1024), grpc.MaxCallSendMsgSize(2*1024*1024)), grpc.WithUnaryInterceptor(func(ctx context.Context, method string, req, reply any, connection *grpc.ClientConn, invoke grpc.UnaryInvoker, opts ...grpc.CallOption) error {
 		timeout := 5 * time.Second
 		if strings.HasSuffix(method, "/CompleteJob") {
 			timeout = 90 * time.Second

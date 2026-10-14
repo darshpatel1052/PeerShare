@@ -40,7 +40,9 @@
     "test:s3": "PEERSCREEN_S3_REHEARSAL=true node scripts/container-smoke.mjs",
     "test:gateway": "node scripts/gateway-smoke.mjs",
     "test:origin": "node scripts/origin-smoke.mjs",
+    "test:operations": "PEERSCREEN_OPERATIONS_REHEARSAL=true node scripts/gateway-smoke.mjs",
     "backup:local": "node scripts/backup-local.mjs",
+    "operations": "node scripts/operations.mjs",
     "check:stun": "node scripts/stun-check.mjs",
     "compose:demo": "node scripts/compose-demo.mjs",
     "check": "npm run format:check && npm run typecheck && npm test"

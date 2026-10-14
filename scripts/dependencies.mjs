@@ -3,7 +3,15 @@ import { localEnvironment } from "./local-environment.mjs";
 
 export async function compose(
   args,
-  { test = false, quiet = false, overlays = [] } = {},
+  {
+    test = false,
+    quiet = false,
+    overlays = [],
+    profiles = process.env.PEERSCREEN_WITH_OPERATIONS === "true" ||
+    process.env.PEERSCREEN_OPERATIONS_REHEARSAL === "true"
+      ? ["ops"]
+      : [],
+  } = {},
 ) {
   // Teardown must include profiled app services as well as dependencies.
   // Otherwise old API/worker consumers can survive and contaminate a new test.
@@ -22,17 +30,20 @@ export async function compose(
         test,
         quiet,
         overlays,
+        profiles,
       },
     );
     await compose(["run", "--rm", "--no-deps", "media-bootstrap"], {
       test,
       quiet,
       overlays,
+      profiles,
     });
     await compose(["run", "--rm", "--no-deps", "kafka-topics"], {
       test,
       quiet,
       overlays,
+      profiles,
     });
     return output;
   }
@@ -50,6 +61,7 @@ export async function compose(
         "-f",
         "deploy/compose/local.yml",
         ...overlays.flatMap((path) => ["-f", path]),
+        ...profiles.flatMap((profile) => ["--profile", profile]),
         ...args,
       ],
       {

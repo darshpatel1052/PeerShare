@@ -22,6 +22,10 @@ import (
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type App struct {
@@ -153,6 +157,11 @@ func (a *App) requestScope(next http.Handler) http.Handler {
 		}
 		ctx, cancel := context.WithTimeout(context.WithValue(r.Context(), requestIDKey{}, id), timeout)
 		defer cancel()
+		// Public trace headers cannot force parent sampling or inject baggage.
+		var span trace.Span
+		if r.URL.Path != "/metrics" && !strings.HasPrefix(r.URL.Path, "/health/") {
+			ctx, span = otel.Tracer("peerscreen/http").Start(ctx, "http_request", trace.WithSpanKind(trace.SpanKindServer))
+		}
 		r = r.WithContext(ctx)
 		w.Header().Set("X-Request-ID", id)
 		w.Header().Set("X-Content-Type-Options", "nosniff")
@@ -166,6 +175,18 @@ func (a *App) requestScope(next http.Handler) http.Handler {
 			if recover() != nil {
 				a.error(tracked, r, 500, "internal_error", "The request could not be completed.")
 				a.Logger.Error("handler_panic", "request_id", id)
+			}
+			if span != nil {
+				route := r.Pattern
+				if route == "" {
+					route = "unmatched"
+				}
+				span.SetName(route)
+				span.SetAttributes(attribute.String("http.route", route), attribute.Int("http.response.status_code", tracked.status))
+				if tracked.status >= 500 {
+					span.SetStatus(codes.Error, "server_error")
+				}
+				span.End()
 			}
 			a.Logger.Info("http_request", "request_id", id, "method", r.Method, "route", r.Pattern, "status", tracked.status, "duration_ms", time.Since(started).Milliseconds())
 			if r.URL.Path != "/metrics" {

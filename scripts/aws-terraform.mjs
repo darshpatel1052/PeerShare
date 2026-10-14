@@ -20,11 +20,14 @@ async function assertAccount() {
     awsRead(["sts", "get-caller-identity"]),
     awsRead(["freetier", "get-account-plan-state"], { region: "us-east-1" }),
   ]);
+  const credits = Number(plan.accountPlanRemainingCredits?.amount);
   if (
     identity.Account !== config.settings.AWS_ACCOUNT_ID ||
     plan.accountPlanType !== "FREE" ||
     plan.accountPlanStatus !== "ACTIVE" ||
-    plan.accountPlanRemainingCredits?.amount < 10
+    !Number.isFinite(credits) ||
+    credits < 10 ||
+    plan.accountPlanRemainingCredits?.unit !== "USD"
   )
     throw new Error(
       "Deployment requires the configured account, active Free plan and at least USD 10 remaining credits",
@@ -182,6 +185,7 @@ try {
     await prepare();
     const targets = [
       "aws_s3_bucket.storage",
+      "aws_s3_bucket_policy.storage",
       "aws_s3_bucket_public_access_block.storage",
       "aws_s3_bucket_server_side_encryption_configuration.storage",
       "aws_s3_bucket_lifecycle_configuration.originals",
@@ -257,7 +261,10 @@ try {
         "Deployment plan includes deletion; inspect it before proceeding",
       );
     await assertAccount();
-    const log = await tf(["apply", "-input=false", planFile], 2700000);
+    const log = await tf(
+      ["apply", "-input=false", `-state=${state}`, planFile],
+      2700000,
+    );
     await writeFile(resolve(directory, "deployment-apply.txt"), log, {
       mode: 0o600,
     });

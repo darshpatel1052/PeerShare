@@ -1,0 +1,9 @@
+# Only with gateway-network.yml/gateway.yml's fixed rehearsal subnet. Start
+# operator services away from the gateway address reserved by the trust model.
+services:
+  prometheus:
+    networks: { default: { ipv4_address: 172.29.241.100 } }
+  grafana:
+    networks: { default: { ipv4_address: 172.29.241.101 } }
+  jaeger:
+    networks: { default: { ipv4_address: 172.29.241.102 } }

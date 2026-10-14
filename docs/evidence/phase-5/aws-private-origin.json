@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-14T20:06:05.550564+00:00",
+  "scope": "Actual AWS host via loopback TLS with private origin header; public CloudFront pending",
+  "validOriginTLS": true,
+  "healthReady": true,
+  "staticRoutes": true,
+  "originalChannel": true,
+  "originalVideo": true,
+  "s3Manifest": true,
+  "s3Integrity": true,
+  "missingOriginHeader403": true,
+  "metricsPrivate404": true,
+  "roleRefreshTimer": true,
+  "manifestSHA256": "bafe5396e47f35079661c77c6a29046944451e4e10bd9b57853cf8679372b225",
+  "integritySHA256": "c3e738e746db89bee55d2a091f40754e3851b813294732f2f76f7cd1ef3dd989",
+  "publicDeployment": false,
+  "liveGoogleAuthentication": false,
+  "release": "4d4031957c757c842965c33bf0d876b961f6b863",
+  "certificateRenewalDryRun": true,
+  "backupRestore": {
+    "checkedAt": "2026-10-14T19:53:55.034Z",
+    "counts": {
+      "users": 4,
+      "channels": 2,
+      "videos": 4,
+      "uploads": 3,
+      "playlists": 0,
+      "media_jobs": 0
+    },
+    "restoredDatabase": true,
+    "matchedFiles": 85,
+    "restoredFiles": true,
+    "scope": "Actual private AWS snapshot download; isolated networkless PostgreSQL restore and archive extraction",
+    "awsSnapshotRestore": true
+  }
+}

@@ -15,6 +15,12 @@ import { gatewayConfig } from "./gateway-config.mjs";
 const run = promisify(execFile),
   dev = "http://localhost:3220",
   origin = "https://localhost:3443";
+const operations = process.env.PEERSCREEN_OPERATIONS_REHEARSAL === "true";
+if (operations) {
+  process.env.GRAFANA_ADMIN_PASSWORD = randomBytes(24).toString("hex");
+  process.env.OTEL_SAMPLE_RATIO = "1";
+  process.env.COMPOSE_PROFILES = "app,ops";
+}
 Object.assign(process.env, {
   PEERSCREEN_WEB_PORT: "3220",
   PEERSCREEN_MEDIA_PORT: "3221",
@@ -27,7 +33,10 @@ Object.assign(process.env, {
   PEERSCREEN_GATEWAY_GID: String(process.getgid()),
 });
 const network = ["deploy/compose/gateway-network.yml"],
-  overlays = ["deploy/compose/gateway.yml"];
+  operatorOverlay = operations
+    ? ["deploy/compose/operations.yml", "deploy/compose/operations-network.yml"]
+    : [],
+  overlays = ["deploy/compose/gateway.yml", ...operatorOverlay];
 const directory = await mkdtemp(join(tmpdir(), "peerscreen-gateway-"));
 const password = randomBytes(24).toString("hex"),
   email = `${randomUUID()}@example.test`;
@@ -78,7 +87,24 @@ try {
     ".local/gateway/key.pem",
     ".local/gateway/cert.pem",
   ]);
-  await startContainerApp({ test: true, overlays: network });
+  if (operations)
+    await compose(
+      [
+        "--profile",
+        "ops",
+        "up",
+        "-d",
+        "--no-build",
+        "prometheus",
+        "grafana",
+        "jaeger",
+      ],
+      { test: true, overlays: [...network, ...operatorOverlay] },
+    );
+  await startContainerApp({
+    test: true,
+    overlays: [...network, ...operatorOverlay],
+  });
   initial = await request.newContext({ baseURL: dev });
   let response = await call(initial, dev, "/api/v1/auth/register", "POST", {
     email,
@@ -196,7 +222,7 @@ try {
   );
   await compose(["--profile", "app", "stop", "web", "api"], {
     test: true,
-    overlays: network,
+    overlays: [...network, ...operatorOverlay],
   });
   await compose(
     [
@@ -268,6 +294,124 @@ try {
     200,
   );
   assert.equal((await call(secure, origin, "/metrics")).status(), 404);
+  let operatorEvidence;
+  if (operations) {
+    let replicaCount;
+    await until(
+      async () => {
+        const response = await fetch(
+          "http://localhost:19091/api/v1/query?query=" +
+            encodeURIComponent('sum(up{job="catalogue"})'),
+        );
+        const result = await response.json();
+        replicaCount = Number(result.data?.result?.[0]?.value?.[1]);
+        return replicaCount === 2;
+      },
+      "Prometheus did not scrape both catalogue replicas",
+      30000,
+    );
+    const authorization =
+      "Basic " +
+      Buffer.from("admin:" + process.env.GRAFANA_ADMIN_PASSWORD).toString(
+        "base64",
+      );
+    let panelCount;
+    await until(
+      async () => {
+        const response = await fetch(
+          "http://localhost:3301/api/dashboards/uid/peerscreen-operations",
+          { headers: { Authorization: authorization } },
+        );
+        const result = await response.json();
+        panelCount = result.dashboard?.panels?.length;
+        return response.ok && panelCount === 8;
+      },
+      "Provisioned Grafana dashboard unavailable",
+      30000,
+    );
+    let traces;
+    let linkedRPC = false;
+    await until(
+      async () => {
+        const query = new URLSearchParams({
+          "query.serviceName": "peerscreen-worker",
+          "query.operationName": "process_video_attempt",
+          "query.startTimeMin": new Date(Date.now() - 3600000).toISOString(),
+          "query.startTimeMax": new Date(Date.now() + 60000).toISOString(),
+          "query.searchDepth": "10",
+        });
+        const response = await fetch(
+          `http://localhost:16686/api/v3/traces?${query}`,
+        );
+        const result = await response.json();
+        traces = result.result?.resourceSpans || [];
+        // Jaeger 2.22 returns OTLP JSON, with spans grouped by resource rather
+        // than by trace. Verify the actual worker-client/coordinator-server
+        // parent relationship instead of accepting two unrelated spans.
+        const spans = traces.flatMap((resource) => {
+          const service = resource.resource?.attributes?.find(
+            (attribute) => attribute.key === "service.name",
+          )?.value?.stringValue;
+          return (resource.scopeSpans || []).flatMap((scope) =>
+            (scope.spans || []).map((span) => ({ ...span, service })),
+          );
+        });
+        linkedRPC = spans.some(
+          (root) =>
+            root.service === "peerscreen-worker" &&
+            root.name === "process_video_attempt" &&
+            spans.some(
+              (client) =>
+                client.service === "peerscreen-worker" &&
+                client.traceId === root.traceId &&
+                client.parentSpanId === root.spanId &&
+                spans.some(
+                  (server) =>
+                    server.service === "peerscreen-coordinator" &&
+                    server.traceId === client.traceId &&
+                    server.parentSpanId === client.spanId,
+                ),
+            ),
+        );
+        await writeFile(
+          ".local/evidence/operations-trace-diagnostic.json",
+          JSON.stringify(
+            {
+              status: response.status,
+              services: [...new Set(spans.map((span) => span.service))],
+              traceCount: new Set(spans.map((span) => span.traceId)).size,
+              operations: [...new Set(spans.map((span) => span.name))],
+              workerRPCLinkedToCoordinator: linkedRPC,
+            },
+            null,
+            2,
+          ),
+        );
+        return response.ok && linkedRPC;
+      },
+      "Real worker/coordinator trace unavailable",
+      30000,
+    );
+    const serialized = JSON.stringify(traces);
+    assert.equal(
+      serialized.includes(password),
+      false,
+      "Trace contains a private password",
+    );
+    assert.equal(
+      serialized.includes(email),
+      false,
+      "Trace contains an account email",
+    );
+    operatorEvidence = {
+      scrapedReplicas: replicaCount,
+      grafanaPanels: panelCount,
+      realWorkerCoordinatorTrace: linkedRPC,
+      jaegerQueryAPI: "v3",
+      traceHasEmailOrPassword: false,
+      syntheticRequestLoad: false,
+    };
+  }
   const listing = await compose(
     ["--profile", "app", "ps", "--format", "json", "api"],
     { test: true, overlays, quiet: true },
@@ -427,10 +571,13 @@ try {
     healthyReplicaAfterStop: true,
     awsResourcesCreated: 0,
     publicDeployment: false,
+    ...(operatorEvidence ? { operations: operatorEvidence } : {}),
   };
   await mkdir(".local/evidence", { recursive: true });
   await writeFile(
-    ".local/evidence/phase-5-gateway.json",
+    operations
+      ? ".local/evidence/phase-5-operations.json"
+      : ".local/evidence/phase-5-gateway.json",
     JSON.stringify(record, null, 2) + "\n",
   );
   console.log(JSON.stringify(record));

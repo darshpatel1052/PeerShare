@@ -10,6 +10,7 @@ import (
 
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
+	"github.com/darshpatel1052/Peer-Screen/services/api/internal/telemetry"
 )
 
 func main() {
@@ -25,6 +26,11 @@ func run() error {
 	}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+	closeTracing, err := telemetry.Init(ctx, "peerscreen-worker")
+	if err != nil {
+		return err
+	}
+	defer closeTracing()
 	objects, err := objectstore.FromEnvironment(ctx)
 	if err != nil {
 		return err

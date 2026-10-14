@@ -18,6 +18,10 @@ import (
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
 	"github.com/google/uuid"
 	"github.com/twmb/franz-go/pkg/kgo"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	otelcodes "go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -132,6 +136,8 @@ func RunWorker(ctx context.Context, client *Client, consumer, producer *kgo.Clie
 	}
 }
 func processAttempt(parent context.Context, client *Client, job *pb.JobSnapshot, uploads, media string, logger *slog.Logger, objects *objectstore.Remote) {
+	parent, span := otel.Tracer("peerscreen/media").Start(parent, "process_video_attempt", trace.WithAttributes(attribute.String("peerscreen.job.id", job.Spec.JobId), attribute.String("peerscreen.attempt.id", job.AttemptId)))
+	defer span.End()
 	ctx, cancel := context.WithTimeout(parent, 30*time.Minute)
 	defer cancel()
 	attempt := &pb.Attempt{JobId: job.Spec.JobId, AttemptId: job.AttemptId, WorkerId: job.WorkerId, LeaseEpoch: job.LeaseEpoch}
@@ -212,8 +218,11 @@ func processAttempt(parent context.Context, client *Client, job *pb.JobSnapshot,
 	cancel()
 	<-heartbeatDone
 	if err == nil {
+		span.SetAttributes(attribute.String("peerscreen.attempt.result", "accepted"))
 		logger.Info("media_attempt_accepted", "job_id", spec.JobId, "attempt_id", attempt.AttemptId, "epoch", attempt.LeaseEpoch)
 	} else {
+		span.SetStatus(otelcodes.Error, "attempt_stopped")
+		span.SetAttributes(attribute.String("peerscreen.attempt.result", "stopped"))
 		logger.Warn("media_attempt_stopped", "job_id", spec.JobId, "attempt_id", attempt.AttemptId, "epoch", attempt.LeaseEpoch)
 	}
 }

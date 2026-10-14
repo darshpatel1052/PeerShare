@@ -4,7 +4,7 @@ A video platform for publishing films, following creators and building playlists
 
 Creators upload an MP4, choose artwork, preview it and publish a watch link. Viewers search the catalogue, follow channels, save private or public playlists and play them in order. Creators can see watch time, qualified plays and HTTP/peer delivery in Analytics. Google sign-in and email accounts use the same owned channel and workspace.
 
-The current app runs locally with persistent data. New supported uploads produce 480p/720p HLS. Public hosting, S3 storage and cross-network peer validation remain separate milestones; no AWS resources have been provisioned.
+The app runs locally with persistent data, and an immutable release is running behind the private AWS origin. New supported uploads produce 480p/720p HLS; the production storage adapter uses private S3. Public CloudFront delivery awaits AWS account verification. Real two-network peer validation remains pending.
 
 | Build a feature                       | Learn the concepts behind it                                      |
 | ------------------------------------- | ----------------------------------------------------------------- |
@@ -89,9 +89,9 @@ Sharing starts off for each video/version in a new tab. Your choice is remembere
 
 The normal local runtime uses separate catalogue, media coordinator and worker processes, typed authenticated gRPC and real Kafka notifications. New media produces 480p/720p when the source supports them; smaller sources remain smaller. Existing accepted outputs keep their current qualities. Studio lists the latest 30 uploads. Read [the Phase 3 guide](docs/learning/phase-3/README.md) and [ADR 0004](docs/adr/0004-media-services-and-durable-events.md) for service ownership, outboxes, leases, epochs and recovery.
 
-The local transport remains filesystem storage. S3 multipart operations, public upload allowlists, email verification/password recovery, backups/restore, multi-host failover and public deployment require later work. Production-mode new upload admission remains disabled pending its policy. Native mode stores media under `.local`; container mode retains named volumes. Switching modes does not migrate uploaded media between roots. Each runtime database credential owns only its service schema; a production deployment still needs a separate restricted migration/runtime-role split. Behind the local proxy, authentication limits share the proxy TCP-address bucket. Native HLS and other browsers have not been proved equivalent to the Chromium integrity/P2P path.
+Normal local transport uses filesystem storage; the optional S3 rehearsal and AWS use the official Go S3 adapter. Uploads are API-mediated verified chunks stored as S3 objects, rather than native browser S3 multipart. Production creators need expiring approval; public registration is closed. Full local and AWS-downloaded snapshots have passed isolated restore checks. Email verification/password recovery and multi-host availability are future extensions. Native mode stores media under `.local`; container mode retains named volumes. Switching modes does not migrate uploaded media between roots. Each runtime database credential owns only its service schema; a production deployment still needs a separate restricted migration/runtime-role split. Behind the local proxy, authentication limits share the proxy TCP-address bucket. Native HLS and other browsers have not been proved equivalent to the Chromium integrity/P2P path.
 
-The tracker now uses a bounded WebSocket-only implementation; removing the old server dependency removed its vulnerable `ip` chain. The current dependency audit reports zero findings. AWS resources have not been provisioned.
+The tracker now uses a bounded WebSocket-only implementation; removing the old server dependency removed its vulnerable `ip` chain. The locked JavaScript dependencies currently audit with zero findings. AWS storage, images, scoped roles, certificates and the bounded compute origin are provisioned; the account remains on its Free plan.
 
 Phase 0's historical [evidence](docs/evidence/milestone-0.md) and [ADR](docs/adr/0001-static-export-and-verified-peer-delivery.md) remain available. Checkpoint commits are created and pushed after substantial validated progress.
 
@@ -103,7 +103,9 @@ See [the UI learning notes](docs/learning/ui-design.md) for design tokens, compo
 
 ## Deployment preparation
 
-Phase 5 has started with STUN discovery, an HTTPS/WSS Envoy gateway rehearsal, two catalogue replicas, private operational metrics and smaller runtime images. The AWS starter targets **peerscreen.darshpatel.dev** in Mumbai; it has been validated locally and has not created resources. Read the [Phase 5 learning and deployment guide](docs/learning/phase-5/README.md) for the resource model, current cost example and remaining deployment work. The local gateway rehearsal is available through `npm run test:gateway`; intentional public STUN discovery through `npm run check:stun`.
+Phase 5 has started with STUN discovery, an HTTPS/WSS Envoy gateway rehearsal, two catalogue replicas, private operational metrics and smaller runtime images. The AWS deployment targets **peerscreen.darshpatel.dev** in Mumbai. Its private origin is provisioned and restored; public delivery awaits CloudFront account verification. Read the [Phase 5 learning and deployment guide](docs/learning/phase-5/README.md) for the resource model, current cost example and remaining deployment work. The local gateway rehearsal is available through `npm run test:gateway`; `npm run test:operations` includes real monitoring and worker/coordinator tracing. Intentional public STUN discovery uses `npm run check:stun`. Read the [deployment runbook](docs/runbooks/aws-deployment.md) and [cost plan](docs/runbooks/aws-cost-plan.md).
+
+Run `npm run operations` for the normal app plus private Grafana (`localhost:3301`), Jaeger (`localhost:16686`) and Prometheus (`localhost:19091`). Grafana uses username `admin`; its generated password stays in ignored `.local/operations.env`. [Learn what each signal means](docs/learning/phase-5/06-observability.md).
 
 ## Creator settings and Google sign-in
 
