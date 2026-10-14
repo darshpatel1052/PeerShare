@@ -8,6 +8,8 @@ An SVG's outer box can be centred while its drawing looks displaced. The previou
 
 The new player icon uses a rounded filled triangle with its visual weight near the centre of the same 24-unit coordinate system. The button centres the SVG through CSS grid and adds no horizontal offset. Both the large overlay and the control-row play button use this one drawing, so they stay consistent when their sizes change.
 
+Video thumbnails now reuse this same `PlayerIcon` through `VideoCard` in [video-list.tsx](../../apps/web/components/video-list.tsx). Their separate poster overlay also uses the white/charcoal palette, centred geometry and subtle hover treatment. Featured and smaller catalogue/channel cards therefore match the actual player instead of retaining the old offset triangle and green hover fill.
+
 `viewBox="0 0 24 24"` describes drawing coordinates, not fixed screen pixels. CSS can display that drawing at 20, 22 or 28 pixels while preserving its proportions. Filled play/pause shapes remain readable at small sizes; volume and fullscreen use the same 1.65-unit stroke with round caps and joins.
 
 ## Component responsibilities

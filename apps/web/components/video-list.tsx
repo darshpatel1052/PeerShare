@@ -5,6 +5,7 @@ import { duration, type Video, type VideosPage } from "../lib/api";
 import { useResource } from "../lib/use-resource";
 import { useAuth } from "./auth-provider";
 import { Avatar, Icon, LoadingState } from "./ui";
+import { PlayerIcon } from "./player-icon";
 
 export function VideoCard({
   item,
@@ -27,8 +28,8 @@ export function VideoCard({
             Latest release
           </span>
         )}
-        <span className="poster-play">
-          <Icon name="play" />
+        <span className="poster-play" aria-hidden="true">
+          <PlayerIcon name="play" />
         </span>
         <span className="duration">{duration(item.duration_seconds)}</span>
       </Link>
@@ -57,7 +58,7 @@ export function VideoCard({
         </div>
         {featured && (
           <Link className="button featured-watch" href={`/watch?v=${item.id}`}>
-            <Icon name="play" />
+            <PlayerIcon name="play" />
             Watch video
             <Icon name="arrow" />
           </Link>
