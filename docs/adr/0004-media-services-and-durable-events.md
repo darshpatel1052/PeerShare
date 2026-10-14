@@ -1,6 +1,6 @@
 # ADR 0004: media services, durable RPC submission, and Kafka notifications
 
-Date: 14 October 2026. Status: implemented; Phase 3 verification is in progress.
+Date: 14 October 2026. Status: implemented and verified locally.
 
 ## Context
 
@@ -24,7 +24,7 @@ Catalogue processing rows remain a read model, with a coordinator version and an
 
 ## Migration and retained boundaries
 
-The new catalogue migration leaves accepted Phase 2 paths untouched. Fully identified unfinished sources receive durable submissions; previously consumed attempt counts are retained. Failed/cancelled older jobs enter the new pipeline when the owner retries them. Existing migrations retain their checksums.
+The new catalogue migration leaves accepted Phase 2 paths untouched. Fully identified unfinished sources receive durable submissions; previously consumed attempt counts are retained. Failed/cancelled older jobs enter the new pipeline when the owner retries them. Existing migrations retain their checksums. The container start command builds first, then stops application writers before migration/seed and startup; old executors must not mutate an in-flight job while the new migration imports it.
 
 The filesystem transport and paired named volumes remain the local storage adapter. This is a single-host service/recovery exercise, not S3 multipart storage or multi-host availability. The S3 storage implementation, public admission/TLS, cloud cost record, telemetry, and deployment operations remain their explicit later milestones.
 
@@ -32,7 +32,7 @@ The historical Phase 1/2 failure runners explicitly select the retained developm
 
 ## Verification and references
 
-Real tests cover signed-in HTTP uploads, gRPC authentication, PostgreSQL ownership, Kafka publication, FFmpeg decoding, claim replay, stale epochs, retry limits, cancellation, projection replay and deletion. Standalone-process crash tests and the complete browser journey are required before declaring the milestone complete.
+Real tests cover signed-in HTTP uploads, gRPC authentication, PostgreSQL ownership, Kafka publication, FFmpeg decoding, claim replay, stale epochs, retry limits, cancellation, projection replay and deletion. All 43 top-level Go cases (67 including subcases), 19 production Chromium cases, standalone-process crash recovery and packaged-container uploads passed. Original local media and Google availability were preserved. See [the milestone evidence](../evidence/milestone-3.md) for source binding, actual observations and scope.
 
 Dependencies were checked on 14 October 2026: gRPC Go 1.84.0, protobuf 1.36.12, Go gRPC generator 1.6.2, franz-go 1.22.2, and Apache Kafka 4.2.2 pinned by image digest. Contract generation uses the pinned pure-Go protobuf compiler and the official Go plugins, with a byte-comparison CI check.
 

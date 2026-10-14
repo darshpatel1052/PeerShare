@@ -1,0 +1,110 @@
+{
+  "checkedOn": "2026-10-14",
+  "headSHA": "bf010df45186de5ae1a966258027ae869f442182",
+  "runURL": "https://github.com/darshpatel1052/Peer-Screen/actions/runs/38475893519",
+  "status": "completed",
+  "conclusion": "success",
+  "scope": "backend checkpoint; predates final packaged-container check",
+  "jobs": [
+    {
+      "id": 115566363940,
+      "name": "browser-media",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci --include=optional",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y ffmpeg",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npx playwright install --with-deps chromium --only-shell",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run fixture",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run web-build",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run contracts:check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run proto:check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run api:vet",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:integration",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:browser",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:recovery",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:media-recovery",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:distributed-recovery",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}

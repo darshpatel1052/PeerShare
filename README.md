@@ -2,7 +2,7 @@
 
 A video publishing application with opt-in peer-assisted delivery and verified HTTP fallback. The implementation follows the [project brief](docs/project-brief.md) in tested checkpoints.
 
-**Phase 2 is complete locally:** authenticated resumable MP4 uploads, verified source assembly, a durable fenced FFmpeg worker, private previews, owner publishing/editing/deletion, and real HTTP playback. The existing identity/catalogue and verified HLS/peer player remain working. Storage uses persistent local directories or Docker volumes; S3, Kafka/gRPC service extraction and public deployment are later work.
+**Phase 3 is complete locally:** separate catalogue, media coordinator and worker services use authenticated gRPC, real Kafka notifications, durable outboxes and lease/epoch recovery. Supported new uploads produce 480p/720p HLS. Creator accounts, resumable uploads, private preview, publishing and the verified HTTP/peer player remain working. Storage uses persistent local directories or Docker volumes; S3 and public deployment remain later work.
 
 ## Start locally
 
@@ -21,13 +21,17 @@ Stop the native demo with Ctrl+C before choosing another mode:
 
 ```sh
 npm run dev             # Next.js hot reload, native Go, local media/tracker
-npm run compose:demo    # Go/web/database/cache containers; fixture required first
+npm run compose:demo    # Web/API/coordinator/worker/Kafka containers; fixture required first
 npm run stop            # Stop project containers; preserve the database volume
 ```
 
-Only one app mode can occupy the local ports at a time. Stop app containers before returning to native demo/development. Host ports are web 3000, media 3001, tracker 8000, private API 18080, PostgreSQL 55432 and Redis 56379, all bound to loopback. Container-internal API port is 8080. On this machine Docker's default build bridge was absent; `PEERSCREEN_BUILD_NETWORK=host npm run compose:demo` makes build downloads work while runtime services still use the private Compose bridge.
+Only one app mode can occupy the local ports at a time. Stop app containers before returning to native demo/development. Host ports are web 3000, media 3001, tracker 8000, private API 18080, PostgreSQL 55432, Redis 56379 and Kafka 19092, all bound to loopback. Container-internal API port is 8080; coordinator RPC stays on the private Compose network. On this machine Docker's default build bridge was absent; `PEERSCREEN_BUILD_NETWORK=host npm run compose:demo` makes build downloads work while runtime services still use the private Compose bridge.
+
+Container startup builds images first, stops app writers, then applies migrations and starts the new services. Database and media volumes persist. This ordering prevents an old worker from racing migration of unfinished jobs. Keep the ignored local credential files with that persistent database; do not regenerate their passwords while retaining its volumes.
 
 ## Learn the implementation
+
+The [Phase 3 learning guide](docs/learning/phase-3/README.md) explains service boundaries, the catalogue/media data model, generated protobuf, Go gRPC handlers, Kafka offsets, outboxes/inboxes, leases, epochs, cancellation and adaptive encoding. The [Phase 3 evidence](docs/evidence/milestone-3.md) records named checks, actual crashes, preservation checks and their limits.
 
 The [Phase 2 learning guide](docs/learning/phase-2/README.md) explains upload components, the new tables/transactions, HTTP contracts, Go worker/lease concepts, FFmpeg/HLS, and recovery experiments. See [Phase 2 evidence](docs/evidence/milestone-2.md) for actual byte counts, attempt identities, screenshots, procedures and limits.
 
@@ -48,14 +52,17 @@ See [the detailed Phase 1 evidence](docs/evidence/milestone-1.md) for procedures
 npx playwright install chromium --only-shell
 npm run check
 npm run contracts:check
+npm run proto:check
 npm run api:vet
 npm run test:integration
 npm run test:browser
 npm run test:recovery
 npm run test:media-recovery
+npm run test:distributed-recovery
+npm run test:containers
 ```
 
-Phase 2 verification covers 5 named player unit cases, 7 Go unit cases, 15 real PostgreSQL/Redis integration cases and 16 production-browser cases, plus actual API/database/cache and media-process crash recovery. Go integration uses the race detector. Browser tests use the production export, not development mode. Integration, browser and recovery runners use the same separate disposable `peerscreen-test` project, so run them sequentially. They remove only that project's test volume; normal app data persists. CI recreates these checks and retains raw evidence.
+Current verification covers 8 named JavaScript unit cases, 43 top-level Go cases (67 including named subcases) and 19 production Chromium cases, plus actual broker/coordinator/worker/API crash recovery and a packaged-container upload check. Go integration uses the race detector and real PostgreSQL/Redis/Kafka/gRPC/FFmpeg. Browser tests use the production export. Integration, browser, recovery and container runners share the separate disposable `peerscreen-test` project, so run them sequentially. They remove only that project's test volumes; normal app data persists. CI recreates these checks and retains raw evidence. Historical Phase 1/2 crash runners explicitly use the development-only legacy executor; Phase 3 browser/recovery/container checks use the separate services.
 
 ## Try peer delivery
 

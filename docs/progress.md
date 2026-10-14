@@ -64,7 +64,7 @@ Backend foundation checkpoint: `7809eb3c8ebb04bf54a2012ea0fde58d1f837f97`, pushe
 
 This is the local milestone exit: interrupted upload recovery, actual processed publication and HTTP watch. The filesystem transport is not S3; media processing is still in the API binary/catalog schema. No AWS resources were provisioned.
 
-## In verification: milestone 3 — media service and distributed recovery
+## Completed locally: milestone 3 — media service and distributed recovery
 
 - Independent catalogue, coordinator and worker executables, with versioned generated protobuf/gRPC contracts and separate method-scoped credentials.
 - Separate `catalog`/`media` PostgreSQL ownership; the worker has no database or Google credential.
@@ -72,7 +72,11 @@ This is the local milestone exit: interrupted upload recovery, actual processed 
 - Replay-safe claims, sixty-second database-time leases, ten-second heartbeats, increasing epochs, bounded persisted retries, two-step cancellation and pending-job redispatch.
 - Real source-appropriate 480p/720p encoding and independent output descriptor/file verification. Existing accepted media paths remain intact.
 - Actual broker outage, coordinator SIGKILL, worker SIGKILL with observed FFmpeg termination, lease-respecting recovery, stale completion rejection and API-only restart have passed locally.
-- Complete integration and production-browser verification/evidence are being closed before declaring the milestone finished. See [the Phase 3 learning guide](learning/phase-3/README.md) and [ADR 0004](adr/0004-media-services-and-durable-events.md).
+- Validation passed: 8 JavaScript unit cases, 43 top-level Go cases (67 including named subcases) with real dependencies/race detection, and all 19 production Chromium cases. Adaptive uploads actually decode and switch between 720p and 480p.
+- Packaged-container upload/publication and media serving passed. Explicit build artifact paths fix a Linux `/media` directory collision; this actual-image check is now required in CI.
+- Normal containers upgraded with their existing volumes. Original channel/video/480p manifest still return 200; Google remains enabled. A private metadata snapshot was created, without claiming a full media backup/restore exercise.
+- Backend checkpoint `bf010df45186de5ae1a966258027ae869f442182` pushed to main; its complete [CI run passed](https://github.com/darshpatel1052/Peer-Screen/actions/runs/38475893519), including historical and distributed recovery. The closing packaging/evidence checkpoint adds the container check; its exact revision and CI status are available in Git history/GitHub.
+- See [the Phase 3 learning guide](learning/phase-3/README.md), [detailed evidence](evidence/milestone-3.md) and [ADR 0004](adr/0004-media-services-and-durable-events.md).
 
 The current adapter remains the local filesystem with paired volumes. S3-compatible operations and public deployment require their own explicit verification; no AWS resources were provisioned.
 

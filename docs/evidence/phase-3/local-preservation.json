@@ -1,0 +1,29 @@
+{
+  "checkedOn": "2026-10-14",
+  "originalChannelBeforeStatus": 200,
+  "originalVideoBeforeStatus": 200,
+  "googleEnabledBefore": true,
+  "privateMetadataSnapshotCreated": true,
+  "snapshotMode": "600",
+  "originalChannelAfterStatus": 200,
+  "originalVideoAfterStatus": 200,
+  "originalVideoQualities": [480],
+  "originalManifestStatus": 200,
+  "googleEnabledAfter": true,
+  "readyStatus": 200,
+  "normalContainerState": [
+    "api:running:healthy",
+    "kafka:running:healthy",
+    "media:running:healthy",
+    "postgres:running:healthy",
+    "redis:running:healthy",
+    "web:running:healthy",
+    "worker:running:"
+  ],
+  "finalStartupSequenceVerified": true,
+  "checkedAt": "2026-10-14T08:14:50.606Z",
+  "originalIntegrityStatus": 200,
+  "originalSegmentStatus": 200,
+  "originalSegmentBytes": 188752,
+  "originalSegmentHashMatches": true
+}

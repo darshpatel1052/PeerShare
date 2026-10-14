@@ -1,0 +1,458 @@
+{
+  "checkedOn": "2026-10-14T08:06:41.036Z",
+  "scope": "real Compose web/API/coordinator/worker, separate schema credentials, Kafka and persistent test volumes",
+  "staticRoutes": true,
+  "googleCredentialsExcluded": true,
+  "actualWorkerProcessing": true,
+  "renditions": [480, 720],
+  "publishedManifestAndSegments": true,
+  "observations": [
+    {
+      "path": "/api/v1/auth/options",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/register",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/api/v1/channels",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/api/v1/uploads",
+      "method": "POST",
+      "status": 201,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365/parts/presign",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365/parts/1",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365/complete",
+      "method": "POST",
+      "status": 202,
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "queued",
+      "processing": "pending"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "encoding",
+      "processing": "processing"
+    },
+    {
+      "path": "/api/v1/uploads/c9dc5f5e-b956-42a6-8e09-adf57af17365",
+      "method": "GET",
+      "status": 200,
+      "stage": "ready",
+      "processing": "ready"
+    },
+    {
+      "path": "/api/v1/videos/c8302a8f-1527-458c-9bc2-1f91857f714a/publish",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/videos/c8302a8f-1527-458c-9bc2-1f91857f714a",
+      "method": "GET",
+      "status": 200
+    }
+  ]
+}

@@ -9,7 +9,10 @@ npm run proto:check
 npm run api:vet
 npm run test:integration
 npm run test:browser
+npm run test:recovery
+npm run test:media-recovery
 npm run test:distributed-recovery
+npm run test:containers
 ```
 
 ## What each layer establishes
@@ -22,6 +25,16 @@ The connected HTTP integration test uploads through the real owner-authenticated
 
 Production-browser tests build the static Next.js export and use the separate native media/coordinator/worker processes. Existing sign-in, channel, Studio, custom controls, artwork and peer/fallback journeys must still pass. Simulated Google availability checks remain distinct from your reported successful live Google sign-in.
 
+The current local result is 8 JavaScript unit cases, 43 top-level Go cases (67 including named subcases), and 19 browser cases, all passing. The Go total includes foundation unit tests as well as integration tests; calling all 43 cases database integration tests would overstate the evidence. The historical `test:recovery` and `test:media-recovery` runners explicitly select the legacy development executor, while the Phase 3 browser/distributed/container tests exercise separate services.
+
+## Why native tests and container tests are separate
+
+`npm run test:containers` starts actual images through the same helper as `npm run compose:demo`. It checks the exported account page and readiness, creates a disposable creator, uploads a generated three-second 720p MP4, waits for the packaged worker, publishes it, and reads both rendition playlists and media segments over HTTP. Tests clear live Google credentials, and use ports 3220/3221/8220/18082 so the normal app can remain available. Its `finally` block removes only the disposable project and generated source.
+
+A passing native Go build cannot prove that Docker copied a runnable file to its entrypoint. Our first container upgrade exposed exactly this: Go's `-o /media` targeted an existing Linux directory and placed a file inside it. Copying that path produced a directory at the intended entrypoint. The fix compiles to explicit files beneath `/artifacts`, then copies them to `/peerscreen`, `/peerscreen-media` and `/peerscreen-worker`. The HTTP upload check establishes that the final executable, FFmpeg installation, credentials, volume permissions, broker and serving path cooperate in the actual images.
+
+The startup helper builds both images before stopping app processes. It then stops web/API/worker/coordinator, runs migrations through Compose dependencies, and waits for the new services. This limits the interruption and prevents an old writer from racing migration. Persistent database/media volumes and private credential files remain paired across upgrades. A running worker has no separate Docker health probe; a real completed upload provides stronger evidence of its processing behavior than a container status alone.
+
 ## Process recovery is stronger than changing a state in a unit test
 
 `npm run test:distributed-recovery` creates an owned generated source and a disposable creator. It stops the test Kafka broker, completes an upload, and verifies that the coordinator's job/outbox persist. It actually kills/restarts the coordinator while the broker is down. After broker recovery it starts a worker, observes the worker's real FFmpeg child and kills the worker with SIGKILL.
@@ -30,7 +43,7 @@ The test verifies that FFmpeg stops, the existing lease remains respected, and a
 
 This runner does not shorten the sixty-second lease by editing SQL. The coordinator unit-level integration tests separately force expired timestamps to exercise transitions quickly; their results are labelled as database transition tests rather than process-crash measurements.
 
-Raw process evidence is written to `.local/evidence/phase-3-process-recovery.json`. It contains generated fixture IDs, states, elapsed observations and HTTP outcomes. It contains no cookies, passwords, RPC tokens, Google client values or real creator email. The final milestone evidence should bind results to source fingerprints and record runtime/dependency scope.
+Raw process evidence is written to `.local/evidence/phase-3-process-recovery.json`. It contains generated fixture IDs, states, elapsed observations and HTTP outcomes. It contains no cookies, passwords, RPC tokens, Google client values or real creator email. The [milestone evidence](../../evidence/milestone-3.md) binds results to source fingerprints and records runtime/dependency scope. The recorded 70,410 ms covers recovery and subsequent validation, including the real sixty-second lease; it is not an isolated encode-time benchmark.
 
 ## Useful reading experiments
 

@@ -30,3 +30,5 @@ flowchart LR
 ```
 
 The product learns that a video is ready through a persisted accepted result, not because a process exited or a message was delivered. Readiness still does not publish a video: the creator controls publication through the existing owner-authenticated HTTP API.
+
+The phase is verified locally. Use [the detailed evidence report](../../evidence/milestone-3.md) to compare each architecture claim with an actual test, recorded crash, source fingerprint and known boundary. For a hands-on product check, upload your own 720p MP4 in Studio, preview it privately, publish it, then select 720p and 480p in the custom player. Existing lower-resolution uploads retain their accepted output; this change does not reprocess them.

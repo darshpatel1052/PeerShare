@@ -3,11 +3,11 @@ x-api-environment: &api-environment
   GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
   EXPOSE_OPERATOR_FIXTURE: ${EXPOSE_OPERATOR_FIXTURE:-false}
   APP_ENV: development
-  APP_ORIGIN: http://localhost:3000
-  MEDIA_BASE_URL: http://localhost:3000/media/
+  APP_ORIGIN: http://localhost:${PEERSCREEN_WEB_PORT:-3000}
+  MEDIA_BASE_URL: http://localhost:${PEERSCREEN_WEB_PORT:-3000}/media/
   UPLOAD_DIR: /app/.local/uploads
   MEDIA_DIR: /app/.local/media
-  TRACKER_URL: ws://localhost:8000
+  TRACKER_URL: ws://localhost:${PEERSCREEN_TRACKER_PORT:-8000}
   API_LISTEN_ADDR: 0.0.0.0:8080
   MEDIA_GRPC_ADDR: media:9090
   CATALOG_RPC_TOKEN: ${CATALOG_RPC_TOKEN}
@@ -153,7 +153,7 @@ services:
       redis: { condition: service_healthy }
       media: { condition: service_healthy }
       kafka-topics: { condition: service_completed_successfully }
-    ports: ["127.0.0.1:18080:8080"]
+    ports: ["127.0.0.1:${PEERSCREEN_API_PORT:-18080}:8080"]
     healthcheck:
       test: [CMD, /peerscreen, healthcheck]
       interval: 3s
@@ -170,7 +170,7 @@ services:
   media-migrate:
     profiles: [app]
     image: peerscreen-api:local
-    entrypoint: [/media]
+    entrypoint: [/peerscreen-media]
     command: [migrate]
     environment: &media-environment
       APP_ENV: development
@@ -185,14 +185,14 @@ services:
   media:
     profiles: [app]
     image: peerscreen-api:local
-    entrypoint: [/media]
+    entrypoint: [/peerscreen-media]
     environment: *media-environment
     depends_on:
       media-migrate: { condition: service_completed_successfully }
       storage-init: { condition: service_completed_successfully }
     volumes: ["media-data:/app/.local/media:ro"]
     healthcheck:
-      test: [CMD, /media, healthcheck]
+      test: [CMD, /peerscreen-media, healthcheck]
       interval: 3s
       timeout: 5s
       retries: 20
@@ -204,7 +204,7 @@ services:
   worker:
     profiles: [app]
     image: peerscreen-api:local
-    entrypoint: [/worker]
+    entrypoint: [/peerscreen-worker]
     environment:
       APP_ENV: development
       MEDIA_GRPC_ADDR: media:9090
@@ -235,7 +235,12 @@ services:
       DEMO_BIND_HOST: 0.0.0.0
     depends_on:
       api: { condition: service_healthy }
-    ports: ["127.0.0.1:3000:3000", "127.0.0.1:3001:3001", "127.0.0.1:8000:8000"]
+    ports:
+      [
+        "127.0.0.1:${PEERSCREEN_WEB_PORT:-3000}:3000",
+        "127.0.0.1:${PEERSCREEN_MEDIA_PORT:-3001}:3001",
+        "127.0.0.1:${PEERSCREEN_TRACKER_PORT:-8000}:8000",
+      ]
     volumes:
       - media-data:/app/.local/media:ro
     healthcheck:
