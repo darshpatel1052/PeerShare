@@ -33,6 +33,7 @@ type App struct {
 	Limiter    *ratelimit.Limiter
 	Logger     *slog.Logger
 	metrics    requestMetrics
+	analytics  *analyticsCache
 	dummyHash  string
 	partSlots  chan struct{}
 	imageSlots chan struct{}
@@ -72,7 +73,23 @@ func New(ctx context.Context, cfg config.Config, db *store.Store, cache *redis.C
 	if err != nil {
 		return nil, err
 	}
-	return &App{Media: media, Google: newGoogleAuth(cfg), Config: cfg, Store: db, Redis: cache, Hasher: hasher, Logger: logger, dummyHash: dummy, partSlots: make(chan struct{}, 12), imageSlots: make(chan struct{}, 1), Limiter: &ratelimit.Limiter{Client: cache, Prefix: cfg.RatePrefix, Limit: cfg.AuthLimit, Window: time.Minute}}, nil
+	analytics, err := newAnalyticsCache(cfg.AnalyticsRedisURL)
+	if err != nil {
+		if media != nil {
+			_ = media.Conn.Close()
+		}
+		return nil, errors.New("invalid ANALYTICS_REDIS_URL")
+	}
+	return &App{analytics: analytics, Media: media, Google: newGoogleAuth(cfg), Config: cfg, Store: db, Redis: cache, Hasher: hasher, Logger: logger, dummyHash: dummy, partSlots: make(chan struct{}, 12), imageSlots: make(chan struct{}, 1), Limiter: &ratelimit.Limiter{Client: cache, Prefix: cfg.RatePrefix, Limit: cfg.AuthLimit, Window: time.Minute}}, nil
+}
+
+func (a *App) Close() {
+	if a.analytics.client != nil {
+		_ = a.analytics.client.Close()
+	}
+	if a.Media != nil {
+		_ = a.Media.Conn.Close()
+	}
 }
 
 func (a *App) Handler() http.Handler {

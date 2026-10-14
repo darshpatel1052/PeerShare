@@ -24,6 +24,7 @@ type Config struct {
 	GoogleClientSecret    string
 	DatabaseURL           string
 	RedisURL              string
+	AnalyticsRedisURL     string
 	ListenAddr            string
 	AppOrigin             string
 	MediaBaseURL          string
@@ -50,6 +51,7 @@ func Load() (Config, error) {
 		RatePrefix: value("RATE_PREFIX", "peerscreen:auth"), CookieName: "peerscreen_session",
 		UploadDir: value("UPLOAD_DIR", ".local/uploads"), MediaDir: value("MEDIA_DIR", ".local/media")}
 	cfg.MediaAddress = os.Getenv("MEDIA_GRPC_ADDR")
+	cfg.AnalyticsRedisURL = os.Getenv("ANALYTICS_REDIS_URL")
 	cfg.CatalogRPCToken = os.Getenv("CATALOG_RPC_TOKEN")
 	cfg.KafkaServers = os.Getenv("KAFKA_BOOTSTRAP_SERVERS")
 	if raw := os.Getenv("TRUSTED_PROXY_CIDRS"); raw != "" {
@@ -93,6 +95,13 @@ func Load() (Config, error) {
 	cfg.SecureCookies = cfg.Environment == "production"
 	cfg.RegistrationEnabled = !cfg.SecureCookies
 	cfg.UploadsEnabled = !cfg.SecureCookies
+	if raw := os.Getenv("UPLOADS_ENABLED"); raw != "" {
+		enabled, err := strconv.ParseBool(raw)
+		if err != nil {
+			return cfg, errors.New("UPLOADS_ENABLED must be a boolean")
+		}
+		cfg.UploadsEnabled = enabled
+	}
 	if raw := os.Getenv("REGISTRATION_ENABLED"); raw != "" {
 		enabled, err := strconv.ParseBool(raw)
 		if err != nil {

@@ -66,6 +66,7 @@ function AnalyticsContents({
     videoID
       ? `/videos/${videoID}/analytics`
       : `/channels/${channelID}/analytics`,
+    true,
   );
   const totals =
     resource.state.status === "ready" ? resource.state.value.totals : null;

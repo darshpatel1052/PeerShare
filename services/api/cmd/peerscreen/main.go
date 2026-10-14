@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/config"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -68,6 +70,25 @@ func run() error {
 	}
 	defer db.Pool.Close()
 	switch command {
+	case "creator-access":
+		if len(os.Args) < 4 {
+			return errors.New("use creator-access grant USER_ID HOURS or creator-access revoke USER_ID")
+		}
+		id, err := uuid.Parse(os.Args[3])
+		if err != nil || id.String() != os.Args[3] {
+			return errors.New("use a canonical PeerScreen user ID")
+		}
+		if os.Args[2] == "revoke" && len(os.Args) == 4 {
+			return db.RevokeCreator(ctx, id.String())
+		}
+		if os.Args[2] != "grant" || len(os.Args) != 5 {
+			return errors.New("use creator-access grant USER_ID HOURS or creator-access revoke USER_ID")
+		}
+		hours, err := strconv.Atoi(os.Args[4])
+		if err != nil {
+			return errors.New("creator access hours must be an integer")
+		}
+		return db.GrantCreator(ctx, id.String(), hours)
 	case "migrate":
 		if err := db.Migrate(ctx); err != nil {
 			return errors.New("catalogue migration failed")
@@ -122,9 +143,7 @@ func run() error {
 	if err != nil {
 		return errors.New("API initialization failed")
 	}
-	if app.Media != nil {
-		defer app.Media.Conn.Close()
-	}
+	defer app.Close()
 	server := http.Server{Addr: cfg.ListenAddr, Handler: app.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 2 * time.Minute, WriteTimeout: 2 * time.Minute, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 8 * 1024}
 	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

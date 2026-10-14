@@ -107,11 +107,12 @@ func (a *App) channelAnalytics(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	value, err := a.Store.CreatorAnalytics(r.Context(), identity(r).ID, id, nil)
+	value, err := a.creatorAnalytics(r, id, nil)
 	if err != nil {
 		a.storeError(w, r, err)
 		return
 	}
+	w.Header().Set("Cache-Control", "private, no-store")
 	writeJSON(w, 200, value)
 }
 func (a *App) videoAnalytics(w http.ResponseWriter, r *http.Request) {
@@ -128,11 +129,12 @@ func (a *App) videoAnalytics(w http.ResponseWriter, r *http.Request) {
 		a.storeError(w, r, err)
 		return
 	}
-	value, err := a.Store.CreatorAnalytics(r.Context(), identity(r).ID, channel, &id)
+	value, err := a.creatorAnalytics(r, channel, &id)
 	if err != nil {
 		a.storeError(w, r, err)
 		return
 	}
+	w.Header().Set("Cache-Control", "private, no-store")
 	writeJSON(w, 200, value)
 }
 

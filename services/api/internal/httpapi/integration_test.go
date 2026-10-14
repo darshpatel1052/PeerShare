@@ -58,6 +58,9 @@ func setup(t *testing.T) *testApp {
 	cfg.AuthLimit = 120
 	cfg.UploadDir = t.TempDir()
 	cfg.MediaDir = t.TempDir()
+	// General workflow assertions read current aggregates. The cache integration
+	// case explicitly enables the separate real Redis instance below.
+	cfg.AnalyticsRedisURL = ""
 	db, err := store.Open(context.Background(), cfg.DatabaseURL)
 	if err != nil {
 		t.Fatal("test PostgreSQL unavailable")
@@ -81,6 +84,7 @@ func setup(t *testing.T) *testApp {
 		t.Fatal(err)
 	}
 	server := httptest.NewServer(app.Handler())
+	t.Cleanup(app.Close)
 	t.Cleanup(server.Close)
 	return &testApp{App: app, Server: server, DB: db, Logs: logs}
 }

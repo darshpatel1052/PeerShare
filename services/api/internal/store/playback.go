@@ -325,3 +325,14 @@ func (s *Store) CreatorAnalytics(ctx context.Context, userID, channelID string, 
 	rows.Close()
 	return result, tx.Commit(ctx)
 }
+
+// Authorize before cache access, then derive a metadata version without joining
+// playback reports. Telemetry itself may be up to the cache TTL behind.
+func (s *Store) AnalyticsScope(ctx context.Context, userID, channelID string, videoID *string) (string, error) {
+	var version string
+	err := s.Pool.QueryRow(ctx, `SELECT c.revision::text||':'||coalesce(max(v.updated_at)::text,'empty')||':'||count(v.id)::text
+		FROM catalog.channels c LEFT JOIN catalog.videos v ON v.channel_id=c.id
+		WHERE c.id=$1 AND c.owner_id=$2
+		AND ($3::uuid IS NULL OR EXISTS(SELECT 1 FROM catalog.videos x WHERE x.id=$3 AND x.channel_id=c.id AND x.deleted_at IS NULL)) GROUP BY c.id`, channelID, userID, videoID).Scan(&version)
+	return version, translate(err)
+}

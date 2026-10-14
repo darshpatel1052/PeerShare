@@ -35,6 +35,9 @@ func (a *App) setThumbnail(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) setCreatorImage(w http.ResponseWriter, r *http.Request, kind string) {
+	if !a.creatorAccess(w, r) {
+		return
+	}
 	id, valid := canonicalID(r.PathValue("id"))
 	if !valid {
 		a.error(w, r, 400, "invalid_id", "Use a valid resource identifier.")

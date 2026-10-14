@@ -16,11 +16,14 @@ export async function compose(
     args.includes("--wait") &&
     /^\d+$/.test(args.at(-1))
   ) {
-    const output = await compose([...args, "postgres", "redis", "kafka"], {
-      test,
-      quiet,
-      overlays,
-    });
+    const output = await compose(
+      [...args, "postgres", "redis", "redis-cache", "kafka"],
+      {
+        test,
+        quiet,
+        overlays,
+      },
+    );
     await compose(["run", "--rm", "--no-deps", "media-bootstrap"], {
       test,
       quiet,

@@ -5,7 +5,7 @@ type Resource<T> =
   | { status: "loading" }
   | { status: "ready"; value: T }
   | { status: "error"; error: ApiError };
-export function useResource<T>(path: string | null) {
+export function useResource<T>(path: string | null, freshOnRetry = false) {
   const [resource, setResource] = useState<{
     path: string | null;
     state: Resource<T>;
@@ -15,7 +15,12 @@ export function useResource<T>(path: string | null) {
     if (!path) return;
     const controller = new AbortController();
     setResource({ path, state: { status: "loading" } });
-    api<T>(path, { signal: controller.signal })
+    api<T>(path, {
+      signal: controller.signal,
+      ...(freshOnRetry && revision > 0
+        ? { headers: { "Cache-Control": "no-cache" } }
+        : {}),
+    })
       .then((value) => {
         if (!controller.signal.aborted)
           setResource({ path, state: { status: "ready", value } });
@@ -38,7 +43,7 @@ export function useResource<T>(path: string | null) {
           });
       });
     return () => controller.abort();
-  }, [path, revision]);
+  }, [path, revision, freshOnRetry]);
   const state: Resource<T> =
     resource.path === path ? resource.state : { status: "loading" };
   return { state, retry: () => setRevision((value) => value + 1) };

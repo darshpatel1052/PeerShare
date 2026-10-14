@@ -114,6 +114,10 @@ See [the Phase 5 learning guide](learning/phase-5/README.md) and [current eviden
 
 ## Product and Google identity follow-up
 
+The following Phase 5 slice adds optional shared creator-analytics caching and production creator approval. Analytics uses a separate 32 MiB Redis instance with allkeys-lru, a 15-second TTL, per-request SQL ownership checks, metadata-versioned keys, explicit Refresh bypass and PostgreSQL fallback. The original noeviction rate-limiter memory remains separate. Production creation/upload/processing requests require a bounded PostgreSQL creator grant; expiry/revocation do not prevent owner cleanup. Upload setup/retries also use a shared per-user request limit. Development retains its existing creator workflow.
+
+Verification passed 57 top-level Go cases (82 including named subcases) with real PostgreSQL, two Redis processes, Kafka, FFmpeg and race detection. The new cache case uses two independent clients, observes a shared hit/current refresh, checks ownership/metadata/deletion and cache failure fallback. The creator case checks grant, expiry, revocation and cleanup. Static build, formatting, types and eight existing JavaScript cases passed. This does not claim a measured cache latency improvement, production creator provisioning or an AWS deployment.
+
 Creator banners/thumbnails, Workspace Settings, custom player controls and separate Drafts/Published/Unpublished states are implemented and verified. Google OIDC supports explicit connection to an existing account and retains PeerScreen sessions/ownership. Shared-file credential loading was fixed in `b46f180`, whose complete [CI run passed](https://github.com/darshpatel1052/Peer-Screen/actions/runs/38462247614). On 14 October 2026, the user reported that live Google sign-in worked; this is user-reported validation, distinct from automated signed-provider tests. See [the implementation learning guide](learning/product-and-google/README.md).
 
 ## Product UI redesign

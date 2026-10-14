@@ -56,11 +56,17 @@ func validateVideoDetails(title, description string, tags []string) bool {
 	return true
 }
 func (a *App) createUpload(w http.ResponseWriter, r *http.Request) {
+	if !a.creatorAccess(w, r) {
+		return
+	}
 	if !a.Config.UploadsEnabled {
 		a.error(w, r, 403, "uploads_disabled", "New uploads are unavailable on this deployment.")
 		return
 	}
 	var body createUploadRequest
+	if !a.uploadCapacity(w, r) {
+		return
+	}
 	if !a.decode(w, r, &body) {
 		return
 	}
@@ -155,6 +161,9 @@ func (a *App) listOwnedUploads(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, map[string]any{"items": items})
 }
 func (a *App) presignParts(w http.ResponseWriter, r *http.Request) {
+	if !a.creatorAccess(w, r) {
+		return
+	}
 	id, ok := canonicalID(r.PathValue("id"))
 	if !ok {
 		a.error(w, r, 400, "invalid_id", "Use a valid upload ID.")
@@ -200,6 +209,9 @@ func (a *App) presignParts(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, map[string]any{"parts": grants})
 }
 func (a *App) putUploadPart(w http.ResponseWriter, r *http.Request) {
+	if !a.creatorAccess(w, r) {
+		return
+	}
 	id, ok := canonicalID(r.PathValue("id"))
 	if !ok {
 		a.error(w, r, 400, "invalid_id", "Use a valid upload ID.")
@@ -367,6 +379,9 @@ func syncDirectory(path string) error {
 	return f.Sync()
 }
 func (a *App) completeUpload(w http.ResponseWriter, r *http.Request) {
+	if !a.creatorAccess(w, r) {
+		return
+	}
 	id, ok := canonicalID(r.PathValue("id"))
 	if !ok {
 		a.error(w, r, 400, "invalid_id", "Use a valid upload ID.")
@@ -536,7 +551,12 @@ func (a *App) processingVideo(w http.ResponseWriter, r *http.Request) {
 	a.decorateUpload(&u)
 	writeJSON(w, 200, u)
 }
-func (a *App) retryVideo(w http.ResponseWriter, r *http.Request)  { a.mutateJob(w, r, true) }
+func (a *App) retryVideo(w http.ResponseWriter, r *http.Request) {
+	if !a.creatorAccess(w, r) || !a.uploadCapacity(w, r) {
+		return
+	}
+	a.mutateJob(w, r, true)
+}
 func (a *App) cancelVideo(w http.ResponseWriter, r *http.Request) { a.mutateJob(w, r, false) }
 func (a *App) mutateJob(w http.ResponseWriter, r *http.Request, retry bool) {
 	id, ok := canonicalID(r.PathValue("id"))

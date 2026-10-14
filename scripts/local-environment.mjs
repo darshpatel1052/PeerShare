@@ -71,8 +71,10 @@ export async function localEnvironment({ test = false } = {}) {
     ...(await mediaEnvironment({ test })),
     POSTGRES_PORT: String(postgresPort),
     REDIS_PORT: String(redisPort),
+    REDIS_CACHE_PORT: String(test ? 56382 : 56381),
     DATABASE_URL: `postgres://peerscreen_catalog:${values.CATALOG_DB_PASSWORD}@127.0.0.1:${postgresPort}/peerscreen?sslmode=disable`,
     REDIS_URL: `redis://:${values.REDIS_PASSWORD}@127.0.0.1:${redisPort}/0`,
+    ANALYTICS_REDIS_URL: `redis://:${values.REDIS_PASSWORD}@127.0.0.1:${test ? 56382 : 56381}/0`,
     APP_ENV: "development",
     PEER_STUN_URLS: test
       ? ""

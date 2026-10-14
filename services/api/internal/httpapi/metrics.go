@@ -54,6 +54,9 @@ func (a *App) operationalMetrics(w http.ResponseWriter, r *http.Request) {
 	var memory runtime.MemStats
 	runtime.ReadMemStats(&memory)
 	stats := a.Store.Pool.Stat()
+	if a.analytics != nil {
+		fmt.Fprintf(w, "# TYPE peerscreen_analytics_cache_total counter\npeerscreen_analytics_cache_total{result=\"hit\"} %d\npeerscreen_analytics_cache_total{result=\"miss\"} %d\npeerscreen_analytics_cache_total{result=\"error\"} %d\npeerscreen_analytics_cache_total{result=\"bypass\"} %d\n", a.analytics.hits.Load(), a.analytics.misses.Load(), a.analytics.errors.Load(), a.analytics.bypasses.Load())
+	}
 	fmt.Fprintf(w, "peerscreen_go_goroutines %d\npeerscreen_go_heap_bytes %d\npeerscreen_db_connections %d\npeerscreen_db_acquired_connections %d\npeerscreen_db_max_connections %d\n", runtime.NumGoroutine(), memory.HeapAlloc, stats.TotalConns(), stats.AcquiredConns(), stats.MaxConns())
 	a.metrics.Lock()
 	defer a.metrics.Unlock()

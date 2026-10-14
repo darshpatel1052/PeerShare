@@ -24,6 +24,9 @@ type editChannelBody struct {
 }
 
 func (a *App) createChannel(w http.ResponseWriter, r *http.Request) {
+	if !a.creatorAccess(w, r) {
+		return
+	}
 	var body createChannelBody
 	if !a.decode(w, r, &body) {
 		return

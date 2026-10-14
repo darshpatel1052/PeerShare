@@ -22,6 +22,8 @@ services:
     ports: !reset []
   redis:
     ports: !reset []
+  redis-cache:
+    ports: !reset []
   kafka:
     ports: !reset []
   gateway:
