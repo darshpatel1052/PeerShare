@@ -1,6 +1,12 @@
 "use client";
-import { useEffect, useRef, useState, type RefObject } from "react";
-import { Icon } from "./ui";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type RefObject,
+} from "react";
+import { PlayerIcon } from "./player-icon";
 
 const clock = (seconds: number) => {
   const value = Math.max(0, Math.floor(seconds || 0));
@@ -28,6 +34,7 @@ export default function VideoPlayer({
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [buffered, setBuffered] = useState(0);
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState(false);
   const [buffering, setBuffering] = useState(false);
@@ -51,6 +58,18 @@ export default function VideoPlayer({
       setDuration(Number.isFinite(video.duration) ? video.duration : 0);
       setVolume(video.volume);
       setMuted(video.muted);
+      let bufferedEnd = 0;
+      const ranges = video.buffered;
+      for (let index = 0; index < ranges.length; index++) {
+        if (
+          ranges.start(index) <= video.currentTime &&
+          ranges.end(index) >= video.currentTime
+        ) {
+          bufferedEnd = ranges.end(index);
+          break;
+        }
+      }
+      setBuffered(bufferedEnd);
     };
     const wait = () => setBuffering(true);
     const progress = () => setBuffering(false);
@@ -67,6 +86,7 @@ export default function VideoPlayer({
       "durationchange",
       "loadedmetadata",
       "volumechange",
+      "progress",
     ];
     events.forEach((event) => video.addEventListener(event, sync));
     video.addEventListener("waiting", wait);
@@ -175,7 +195,7 @@ export default function VideoPlayer({
           disabled={!ready}
           onClick={() => void toggle()}
         >
-          <Icon name="play" />
+          <PlayerIcon name="play" />
         </button>
       )}
       {buffering && playing && (
@@ -200,17 +220,18 @@ export default function VideoPlayer({
           style={
             {
               "--played": `${duration ? (time / duration) * 100 : 0}%`,
-            } as React.CSSProperties
+              "--buffered": `${duration ? (Math.min(Math.max(time, buffered), duration) / duration) * 100 : 0}%`,
+            } as CSSProperties
           }
         />
         <div className="player-control-row">
           <button
-            className="player-button"
+            className="player-button player-toggle"
             aria-label={playing ? "Pause" : "Play"}
             disabled={!ready}
             onClick={() => void toggle()}
           >
-            <Icon name={playing ? "pause" : "play"} />
+            <PlayerIcon name={playing ? "pause" : "play"} />
           </button>
           <div className="player-volume">
             <button
@@ -218,7 +239,15 @@ export default function VideoPlayer({
               aria-label={muted || volume === 0 ? "Unmute" : "Mute"}
               onClick={mute}
             >
-              <Icon name={muted || volume === 0 ? "muted" : "volume"} />
+              <PlayerIcon
+                name={
+                  muted || volume === 0
+                    ? "muted"
+                    : volume < 0.5
+                      ? "volume-low"
+                      : "volume"
+                }
+              />
             </button>
             <input
               type="range"
@@ -227,6 +256,9 @@ export default function VideoPlayer({
               step={0.05}
               value={muted ? 0 : volume}
               aria-label="Volume"
+              style={
+                { "--volume": `${muted ? 0 : volume * 100}%` } as CSSProperties
+              }
               onChange={(e) => {
                 const video = videoRef.current;
                 if (video) {
@@ -242,25 +274,28 @@ export default function VideoPlayer({
           </span>
           <span className="player-control-spacer" />
           {onQuality && (
-            <select
-              aria-label="Video quality"
-              value={quality}
-              onChange={(e) => onQuality(Number(e.target.value))}
-            >
-              <option value={0}>Auto</option>
-              {qualities.map((height) => (
-                <option key={height} value={height}>
-                  {height}p
-                </option>
-              ))}
-            </select>
+            <div className="player-quality">
+              <select
+                aria-label="Video quality"
+                value={quality}
+                onChange={(e) => onQuality(Number(e.target.value))}
+              >
+                <option value={0}>Auto</option>
+                {qualities.map((height) => (
+                  <option key={height} value={height}>
+                    {height}p
+                  </option>
+                ))}
+              </select>
+              <PlayerIcon name="chevron" />
+            </div>
           )}
           <button
             className="player-button"
             aria-label={fullscreen ? "Exit fullscreen" : "Enter fullscreen"}
             onClick={() => void full()}
           >
-            <Icon name={fullscreen ? "minimize" : "fullscreen"} />
+            <PlayerIcon name={fullscreen ? "minimize" : "fullscreen"} />
           </button>
         </div>
       </div>
