@@ -12,6 +12,7 @@ import (
 
 	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
+	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -50,8 +51,8 @@ func run() error {
 		}
 		return nil
 	}
-	if os.Getenv("APP_ENV") == "production" {
-		return errors.New("public media deployment requires the later TLS and broker-access configuration")
+	if os.Getenv("APP_ENV") == "production" && os.Getenv("INTERNAL_TRANSPORT") != "private-compose" {
+		return errors.New("the initial production coordinator requires its private Compose network")
 	}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -62,6 +63,10 @@ func run() error {
 		return errors.New("media database initialization failed")
 	}
 	defer store.Pool.Close()
+	store.Objects, err = objectstore.FromEnvironment(setup)
+	if err != nil {
+		return err
+	}
 	if command == "migrate" {
 		if err = store.Migrate(setup); err != nil {
 			return errors.New("media migration failed")

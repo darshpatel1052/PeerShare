@@ -110,7 +110,7 @@ The library foundation checkpoint `6b1a9c9` passed [CI](https://github.com/darsh
 - Terraform 1.16.6 / AWS provider 6.68.0 starter validated locally, with encrypted bounded disks, private buckets, retained release repositories and bounded log retention. No AWS plan/apply, DNS edit, image push to AWS or paid-plan upgrade occurred.
 - User selected `peerscreen.darshpatel.dev` and AWS preparation within Free-plan credits. Current credits/expiry, existing usage and demo duration remain unconfirmed; the official-rate 24-hour core subtotal is about USD 2.75 before variable delivery/services and credits.
 
-See [the Phase 5 learning guide](learning/phase-5/README.md) and [current evidence](evidence/phase-5/README.md). This is the first deployment foundation checkpoint, not completion of Phase 5. S3 application transport/revocation, creator admission, certificates, scoped IAM/image delivery, backup/restore, broader observability, account-specific cost/plan and public/two-network validation remain required before provisioning the final product.
+See [the Phase 5 learning guide](learning/phase-5/README.md) and [current evidence](evidence/phase-5/README.md). This paragraph describes the first networking foundation checkpoint. Subsequent deployment slices below record their own verified scope.
 
 ## Product and Google identity follow-up
 
@@ -125,3 +125,13 @@ Creator banners/thumbnails, Workspace Settings, custom player controls and separ
 The user prioritized a complete interface redesign before uploads. The application now shares one graphite/lime theme and locally served typography across Explore, channels, watch, sign-in and the creator workspace. Development banners and the old build-commentary footer have been removed. Working additions include loaded-video search, light/dark persistence, keyboard channel tabs, canonical copy-link and live channel-title preview. Connection metrics start collapsed; publishing availability stays explicit.
 
 See [the UI learning notes](learning/ui-design.md) and [UI evidence](evidence/ui-redesign.md). This checkpoint retains the existing authentication, ownership, conflict and verified HTTP/peer behavior. It does not implement uploads or invent catalogue content.
+
+## Phase 5 private storage and release checkpoint
+
+The official Go S3 adapter now covers resumable chunks, source assembly, worker attempts, coordinator verification, creator artwork, authorized playback and cleanup. Actual packaged S3 upload/480p/720p/publication/read/unpublish/delete passed, including after removing local chunk/output copies. This is API-mediated chunk storage, not native browser S3 multipart. CloudFront media/API remain uncached through the catalogue permission gate.
+
+A real Envoy image validated and exercised the origin secret, trusted viewer-header replacement, media rewrite, private metrics and WSS upgrade with simulated CloudFront requests. A full backup of the normal database and both media/upload volumes restored into an isolated networkless database; all 85 media/source file hashes matched. The exact original local containers resumed.
+
+AWS account-specific preflight confirmed the active Free plan with USD 100 plan credits and eligible compute/AMI/quota. The user's DNS validation produced an issued ACM edge certificate; the production Google callback is user-confirmed. Private S3 buckets, immutable ECR repositories, scoped IAM roles and a seven-day log group are now provisioned. The full workload plan estimates about USD 3.90 gross for the first day, allows USD 10 and records retained-resource costs. No plan upgrade or paid subscription occurred.
+
+Pinned GitHub OIDC publication, role-refresh/renewal hooks and host release scripts are implemented. Actual publication, compute/data rollout, origin renewal, live AWS backup/restore, monitoring/tracing and the public/two-network checks remain. [Learning chapter](learning/phase-5/05-storage-and-release.md), [evidence](evidence/phase-5/storage-and-release.md), [ADR](adr/0005-private-s3-and-bounded-aws-release.md).

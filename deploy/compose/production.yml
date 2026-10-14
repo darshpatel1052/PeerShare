@@ -1,0 +1,97 @@
+# Applied after local.yml + gateway.yml. Secrets/role directories are prepared
+# on the host; images are immutable commit tags published to this account's ECR.
+x-storage: &storage
+  OBJECT_STORAGE: s3
+  AWS_REGION: ${AWS_REGION:?}
+  AWS_CONFIG_FILE: /run/aws/config
+  AWS_SHARED_CREDENTIALS_FILE: /run/aws/unused
+  AWS_EC2_METADATA_DISABLED: "true"
+  S3_ORIGINALS_BUCKET: ${S3_ORIGINALS_BUCKET:?}
+  S3_PROCESSED_BUCKET: ${S3_PROCESSED_BUCKET:?}
+
+x-logs: &logs
+  driver: awslogs
+  options:
+    awslogs-region: ${AWS_REGION}
+    awslogs-group: /peerscreen/showcase
+    awslogs-create-group: "false"
+    mode: non-blocking
+    max-buffer-size: 1m
+
+services:
+  migrate:
+    image: ${API_IMAGE:?}
+  seed:
+    image: ${API_IMAGE}
+    command: [migrate]
+    volumes: !reset []
+  storage-init:
+    image: ${API_IMAGE}
+    command:
+      [
+        "mkdir -p /app/.local/uploads /app/.local/media && chown 10001:10001 /app/.local/uploads /app/.local/media",
+      ]
+    volumes: !override
+      - upload-data:/app/.local/uploads
+      - media-data:/app/.local/media
+  api:
+    image: ${API_IMAGE}
+    environment:
+      <<: *storage
+      UPLOADS_ENABLED: "true"
+    volumes:
+      - /srv/peerscreen/roles/catalogue:/run/aws:ro
+    logging: *logs
+    restart: unless-stopped
+  media-migrate:
+    image: ${API_IMAGE}
+    environment:
+      APP_ENV: production
+      INTERNAL_TRANSPORT: private-compose
+  media:
+    image: ${API_IMAGE}
+    environment:
+      <<: *storage
+      APP_ENV: production
+      INTERNAL_TRANSPORT: private-compose
+    volumes: !override
+      - media-data:/app/.local/media
+      - /srv/peerscreen/roles/coordinator:/run/aws:ro
+    logging: *logs
+    restart: unless-stopped
+  worker:
+    image: ${API_IMAGE}
+    environment:
+      <<: *storage
+      APP_ENV: production
+      INTERNAL_TRANSPORT: private-compose
+    volumes:
+      - /srv/peerscreen/roles/worker:/run/aws:ro
+    logging: *logs
+    restart: unless-stopped
+  web:
+    image: ${WEB_IMAGE:?}
+    logging: *logs
+    restart: unless-stopped
+  postgres:
+    logging: *logs
+    restart: unless-stopped
+  redis:
+    logging: *logs
+    restart: unless-stopped
+  redis-cache:
+    logging: *logs
+    restart: unless-stopped
+  kafka:
+    logging: *logs
+    restart: unless-stopped
+  gateway:
+    user: "10001:10001"
+    volumes: !override
+      - /srv/peerscreen/gateway:/config:ro
+      - /srv/peerscreen/tls:/tls:ro
+    ports: !override
+      - 0.0.0.0:443:8443
+      - 127.0.0.1:19901:9901
+    logging: *logs
+    restart: unless-stopped

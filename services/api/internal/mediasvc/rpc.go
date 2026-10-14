@@ -81,7 +81,11 @@ func NewServer(store *Store, catalogToken, workerToken string) (*grpc.Server, er
 		if !(catalog && catalogMethod || worker && workerMethod) {
 			return nil, status.Error(codes.PermissionDenied, "service cannot perform this command")
 		}
-		bounded, cancel := context.WithTimeout(ctx, 5*time.Second)
+		timeout := 5 * time.Second
+		if method == "CompleteJob" {
+			timeout = 90 * time.Second
+		}
+		bounded, cancel := context.WithTimeout(ctx, timeout)
 		defer cancel()
 		return handler(bounded, req)
 	}
@@ -100,7 +104,11 @@ func Dial(target, token string) (*Client, error) {
 		return nil, errors.New("media target and private service credential required")
 	}
 	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(2*1024*1024), grpc.MaxCallSendMsgSize(2*1024*1024)), grpc.WithUnaryInterceptor(func(ctx context.Context, method string, req, reply any, connection *grpc.ClientConn, invoke grpc.UnaryInvoker, opts ...grpc.CallOption) error {
-		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+		timeout := 5 * time.Second
+		if strings.HasSuffix(method, "/CompleteJob") {
+			timeout = 90 * time.Second
+		}
+		ctx, cancel := context.WithTimeout(ctx, timeout)
 		defer cancel()
 		ctx = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 		return invoke(ctx, method, req, reply, connection, opts...)

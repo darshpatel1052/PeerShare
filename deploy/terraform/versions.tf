@@ -14,3 +14,9 @@ provider "aws" {
     tags = { Project = "PeerScreen", ManagedBy = "Terraform", Environment = "showcase" }
   }
 }
+
+provider "aws" {
+  alias  = "edge"
+  region = "us-east-1"
+  default_tags { tags = { Project = "PeerScreen", ManagedBy = "Terraform", Environment = "showcase" } }
+}

@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { mediaEnvironment } from "./media-environment.mjs";
@@ -75,6 +75,25 @@ export async function localEnvironment({ test = false } = {}) {
     DATABASE_URL: `postgres://peerscreen_catalog:${values.CATALOG_DB_PASSWORD}@127.0.0.1:${postgresPort}/peerscreen?sslmode=disable`,
     REDIS_URL: `redis://:${values.REDIS_PASSWORD}@127.0.0.1:${redisPort}/0`,
     ANALYTICS_REDIS_URL: `redis://:${values.REDIS_PASSWORD}@127.0.0.1:${test ? 56382 : 56381}/0`,
+    S3_DEV_ACCESS_KEY: "peerscreen-local",
+    S3_DEV_SECRET_KEY: createHash("sha256")
+      .update(`local-s3:${values.REDIS_PASSWORD}`)
+      .digest("hex"),
+    ...(process.env.PEERSCREEN_S3_REHEARSAL === "true"
+      ? {
+          OBJECT_STORAGE: "s3",
+          AWS_REGION: "ap-south-1",
+          AWS_ACCESS_KEY_ID: "peerscreen-local",
+          AWS_SECRET_ACCESS_KEY: createHash("sha256")
+            .update(`local-s3:${values.REDIS_PASSWORD}`)
+            .digest("hex"),
+          AWS_SESSION_TOKEN: "",
+          AWS_EC2_METADATA_DISABLED: "true",
+          S3_ORIGINALS_BUCKET: "peerscreen-originals",
+          S3_PROCESSED_BUCKET: "peerscreen-processed",
+          S3_ENDPOINT: `http://127.0.0.1:${test ? 19000 : 19001}`,
+        }
+      : { OBJECT_STORAGE: "local" }),
     APP_ENV: "development",
     PEER_STUN_URLS: test
       ? ""

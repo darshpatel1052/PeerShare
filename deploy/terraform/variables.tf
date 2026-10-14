@@ -18,12 +18,38 @@ variable "admin_cidr" {
   type = string
   validation {
     condition     = can(cidrhost(var.admin_cidr, 0)) && can(regex("/32$", var.admin_cidr))
-    error_message = "SSH administration requires your current IPv4 /32; broad SSH access is not allowed."
+    error_message = "SSH administration requires your current IPv4 /32."
   }
 }
 variable "ssh_key_name" {
   type        = string
-  description = "An existing EC2 key pair in Mumbai. No private key enters Terraform."
+  default     = "peerscreen-showcase"
+  description = "The deployment key pair name. Only its public key enters Terraform."
+}
+variable "ssh_public_key" { type = string }
+variable "origin_secret" {
+  type      = string
+  sensitive = true
+  validation {
+    condition     = can(regex("^[a-f0-9]{64}$", var.origin_secret))
+    error_message = "Use a freshly generated 32-byte origin secret."
+  }
+}
+variable "release_sha" {
+  type    = string
+  default = "bootstrap"
+  validation {
+    condition     = var.release_sha == "bootstrap" || can(regex("^[a-f0-9]{40}$", var.release_sha))
+    error_message = "Use the complete release commit SHA."
+  }
+}
+variable "demo_hours" {
+  type    = number
+  default = 24
+  validation {
+    condition     = var.demo_hours >= 1 && var.demo_hours <= 72 && floor(var.demo_hours) == var.demo_hours
+    error_message = "The initial demo is bounded to 1–72 hours."
+  }
 }
 variable "instance_type" {
   type    = string

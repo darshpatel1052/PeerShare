@@ -7,6 +7,8 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { compose } from "./dependencies.mjs";
 import { startContainerApp } from "./compose-demo.mjs";
+import { localEnvironment } from "./local-environment.mjs";
+import { runGo } from "./go.mjs";
 
 if (process.env.API_TARGET)
   throw new Error("Container smoke uses only its disposable test project.");
@@ -18,6 +20,9 @@ const origin = "http://localhost:3220";
 const run = promisify(execFile);
 const directory = await mkdtemp(join(tmpdir(), "peerscreen-container-"));
 const observations = [];
+const s3Mode = process.env.PEERSCREEN_S3_REHEARSAL === "true";
+const overlays = s3Mode ? ["deploy/compose/local-s3.yml"] : [];
+const storageChecks = {};
 let cookie = "";
 async function call(path, { method = "GET", body, raw, headers = {} } = {}) {
   const response = await fetch(origin + path, {
@@ -46,7 +51,12 @@ async function call(path, { method = "GET", body, raw, headers = {} } = {}) {
   return { status: response.status, data, response };
 }
 try {
-  await startContainerApp({ test: true });
+  await startContainerApp({ test: true, overlays });
+  if (s3Mode)
+    await runGo(
+      ["run", "./cmd/storage-tool"],
+      await localEnvironment({ test: true }),
+    );
   assert.equal((await fetch(origin + "/health/ready")).status, 200);
   assert.equal((await fetch(origin + "/account/")).status, 200);
   assert.equal((await call("/api/v1/auth/options")).data.google_enabled, false);
@@ -122,6 +132,17 @@ try {
     ).status,
     200,
   );
+  if (s3Mode) {
+    await compose(
+      ["exec", "-T", "api", "rm", "-rf", `/app/.local/uploads/${upload.id}`],
+      { test: true, overlays, quiet: true },
+    );
+    assert.equal(
+      (await call(`/api/v1/uploads/${upload.id}`)).data.parts.length,
+      1,
+    );
+    storageChecks.resumeWithoutLocalPart = true;
+  }
   assert.equal(
     (await call(`/api/v1/uploads/${upload.id}/complete`, { method: "POST" }))
       .status,
@@ -137,6 +158,42 @@ try {
     await new Promise((accept) => setTimeout(accept, 100));
   }
   assert.equal(progress.data.processing_state, "ready");
+  if (s3Mode) {
+    const preview = await call(`/api/v1/videos/${upload.video_id}/preview`);
+    assert.equal(preview.status, 200);
+    assert.equal((await fetch(preview.data.playback.manifest_url)).status, 404);
+    assert.equal(
+      (
+        await fetch(preview.data.playback.manifest_url, {
+          headers: { Cookie: cookie },
+        })
+      ).status,
+      200,
+    );
+    storageChecks.privatePreview = true;
+    const audit = JSON.parse(
+      await runGo(
+        ["run", "./cmd/storage-tool", "audit-video", upload.video_id],
+        await localEnvironment({ test: true }),
+        { json: true },
+      ),
+    );
+    assert.equal(audit.sourceObjects, 1);
+    assert.ok(audit.processedObjects >= 7);
+    storageChecks.objectsBeforeCleanup = audit;
+    await compose(
+      [
+        "exec",
+        "-T",
+        "api",
+        "rm",
+        "-rf",
+        `/app/.local/media/videos/${upload.video_id}`,
+      ],
+      { test: true, overlays, quiet: true },
+    );
+    storageChecks.localOutputRemoved = true;
+  }
   assert.equal(
     (
       await call(`/api/v1/videos/${upload.video_id}/publish`, {
@@ -195,7 +252,70 @@ try {
     assert.equal(segment.status, 200);
     assert.ok((await segment.arrayBuffer()).byteLength > 0);
   }
+  if (s3Mode) {
+    const poster = await fetch(video.data.thumbnail_url);
+    assert.equal(poster.status, 200);
+    const banner = await call(`/api/v1/channels/${channel.data.id}/banner`, {
+      method: "PUT",
+      raw: Buffer.from(await poster.arrayBuffer()),
+      headers: {
+        "Content-Type": "image/jpeg",
+        "If-Match": String(channel.data.revision),
+      },
+    });
+    assert.equal(banner.status, 200);
+    assert.equal((await fetch(banner.data.banner_url)).status, 200);
+    storageChecks.artwork = true;
+    assert.equal(
+      (
+        await call(`/api/v1/videos/${upload.video_id}/unpublish`, {
+          method: "POST",
+        })
+      ).status,
+      200,
+    );
+    assert.equal((await fetch(video.data.playback.manifest_url)).status, 404);
+    assert.equal(
+      (
+        await fetch(video.data.playback.manifest_url, {
+          headers: { Cookie: cookie },
+        })
+      ).status,
+      200,
+    );
+    storageChecks.unpublication = true;
+    assert.equal(
+      (await call(`/api/v1/videos/${upload.video_id}`, { method: "DELETE" }))
+        .status,
+      204,
+    );
+    assert.equal(
+      (
+        await fetch(video.data.playback.manifest_url, {
+          headers: { Cookie: cookie },
+        })
+      ).status,
+      404,
+    );
+    let audit;
+    const cleanupDeadline = Date.now() + 30000;
+    while (Date.now() < cleanupDeadline) {
+      audit = JSON.parse(
+        await runGo(
+          ["run", "./cmd/storage-tool", "audit-video", upload.video_id],
+          await localEnvironment({ test: true }),
+          { json: true },
+        ),
+      );
+      if (audit.processedObjects === 0 && audit.sourceObjects === 0) break;
+      await new Promise((accept) => setTimeout(accept, 500));
+    }
+    assert.deepEqual(audit, { processedObjects: 0, sourceObjects: 0 });
+    storageChecks.objectsAfterCleanup = audit;
+  }
   const evidence = {
+    storage: s3Mode ? "S3-compatible Versity 1.9.0" : "local filesystem",
+    ...(s3Mode ? { storageChecks } : {}),
     checkedOn: new Date().toISOString(),
     scope:
       "real Compose web/API/coordinator/worker, separate schema credentials, Kafka and persistent test volumes",
@@ -209,7 +329,9 @@ try {
   };
   await mkdir(".local/evidence", { recursive: true });
   await writeFile(
-    ".local/evidence/phase-3-container-smoke.json",
+    s3Mode
+      ? ".local/evidence/phase-5-s3-container.json"
+      : ".local/evidence/phase-3-container-smoke.json",
     JSON.stringify(evidence, null, 2) + "\n",
   );
   console.log(
@@ -217,14 +339,17 @@ try {
   );
 } catch (error) {
   console.error(error.message);
+  console.error(JSON.stringify({ recentOperations: observations.slice(-5) }));
   process.exitCode = 1;
 } finally {
-  await compose(["down", "--volumes"], { test: true, quiet: true }).catch(
-    (error) => {
-      console.error(error.message);
-      process.exitCode = 1;
-    },
-  );
+  await compose(["down", "--volumes"], {
+    test: true,
+    quiet: true,
+    overlays,
+  }).catch((error) => {
+    console.error(error.message);
+    process.exitCode = 1;
+  });
   try {
     const remaining = await compose(
       ["--profile", "app", "ps", "--all", "--format", "json"],

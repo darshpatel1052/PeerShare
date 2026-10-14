@@ -49,6 +49,10 @@ func (a *App) getProcessedMedia(w http.ResponseWriter, r *http.Request) {
 		a.error(w, r, 404, "not_found", "This media file is unavailable.")
 		return
 	}
+	if a.Objects != nil {
+		a.serveObject(w, r, key, 16<<20)
+		return
+	}
 	relative := filepath.Clean(filepath.FromSlash(key))
 	root, err := filepath.Abs(a.Config.MediaDir)
 	if err != nil {

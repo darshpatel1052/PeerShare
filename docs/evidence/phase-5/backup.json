@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-14T19:32:00.699Z",
+  "scope": "Local normal app: private database dump and both media/upload volumes, networkless isolated restore",
+  "counts": {
+    "users": 4,
+    "channels": 2,
+    "videos": 4,
+    "uploads": 3,
+    "playlists": 0,
+    "media_jobs": 0
+  },
+  "databaseRestore": true,
+  "fileHashesMatched": true,
+  "mediaFiles": 84,
+  "sourceFiles": 1,
+  "awsBackupRestore": false
+}

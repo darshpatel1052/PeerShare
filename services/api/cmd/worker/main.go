@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
+	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
 )
 
 func main() {
@@ -19,11 +20,15 @@ func main() {
 	}
 }
 func run() error {
-	if os.Getenv("APP_ENV") == "production" {
-		return errors.New("public worker deployment requires the later TLS and broker-access configuration")
+	if os.Getenv("APP_ENV") == "production" && os.Getenv("INTERNAL_TRANSPORT") != "private-compose" {
+		return errors.New("the initial production worker requires its private Compose network")
 	}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+	objects, err := objectstore.FromEnvironment(ctx)
+	if err != nil {
+		return err
+	}
 	client, err := mediasvc.Dial(os.Getenv("MEDIA_GRPC_ADDR"), os.Getenv("WORKER_RPC_TOKEN"))
 	if err != nil {
 		return err
@@ -39,7 +44,7 @@ func run() error {
 		return err
 	}
 	defer producer.Close()
-	mediasvc.RunWorker(ctx, client, consumer, producer, os.Getenv("UPLOAD_DIR"), os.Getenv("MEDIA_DIR"), slog.Default())
+	mediasvc.RunWorker(ctx, client, consumer, producer, os.Getenv("UPLOAD_DIR"), os.Getenv("MEDIA_DIR"), slog.Default(), objects)
 	if ctx.Err() == nil {
 		return errors.New("worker stopped before shutdown")
 	}

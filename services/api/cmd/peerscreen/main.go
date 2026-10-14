@@ -38,6 +38,9 @@ func run() error {
 	if len(os.Args) > 1 {
 		command = os.Args[1]
 	}
+	if command == "runtime-credentials" {
+		return runtimeCredentials()
+	}
 	if command == "healthcheck" {
 		client := http.Client{Timeout: 3 * time.Second}
 		listen := os.Getenv("API_LISTEN_ADDR")

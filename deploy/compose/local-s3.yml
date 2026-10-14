@@ -1,0 +1,49 @@
+# Local S3-compatible rehearsal only. It uses disposable project credentials,
+# not AWS credentials; production uses the actual private AWS buckets.
+x-s3: &s3
+  OBJECT_STORAGE: s3
+  AWS_REGION: ap-south-1
+  AWS_ACCESS_KEY_ID: ${S3_DEV_ACCESS_KEY}
+  AWS_SECRET_ACCESS_KEY: ${S3_DEV_SECRET_KEY}
+  AWS_EC2_METADATA_DISABLED: "true"
+  S3_ORIGINALS_BUCKET: peerscreen-originals
+  S3_PROCESSED_BUCKET: peerscreen-processed
+  S3_ENDPOINT: http://s3:7070
+
+services:
+  s3:
+    profiles: [app]
+    image: ghcr.io/versity/versitygw:v1.9.0@sha256:eb7f786fcd91e72194e48fcf1ac16302d686bf8e3a71434bdbc067a6efd3fdc7
+    user: "10001:10001"
+    environment:
+      ROOT_ACCESS_KEY: ${S3_DEV_ACCESS_KEY}
+      ROOT_SECRET_KEY: ${S3_DEV_SECRET_KEY}
+      VGW_BACKEND: posix
+      VGW_BACKEND_ARGS: /data/s3
+      VGW_PORT: ":7070"
+      VGW_REGION: ap-south-1
+    volumes: ["s3-data:/data/s3"]
+    ports: ["127.0.0.1:19000:7070"]
+    depends_on: { storage-init: { condition: service_completed_successfully } }
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 192m
+    cpus: 1
+  storage-init:
+    volumes:
+      - s3-data:/s3
+    command:
+      [
+        "mkdir -p /app/.local/media/fixture /s3 && if [ ! -f /app/.local/media/fixture/integrity.json ]; then cp -a /fixture/. /app/.local/media/fixture/; fi && chown -R 10001:10001 /s3 && chown 10001:10001 /app/.local/uploads /app/.local/media",
+      ]
+  api:
+    environment: *s3
+    depends_on: { s3: { condition: service_started } }
+  media:
+    environment: *s3
+    volumes: !override ["media-data:/app/.local/media"]
+  worker:
+    environment: *s3
+volumes:
+  s3-data:

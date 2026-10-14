@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-10-14T19:32:58.128Z",
+  "scope": "Real pinned Envoy container; simulated CloudFront request headers, local TLS and stub upstreams",
+  "configValid": true,
+  "missingSecret403": true,
+  "wrongSecret403": true,
+  "acceptedSecret200": true,
+  "trustedViewerAddressOverwritesSpoof": true,
+  "mediaPathRewrite": true,
+  "privateMetrics404": true,
+  "websocketUpgrade": true,
+  "actualCloudFront": false
+}

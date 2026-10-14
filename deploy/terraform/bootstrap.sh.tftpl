@@ -1,8 +1,29 @@
 #!/bin/bash
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
+cat >/etc/systemd/system/peerscreen-demo-stop.service <<'UNIT'
+[Unit]
+Description=Stop PeerScreen demo host at the bounded deployment deadline
+[Service]
+Type=oneshot
+ExecStart=/sbin/shutdown -h now
+UNIT
+cat >/etc/systemd/system/peerscreen-demo-stop.timer <<'UNIT'
+[Unit]
+Description=Bounded PeerScreen demonstration runtime
+[Timer]
+OnCalendar=REPLACE_DEADLINE
+Persistent=true
+Unit=peerscreen-demo-stop.service
+[Install]
+WantedBy=timers.target
+UNIT
+deadline=$(date -u --date='+${demo_hours} hours' '+%Y-%m-%d %H:%M:%S UTC')
+sed -i "s/REPLACE_DEADLINE/$deadline/" /etc/systemd/system/peerscreen-demo-stop.timer
+systemctl daemon-reload
+systemctl enable --now peerscreen-demo-stop.timer
 apt-get update
-apt-get install -y docker.io docker-compose-v2 ffmpeg git ca-certificates
+apt-get install -y docker.io docker-compose-v2 ffmpeg git ca-certificates certbot unzip gnupg curl python3
 systemctl stop docker
 disk=/dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_${volume_id}
 for count in $(seq 1 120); do
@@ -22,4 +43,4 @@ cat >/etc/docker/daemon.json <<'JSON'
 {"data-root":"/srv/peerscreen/data/docker","log-driver":"json-file","log-opts":{"max-size":"10m","max-file":"3"}}
 JSON
 systemctl enable --now docker
-echo 'PeerScreen host prepared. Application deployment and TLS issuance remain operator steps.'
+echo 'PeerScreen host prepared with a bounded runtime. Deploy the verified release and origin certificate next.'

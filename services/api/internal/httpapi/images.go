@@ -142,10 +142,21 @@ func (a *App) setCreatorImage(w http.ResponseWriter, r *http.Request, kind strin
 			return
 		}
 	}
+	if a.Objects != nil && imageID != nil {
+		if err = a.Objects.Put(r.Context(), a.Objects.Processed, "images/"+*imageID+".jpg", encoded); err != nil {
+			a.storeError(w, r, err)
+			return
+		}
+	}
 	if err = a.Store.SetCreatorImage(r.Context(), identity(r).ID, id, kind, revision, imageID, len(encoded)); err != nil {
 		// A timeout may have committed. Reference-aware reconciliation removes leftovers.
 		// Known admission failures happen before commit: don't leave rejected artwork on disk.
 		if imagePath != "" && (errors.Is(err, store.ErrNotOwner) || errors.Is(err, store.ErrNotFound) || errors.Is(err, store.ErrRevisionConflict) || errors.Is(err, store.ErrUploadLimit)) {
+			if a.Objects != nil {
+				ctx, cancel := cleanupContext()
+				_ = a.Objects.Delete(ctx, a.Objects.Processed, "images/"+*imageID+".jpg")
+				cancel()
+			}
 			_ = os.Remove(imagePath)
 		}
 		a.storeError(w, r, err)
@@ -243,6 +254,10 @@ func (a *App) getCreatorImage(w http.ResponseWriter, r *http.Request) {
 		a.error(w, r, 404, "not_found", "This image is unavailable.")
 		return
 	}
+	if a.Objects != nil {
+		a.serveObject(w, r, "images/"+id+".jpg", maxImageBody)
+		return
+	}
 	file, err := os.Open(filepath.Join(a.Config.MediaDir, "images", id+".jpg"))
 	if err != nil {
 		a.error(w, r, 404, "not_found", "This image is unavailable.")
@@ -273,6 +288,9 @@ func (a *App) reconcileCreatorImages() {
 		}
 		rows.Close()
 		for _, id := range ids {
+			if a.Objects != nil && a.Objects.Delete(ctx, a.Objects.Processed, "images/"+id+".jpg") != nil {
+				continue
+			}
 			if e := os.Remove(filepath.Join(a.Config.MediaDir, "images", id+".jpg")); e == nil || os.IsNotExist(e) {
 				_ = a.Store.ForgetCreatorImage(ctx, id, cutoff)
 			}
@@ -300,6 +318,9 @@ func (a *App) reconcileCreatorImages() {
 		}
 		referenced, e := a.Store.CreatorImageReferenced(ctx, id)
 		if e != nil || referenced {
+			continue
+		}
+		if a.Objects != nil && a.Objects.Delete(ctx, a.Objects.Processed, "images/"+name) != nil {
 			continue
 		}
 		if e = os.Remove(filepath.Join(a.Config.MediaDir, "images", name)); e == nil || os.IsNotExist(e) {

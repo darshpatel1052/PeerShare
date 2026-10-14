@@ -14,12 +14,14 @@ import (
 
 	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
+	"os"
 )
 
 const DispatchTopic = "peerscreen.media.dispatch.v1"
@@ -29,8 +31,10 @@ const LifecycleTopic = "peerscreen.media.lifecycle.v1"
 var migrations embed.FS
 
 type Store struct {
-	Pool      *pgxpool.Pool
-	MediaRoot string
+	Objects         *objectstore.Remote
+	validationSlots chan struct{}
+	Pool            *pgxpool.Pool
+	MediaRoot       string
 }
 type Event struct {
 	SchemaVersion int    `json:"schema_version"`
@@ -61,7 +65,7 @@ func Open(ctx context.Context, url, mediaRoot string) (*Store, error) {
 		pool.Close()
 		return nil, errors.New("media database unavailable")
 	}
-	return &Store{pool, mediaRoot}, nil
+	return &Store{Pool: pool, MediaRoot: mediaRoot, validationSlots: make(chan struct{}, 1)}, nil
 }
 func (s *Store) Migrate(ctx context.Context) error {
 	tx, err := s.Pool.Begin(ctx)
@@ -371,7 +375,25 @@ func (s *Store) Complete(ctx context.Context, r *pb.CompleteRequest) (*pb.JobSna
 		return current, nil
 	}
 	spec := current.Spec
-	output, err := encoder.ValidateOutput(ctx, encoder.Job{ID: spec.JobId, VideoID: spec.VideoId, GenerationID: spec.GenerationId, AttemptID: current.AttemptId}, s.MediaRoot, r.OutputDescriptorKey)
+	verifyRoot := s.MediaRoot
+	verifyJob := encoder.Job{ID: spec.JobId, VideoID: spec.VideoId, GenerationID: spec.GenerationId, AttemptID: current.AttemptId}
+	if s.Objects != nil {
+		select {
+		case s.validationSlots <- struct{}{}:
+			defer func() { <-s.validationSlots }()
+		default:
+			return nil, status.Error(codes.Unavailable, "output validation busy")
+		}
+		verifyRoot, err = os.MkdirTemp(s.MediaRoot, ".verify-")
+		if err != nil {
+			return nil, err
+		}
+		defer os.RemoveAll(verifyRoot)
+		if err = s.Objects.DownloadAttempt(ctx, verifyRoot, verifyJob, r.OutputDescriptorKey); err != nil {
+			return nil, status.Error(codes.Unavailable, "remote output validation unavailable")
+		}
+	}
+	output, err := encoder.ValidateOutput(ctx, verifyJob, verifyRoot, r.OutputDescriptorKey)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "output descriptor failed validation")
 	}

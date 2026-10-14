@@ -37,7 +37,10 @@
     "test:media-recovery": "node scripts/media-recovery.mjs",
     "test:distributed-recovery": "node scripts/distributed-recovery.mjs",
     "test:containers": "node scripts/container-smoke.mjs",
+    "test:s3": "PEERSCREEN_S3_REHEARSAL=true node scripts/container-smoke.mjs",
     "test:gateway": "node scripts/gateway-smoke.mjs",
+    "test:origin": "node scripts/origin-smoke.mjs",
+    "backup:local": "node scripts/backup-local.mjs",
     "check:stun": "node scripts/stun-check.mjs",
     "compose:demo": "node scripts/compose-demo.mjs",
     "check": "npm run format:check && npm run typecheck && npm test"

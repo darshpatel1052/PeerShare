@@ -19,6 +19,7 @@ func (a *App) reconcileMedia(ctx context.Context) {
 		return
 	}
 	a.reconcileCreatorImages()
+	a.sweepObjects(ctx)
 	a.measureLegacyOutputs(ctx)
 	candidates, err := a.Store.CleanupCandidates(ctx)
 	if err != nil {
@@ -121,6 +122,19 @@ func (a *App) reconcileMedia(ctx context.Context) {
 func (a *App) cleanupUpload(ctx context.Context, c store.Cleanup) {
 	if !a.cleanupQuiesced(ctx, c) {
 		return
+	}
+	if a.Objects != nil {
+		if err := a.Objects.DeletePrefix(ctx, a.Objects.Originals, c.ID+"/"); err != nil {
+			return
+		}
+		if c.Deleted || c.State == "aborted" || c.State == "expired" {
+			if a.Objects.DeleteVideoSources(ctx, c.VideoID) != nil {
+				return
+			}
+			if err := a.Objects.DeletePrefix(ctx, a.Objects.Processed, "videos/"+c.VideoID+"/"); err != nil {
+				return
+			}
+		}
 	}
 	if err := os.RemoveAll(filepath.Join(a.Config.UploadDir, c.ID)); err != nil {
 		return

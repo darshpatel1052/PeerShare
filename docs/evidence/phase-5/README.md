@@ -1,6 +1,6 @@
 # Phase 5 networking and deployment foundation
 
-Checkpoint date: **14 October 2026**. This is a local deployment foundation and AWS preparation. No AWS resources were created, account plan upgraded, image published to AWS or DNS record changed. The user selected `peerscreen.darshpatel.dev`; current credit/expiry/workload inputs remain pending.
+The original networking foundation below was observed on **14 October 2026**. The subsequent [storage/release checkpoint](storage-and-release.md) adds verified S3 transport, origin routing and full local backup/restore. AWS has now issued the edge certificate and provisioned private buckets, scoped roles, image repositories and bounded logs. The active Free plan has USD 100 plan credits; no plan upgrade or paid subscription was enabled. Host/public rollout is in progress.
 
 ## Working networking path
 
@@ -36,4 +36,4 @@ The [official price extract](aws-prices.json), published 12 October and fetched 
 
 CI now includes the packaged gateway rehearsal and a separate Terraform validation job. Current local builds/types, eight JavaScript cases, contract/protobuf checks and Go vet are recorded before the checkpoint. Individual remote CI status is reported separately from local checks.
 
-The next Phase 5 slices remain S3 transport/revocation, creator admission, public certificate renewal, scoped IAM/image delivery, full backup/restore, tracing/dashboards, finalized credit/workload cost and actual public/two-network verification. See the [implementation learning guide](../../learning/phase-5/README.md).
+The original AWS paragraph records that earlier checkpoint's scope. Current work and remaining live checks are recorded in [storage and release](storage-and-release.md), [Redis and creator access](redis-and-access.md), [the full cost plan](../../runbooks/aws-cost-plan.md) and the [learning guide](../../learning/phase-5/README.md).

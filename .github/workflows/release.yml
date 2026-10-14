@@ -1,0 +1,71 @@
+name: Publish AWS release
+
+on:
+  workflow_run:
+    workflows: [Compatibility checks]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: aws-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      vars.PEERSCREEN_BUILD_ROLE != '' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_repository.full_name == github.repository))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      AWS_REGION: ${{ vars.PEERSCREEN_AWS_REGION }}
+      API_REPOSITORY: ${{ vars.PEERSCREEN_API_REPOSITORY }}
+      WEB_REPOSITORY: ${{ vars.PEERSCREEN_WEB_REPOSITORY }}
+      FRONTEND_BUCKET: ${{ vars.PEERSCREEN_FRONTEND_BUCKET }}
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ env.RELEASE_SHA }}
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.PEERSCREEN_BUILD_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: peerscreen-release
+          mask-aws-account-id: true
+      - name: Publish immutable images and retained static assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          registry="${API_REPOSITORY%%/*}"
+          aws ecr get-login-password | docker login --username AWS --password-stdin "$registry"
+          for component in api web; do
+            if [ "$component" = api ]; then
+              repository="$API_REPOSITORY"
+              dockerfile=services/api/Dockerfile
+            else
+              repository="$WEB_REPOSITORY"
+              dockerfile=apps/web/Dockerfile
+            fi
+            if aws ecr describe-images --repository-name "${repository#*/}" --image-ids imageTag="$RELEASE_SHA" >/dev/null 2>&1; then
+              docker pull "$repository:$RELEASE_SHA"
+            else
+              docker build -f "$dockerfile" -t "$repository:$RELEASE_SHA" .
+              docker push "$repository:$RELEASE_SHA"
+            fi
+          done
+          task_container=$(docker create "$WEB_REPOSITORY:$RELEASE_SHA")
+          mkdir -p "$RUNNER_TEMP/frontend"
+          docker cp "$task_container:/app/apps/web/out/." "$RUNNER_TEMP/frontend/"
+          docker rm "$task_container"
+          aws s3 sync "$RUNNER_TEMP/frontend/_next/" "s3://$FRONTEND_BUCKET/assets/_next/" --cache-control 'public,max-age=31536000,immutable' --only-show-errors
+          aws s3 sync "$RUNNER_TEMP/frontend/" "s3://$FRONTEND_BUCKET/releases/$RELEASE_SHA/" --exclude '_next/*' --cache-control 'public,max-age=60' --only-show-errors
+          echo "Published release $RELEASE_SHA. Operator rollout is a separate step."

@@ -37,10 +37,15 @@ resource "aws_security_group" "app" {
 }
 resource "aws_vpc_security_group_ingress_rule" "https" {
   security_group_id = aws_security_group.app.id
-  cidr_ipv4         = "0.0.0.0/0"
+  prefix_list_id    = data.aws_ec2_managed_prefix_list.cloudfront.id
   ip_protocol       = "tcp"
   from_port         = 443
   to_port           = 443
+}
+data "aws_ec2_managed_prefix_list" "cloudfront" { name = "com.amazonaws.global.cloudfront.origin-facing" }
+resource "aws_key_pair" "admin" {
+  key_name   = var.ssh_key_name
+  public_key = var.ssh_public_key
 }
 resource "aws_vpc_security_group_ingress_rule" "acme" {
   security_group_id = aws_security_group.app.id
@@ -48,7 +53,7 @@ resource "aws_vpc_security_group_ingress_rule" "acme" {
   ip_protocol       = "tcp"
   from_port         = 80
   to_port           = 80
-  description       = "Reserved for ACME/HTTPS redirection; no app listener configured yet."
+  description       = "HTTP-01 certificate issuance and renewal for the origin hostname."
 }
 resource "aws_vpc_security_group_ingress_rule" "ssh" {
   security_group_id = aws_security_group.app.id
@@ -73,12 +78,14 @@ resource "aws_ebs_volume" "data" {
   }
 }
 resource "aws_instance" "app" {
-  ami                         = data.aws_ssm_parameter.ubuntu.value
-  instance_type               = var.instance_type
-  key_name                    = var.ssh_key_name
-  subnet_id                   = aws_subnet.app.id
-  vpc_security_group_ids      = [aws_security_group.app.id]
-  associate_public_ip_address = true
+  ami                                  = data.aws_ssm_parameter.ubuntu.value
+  instance_type                        = var.instance_type
+  key_name                             = aws_key_pair.admin.key_name
+  iam_instance_profile                 = aws_iam_instance_profile.host.name
+  subnet_id                            = aws_subnet.app.id
+  vpc_security_group_ids               = [aws_security_group.app.id]
+  associate_public_ip_address          = true
+  instance_initiated_shutdown_behavior = "stop"
   metadata_options {
     http_tokens                 = "required"
     http_put_response_hop_limit = 1
@@ -89,9 +96,17 @@ resource "aws_instance" "app" {
     encrypted             = true
     delete_on_termination = true
   }
-  user_data                   = templatefile("${path.module}/bootstrap.sh.tftpl", { volume_id = replace(aws_ebs_volume.data.id, "-", "") })
+  user_data                   = templatefile("${path.module}/bootstrap.sh.tftpl", { volume_id = replace(aws_ebs_volume.data.id, "-", ""), demo_hours = var.demo_hours })
   user_data_replace_on_change = true
   tags                        = { Name = var.name, ApplicationDomain = var.app_domain }
+}
+resource "aws_eip" "app" {
+  domain = "vpc"
+  tags   = { Name = "${var.name}-origin" }
+}
+resource "aws_eip_association" "app" {
+  instance_id   = aws_instance.app.id
+  allocation_id = aws_eip.app.id
 }
 resource "aws_volume_attachment" "data" {
   device_name = "/dev/sdf"
@@ -99,10 +114,9 @@ resource "aws_volume_attachment" "data" {
   instance_id = aws_instance.app.id
 }
 
-# These private buckets are infrastructure preparation. Application S3 transport
-# and CloudFront publication/revocation must be implemented before using them.
+# Browser access stays behind the catalogue's publication/ownership checks.
 resource "aws_s3_bucket" "storage" {
-  for_each      = toset(["originals", "processed", "frontend"])
+  for_each      = toset(["originals", "processed", "frontend", "backups"])
   bucket        = "${var.name}-${data.aws_caller_identity.current.account_id}-${each.key}"
   force_destroy = false
 }

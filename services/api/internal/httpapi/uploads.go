@@ -133,7 +133,7 @@ func (a *App) getUpload(w http.ResponseWriter, r *http.Request) {
 	if u.State == "open" {
 		valid := []store.UploadPart{}
 		for _, p := range u.Parts {
-			file, e := os.Open(filepath.Join(a.Config.UploadDir, p.StorageKey))
+			file, e := a.openOriginal(r, p.StorageKey, store.PartBytes)
 			if e != nil {
 				continue
 			}
@@ -357,6 +357,12 @@ func (a *App) putUploadPart(w http.ResponseWriter, r *http.Request) {
 		a.storeError(w, r, err)
 		return
 	}
+	if a.Objects != nil {
+		if err = a.Objects.PutFile(r.Context(), a.Objects.Originals, key, path, store.PartBytes); err != nil {
+			a.storeError(w, r, err)
+			return
+		}
+	}
 	if err = a.Store.RecordUploadPart(r.Context(), identity(r).ID, id, number, int(written), digest, key); err != nil {
 		dbctx, stop := cleanupContext()
 		defer stop()
@@ -448,7 +454,7 @@ func (a *App) completeUpload(w http.ResponseWriter, r *http.Request) {
 			a.error(w, r, 409, "parts_missing", "A chunk is missing. Refresh and resume this upload.")
 			return
 		}
-		part, err := os.Open(filepath.Join(a.Config.UploadDir, p.StorageKey))
+		part, err := a.openOriginal(r, p.StorageKey, store.PartBytes)
 		if err != nil {
 			a.error(w, r, 409, "parts_missing", "A stored chunk is unavailable. Resume to repair it.")
 			return
@@ -484,6 +490,12 @@ func (a *App) completeUpload(w http.ResponseWriter, r *http.Request) {
 	if err = syncDirectory(dir); err != nil {
 		a.storeError(w, r, err)
 		return
+	}
+	if a.Objects != nil {
+		if err = a.Objects.PutFile(r.Context(), a.Objects.Originals, sourceKey, path, store.MaxSourceBytes); err != nil {
+			a.storeError(w, r, err)
+			return
+		}
 	}
 	videoID, err := a.Store.CompleteUpload(r.Context(), identity(r).ID, id, sourceKey, total, digest)
 	if err != nil {

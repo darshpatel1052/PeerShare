@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-export function gatewayConfig(origin) {
+export function gatewayConfig(origin, { originHost, originSecret } = {}) {
   const parsed = new URL(origin);
   if (
     parsed.protocol !== "https:" ||
@@ -42,6 +42,20 @@ export function gatewayConfig(origin) {
     route({ prefix: "/health/" }, "catalogue"),
     route({ prefix: "/" }, "web"),
   ];
+  if (originSecret) {
+    if (
+      !/^[a-f0-9]{64}$/.test(originSecret) ||
+      !/^[a-z0-9.-]+$/.test(originHost ?? "")
+    )
+      throw new Error(
+        "CloudFront origin requires its hostname and a private 32-byte secret",
+      );
+    for (const item of routes)
+      item.match.headers = [
+        { name: "x-peerscreen-origin", string_match: { exact: originSecret } },
+      ];
+    routes.push({ match: { prefix: "/" }, direct_response: { status: 403 } });
+  }
   const hcm = {
     "@type":
       "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
@@ -68,7 +82,9 @@ export function gatewayConfig(origin) {
         {
           header: {
             key: "x-peerscreen-client-ip",
-            value: "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%",
+            value: originSecret
+              ? "%REQ(CLOUDFRONT-VIEWER-ADDRESS)%"
+              : "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%",
           },
           append_action: "OVERWRITE_IF_EXISTS_OR_ADD",
         },
@@ -90,7 +106,13 @@ export function gatewayConfig(origin) {
           append_action: "OVERWRITE_IF_EXISTS_OR_ADD",
         },
       ],
-      virtual_hosts: [{ name: "peerscreen", domains: [parsed.host], routes }],
+      virtual_hosts: [
+        {
+          name: "peerscreen",
+          domains: originHost ? [parsed.host, originHost] : [parsed.host],
+          routes,
+        },
+      ],
     },
     http_filters: [router],
   };
@@ -193,6 +215,10 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
     JSON.stringify(
       gatewayConfig(
         process.env.PEERSCREEN_GATEWAY_ORIGIN || "https://localhost:3443",
+        {
+          originHost: process.env.PEERSCREEN_ORIGIN_HOST,
+          originSecret: process.env.PEERSCREEN_ORIGIN_SECRET,
+        },
       ),
       null,
       2,

@@ -23,6 +23,9 @@ func (a *App) clientAddress(r *http.Request) string {
 			if client, err := netip.ParseAddr(r.Header.Get("X-PeerScreen-Client-IP")); err == nil {
 				return client.Unmap().String()
 			}
+			if client, err := netip.ParseAddrPort(r.Header.Get("X-PeerScreen-Client-IP")); err == nil {
+				return client.Addr().Unmap().String()
+			}
 			break
 		}
 	}

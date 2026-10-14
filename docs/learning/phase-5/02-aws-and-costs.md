@@ -1,6 +1,6 @@
 # AWS preparation and a dated cost example
 
-Prepared **14 October 2026** for `peerscreen.darshpatel.dev` in Mumbai (`ap-south-1`). The user requested preparation within the AWS Free plan and credits. The earlier reported balance was USD 100; **the current balance, expiry, existing usage and chosen demo duration are not yet confirmed**. The 24-hour duration below is a planning example, not authorization to create resources.
+The original preparation below was written **14 October 2026** for `peerscreen.darshpatel.dev` in Mumbai (`ap-south-1`). Subsequent account-specific checks confirmed FREE / ACTIVE, USD 100 plan credits and plan expiry 21 March 2027. The user authorized deployment; the first run uses a 24-hour automatic stop pending any duration change. See the [current full cost plan](../../runbooks/aws-cost-plan.md) for all workload and retained-resource assumptions. The original core subtotal below remains historical arithmetic, not the all-in quote.
 
 ## What Terraform models
 

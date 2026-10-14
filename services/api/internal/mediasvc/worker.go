@@ -6,12 +6,16 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"io"
 	"log/slog"
+	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
 	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
 	"github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
 	"github.com/google/uuid"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/grpc/codes"
@@ -45,7 +49,11 @@ func wait(ctx context.Context, d time.Duration) bool {
 
 // Kafka offsets move only after a durable claim/no-op decision, never an in-memory queue handoff.
 // Only one record is handled at a time, so a later offset cannot skip an earlier ambiguous claim.
-func RunWorker(ctx context.Context, client *Client, consumer, producer *kgo.Client, uploads, media string, logger *slog.Logger) {
+func RunWorker(ctx context.Context, client *Client, consumer, producer *kgo.Client, uploads, media string, logger *slog.Logger, remote ...*objectstore.Remote) {
+	var objects *objectstore.Remote
+	if len(remote) > 0 {
+		objects = remote[0]
+	}
 	workerID := uuid.NewString()
 	logger.Info("media_worker_started", "worker_id", workerID)
 	for ctx.Err() == nil {
@@ -119,11 +127,11 @@ func RunWorker(ctx context.Context, client *Client, consumer, producer *kgo.Clie
 				continue
 			}
 			logger.Info("media_attempt_claimed", "job_id", job.Spec.JobId, "attempt_id", job.AttemptId, "epoch", job.LeaseEpoch)
-			processAttempt(ctx, client, job, uploads, media, logger)
+			processAttempt(ctx, client, job, uploads, media, logger, objects)
 		}
 	}
 }
-func processAttempt(parent context.Context, client *Client, job *pb.JobSnapshot, uploads, media string, logger *slog.Logger) {
+func processAttempt(parent context.Context, client *Client, job *pb.JobSnapshot, uploads, media string, logger *slog.Logger, objects *objectstore.Remote) {
 	ctx, cancel := context.WithTimeout(parent, 30*time.Minute)
 	defer cancel()
 	attempt := &pb.Attempt{JobId: job.Spec.JobId, AttemptId: job.AttemptId, WorkerId: job.WorkerId, LeaseEpoch: job.LeaseEpoch}
@@ -159,7 +167,24 @@ func processAttempt(parent context.Context, client *Client, job *pb.JobSnapshot,
 		}
 	}()
 	spec := job.Spec
-	result, err := encoder.Process(ctx, encoder.Job{ID: spec.JobId, VideoID: spec.VideoId, GenerationID: spec.GenerationId, AttemptID: job.AttemptId, SourceKey: spec.SourceKey, SourceBytes: spec.SourceBytes, SourceHash: spec.SourceSha256}, uploads, media, func(stage string, progress int) error { return heartbeat(stage, int32(progress)) })
+	encodeJob := encoder.Job{ID: spec.JobId, VideoID: spec.VideoId, GenerationID: spec.GenerationId, AttemptID: job.AttemptId, SourceKey: spec.SourceKey, SourceBytes: spec.SourceBytes, SourceHash: spec.SourceSha256}
+	var result encoder.Result
+	var err error
+	if objects != nil {
+		var stageRoot string
+		stageRoot, err = os.MkdirTemp(media, ".source-")
+		if err == nil {
+			defer os.RemoveAll(stageRoot)
+			uploads = stageRoot
+			err = downloadSource(ctx, objects, spec.SourceKey, spec.SourceBytes, filepath.Join(stageRoot, filepath.FromSlash(spec.SourceKey)))
+		}
+	}
+	if err == nil {
+		result, err = encoder.Process(ctx, encodeJob, uploads, media, func(stage string, progress int) error { return heartbeat(stage, int32(progress)) })
+	}
+	if err == nil && objects != nil {
+		err = objects.UploadAttempt(ctx, media, encodeJob, result)
+	}
 	if err == nil {
 		// Keep heartbeating while retrying an ambiguous acceptance response. The output remains immutable.
 		for ctx.Err() == nil {
@@ -191,4 +216,28 @@ func processAttempt(parent context.Context, client *Client, job *pb.JobSnapshot,
 	} else {
 		logger.Warn("media_attempt_stopped", "job_id", spec.JobId, "attempt_id", attempt.AttemptId, "epoch", attempt.LeaseEpoch)
 	}
+}
+
+func downloadSource(ctx context.Context, objects *objectstore.Remote, key string, size int64, file string) error {
+	if !objectstore.ValidKey(key) || size < 1 || size > encoder.MaxSourceBytes {
+		return errors.New("invalid source object")
+	}
+	if err := os.MkdirAll(filepath.Dir(file), 0700); err != nil {
+		return err
+	}
+	body, err := objects.Open(ctx, objects.Originals, key, size)
+	if err != nil {
+		return err
+	}
+	defer body.Close()
+	output, err := os.OpenFile(file, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+	if err != nil {
+		return err
+	}
+	n, copyErr := io.Copy(output, body)
+	closeErr := output.Close()
+	if copyErr != nil || closeErr != nil || n != size {
+		return errors.New("source object incomplete")
+	}
+	return nil
 }
