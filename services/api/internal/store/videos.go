@@ -95,7 +95,10 @@ func (s *Store) SearchVideos(ctx context.Context, limit int, channelID *string, 
 		// newest page independently, then deduplicate before the final page limit.
 		// Applying the same cursor/visibility/following filters in both branches
 		// preserves ordering and ensures a video matching both appears only once.
-		statement = "WITH matching_channels AS MATERIALIZED (SELECT id FROM catalog.channels WHERE strpos(lower(title),lower(" + term + "::text))>0), candidates AS ((SELECT v.id,v.published_at FROM catalog.videos v WHERE " + where + " AND v.search_document @@ websearch_to_tsquery('pg_catalog.simple'," + term + "::text)" + order + ") UNION (SELECT v.id,v.published_at FROM catalog.videos v JOIN matching_channels mc ON mc.id=v.channel_id WHERE " + where + order + ")) SELECT " + videoColumns + " FROM candidates hit JOIN catalog.videos v ON v.id=hit.id JOIN catalog.channels c ON c.id=v.channel_id" + order
+		// Bound each matching channel before merging. This also prevents an
+		// absent channel match from scanning the entire chronological feed.
+		channelMatches := "SELECT per.id,per.published_at FROM matching_channels mc CROSS JOIN LATERAL (SELECT v.id,v.published_at FROM catalog.videos v WHERE v.channel_id=mc.id AND " + where + order + ") per" + strings.ReplaceAll(order, "v.", "per.")
+		statement = "WITH matching_channels AS MATERIALIZED (SELECT id FROM catalog.channels WHERE strpos(lower(title),lower(" + term + "::text))>0), candidates AS ((SELECT v.id,v.published_at FROM catalog.videos v WHERE " + where + " AND v.search_document @@ websearch_to_tsquery('pg_catalog.simple'," + term + "::text)" + order + ") UNION (" + channelMatches + ")) SELECT " + videoColumns + " FROM candidates hit JOIN catalog.videos v ON v.id=hit.id JOIN catalog.channels c ON c.id=v.channel_id" + order
 	}
 	rows, err := s.Pool.Query(ctx, statement, args...)
 	if err != nil {
