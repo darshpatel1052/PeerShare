@@ -21,6 +21,7 @@ export default function Studio() {
   const auth = useAuth();
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [file, setFile] = useState<File | null>(null);
+  const [dragging, setDragging] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
@@ -62,6 +63,22 @@ export default function Studio() {
       window.clearInterval(timer);
     };
   }, [auth.me, refresh]);
+
+  function selectFile(chosen: File | null) {
+    if (busyID) return;
+    setDragging(false);
+    setError("");
+    if (
+      chosen &&
+      (!chosen.name.toLowerCase().endsWith(".mp4") ||
+        chosen.size < 1 ||
+        chosen.size > MAX_SOURCE)
+    ) {
+      setError("Choose an MP4 up to 250 MiB.");
+      return;
+    }
+    setFile(chosen);
+  }
 
   function report(cause: unknown) {
     if (transfer.current?.signal.aborted) {
@@ -402,6 +419,38 @@ export default function Studio() {
           {error || notice}
         </div>
       )}
+      <div className="studio-overview" aria-label="Recent upload summary">
+        {(
+          [
+            ["Published", "published", "channel"],
+            ["Drafts", "draft", "film"],
+            ["Unpublished", "unpublished", "lock"],
+          ] as const
+        ).map(([label, state, icon]) => (
+          <button
+            type="button"
+            className="studio-summary"
+            key={state}
+            aria-pressed={filter === state}
+            aria-label={
+              state === "draft" ? "Show drafts" : `Show ${state} videos`
+            }
+            onClick={() => setFilter(state)}
+          >
+            <span>
+              <Icon name={icon} />
+              {label}
+            </span>
+            <strong>
+              {
+                uploads.filter((upload) => upload.publication_state === state)
+                  .length
+              }
+            </strong>
+            <Icon name="arrow" />
+          </button>
+        ))}
+      </div>
       <div className="studio-layout">
         <section className="settings-panel studio-upload-panel">
           <div className="settings-heading">
@@ -412,6 +461,55 @@ export default function Studio() {
             <Icon name="film" />
           </div>
           <form className="account-form" onSubmit={begin}>
+            <div
+              className={`upload-dropzone${dragging ? " is-dragging" : ""}${file ? " has-file" : ""}`}
+              onDragOver={(event) => {
+                event.preventDefault();
+                if (!busyID) setDragging(true);
+              }}
+              onDragLeave={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node))
+                  setDragging(false);
+              }}
+              onDrop={(event) => {
+                event.preventDefault();
+                if (!busyID) selectFile(event.dataTransfer.files[0] || null);
+              }}
+            >
+              <span className="dropzone-icon">
+                <Icon name={file ? "check" : "upload"} />
+              </span>
+              <strong>{file ? file.name : "Drop your video here"}</strong>
+              <span>
+                {file
+                  ? `${(file.size / 1024 / 1024).toFixed(1)} MiB · MP4`
+                  : "or choose a file from your device"}
+              </span>
+              <input
+                type="file"
+                ref={fileInput}
+                accept="video/mp4,.mp4"
+                aria-label="MP4 file"
+                className="sr-only"
+                disabled={!!busyID}
+                onChange={(event) =>
+                  selectFile(event.target.files?.[0] || null)
+                }
+              />
+              <button
+                type="button"
+                className="secondary-button"
+                disabled={!!busyID}
+                onClick={() => fileInput.current?.click()}
+              >
+                {file ? "Change file" : "Choose file"}
+              </button>
+            </div>
+            <small className="upload-resume-note">
+              Progress is saved. To resume later, choose the original file
+              again.
+            </small>
+
             <label className="form-field">
               Video title
               <input
@@ -431,22 +529,6 @@ export default function Studio() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="What should viewers know?"
               />
-            </label>
-            <label className="form-field">
-              MP4 file
-              <input
-                type="file"
-                ref={fileInput}
-                accept="video/mp4,.mp4"
-                onChange={(e) => {
-                  setFile(e.target.files?.[0] || null);
-                  setError("");
-                }}
-              />
-              <small>
-                Your progress is saved. To resume after leaving, select the
-                original file again.
-              </small>
             </label>
             <label className="form-field">
               Tags

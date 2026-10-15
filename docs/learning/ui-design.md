@@ -6,11 +6,11 @@ This checkpoint gives the existing application one visual identity across Explor
 
 The default palette uses graphite surfaces, warm white text and one lime accent. Different surface levels distinguish the page, panels and controls without putting every element inside a card. Accent colour identifies primary actions, selection and the brand; secondary navigation stays quieter. The light variant changes the same semantic variables rather than duplicating every component's styles.
 
-Manrope is the interface face: labels, navigation, controls and descriptions need a consistent reading rhythm. Barlow Condensed gives page titles and the brand panels a stronger silhouette. Both typefaces are bundled with their original licenses and served from the app's own public assets. Font loading uses `swap`, so text can render while the font arrives. [Font sources and licenses](../../apps/web/public/fonts/README.md) are recorded beside the binaries.
+Manrope is the interface face: labels, navigation, controls and descriptions need a consistent reading rhythm. The final product pass uses Manrope for page headings as well; Barlow Condensed remains in decorative identity compositions. Both typefaces are bundled with their original licenses and served from the app's own public assets. Font loading uses `swap`, so text can render while the font arrives. [Font sources and licenses](../../apps/web/public/fonts/README.md) are recorded beside the binaries.
 
 The screen mark combines a play shape with two overlapping frames. The same line artwork appears in channel covers, the sign-in composition and compact creator cards. These are code-native vectors: their shapes remain sharp across sizes and do not depend on an image-generation service. The artwork is default branding, not an uploaded creator banner.
 
-Explore gives the actual published video the largest visual area. Its creator, duration, available qualities and source label come from the API. There are no invented videos, views, followers, popularity rankings or disabled publishing buttons dressed up as working actions. The generated fixture remains identifiable as a test film.
+Explore gives the actual published video the largest visual area. Its creator, duration, publication date and available qualities come from the API. There are no invented videos, views, followers, popularity rankings or disabled publishing buttons dressed up as working actions. The generated fixture retains its explicit title and provenance in its metadata; it stays out of the normal public catalogue.
 
 ## CSS variables: one decision, many components
 
@@ -55,7 +55,7 @@ This storage value is an appearance preference. Authentication continues to use 
 
 ## Working controls and honest scope
 
-Search matches the title, creator and tags of videos already loaded into the catalogue. It can be cleared, and a no-results state explains what happened. When another cursor page exists, the interface explicitly states that loading it expands search coverage. This is a browser filter; no backend full-text search API was added.
+Search now runs on the Go API before cursor pagination, across titles, creators and tags. The browser sends a debounced query and replaces the collection when its scope changes. This supersedes the original loaded-page browser filter.
 
 The Videos/About tabs expose selection and a labelled panel. Arrow keys switch tabs; Home/End move to the first/last tab. Only the selected tab participates in the normal Tab order. Share channel copies a canonical public channel URL containing its UUID; an explicit success state follows a completed clipboard write, and failure gives an address-bar fallback. The copy action sends no message to another person.
 
@@ -72,3 +72,5 @@ The existing account, ownership, conflict, HTTP playback, integrity and real pee
 ## Exercises
 
 Change a semantic colour in one place and list the components affected. Explain why an avatar can be rendered on both server and client, while theme persistence needs a client component. Follow an unsaved channel title from the input into the preview and then through the save request. Use a keyboard to move from Videos to About and back. Finally, inspect why the account settings link and the Go ownership check are separate responsibilities.
+
+See the [Phase 6 product pass](phase-6/01-product-finish.md) for the current layout and upload controls.

@@ -21,20 +21,18 @@ export function VideoCard({
         href={`/watch?v=${item.id}`}
         aria-label={`Watch ${item.title}`}
       >
-        <img src={item.thumbnail_url} alt={`Preview of ${item.title}`} />
-        {featured && (
-          <span className="poster-label">
-            <span />
-            Latest release
-          </span>
-        )}
+        <img
+          src={item.thumbnail_url}
+          alt={`Preview of ${item.title}`}
+          loading={featured ? "eager" : "lazy"}
+          decoding="async"
+        />
         <span className="poster-play" aria-hidden="true">
           <PlayerIcon name="play" />
         </span>
         <span className="duration">{duration(item.duration_seconds)}</span>
       </Link>
       <div className={featured ? "featured-info" : "video-info"}>
-        {featured && <span className="eyebrow">On screen</span>}
         <h3>
           <Link href={`/watch?v=${item.id}`}>{item.title}</Link>
         </h3>
@@ -46,16 +44,27 @@ export function VideoCard({
           </span>
         </Link>
         {featured && <p className="featured-description">{item.description}</p>}
-        <div className="video-tags">
-          {item.source_kind === "fixture" && (
-            <span className="tag">Test film</span>
+        <div className="video-card-meta">
+          <time dateTime={item.published_at}>
+            {new Intl.DateTimeFormat("en", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            }).format(new Date(item.published_at))}
+          </time>
+          {item.qualities.some((quality) => quality >= 720) && (
+            <span className="quality-tag">HD</span>
           )}
-          {item.qualities.map((q) => (
-            <span key={q} className="quality-tag">
-              {q}p
-            </span>
-          ))}
         </div>
+        {featured && item.tags.length > 0 && (
+          <div className="video-tags">
+            {item.tags.slice(0, 3).map((tag) => (
+              <span className="tag" key={tag}>
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
         {featured && (
           <Link className="button featured-watch" href={`/watch?v=${item.id}`}>
             <PlayerIcon name="play" />
@@ -119,6 +128,14 @@ export default function VideoList({
     });
   }, [state, cursor, scope]);
   const matches = items;
+  const spotlight = featured && !search;
+  const channels = items
+    .filter(
+      (item, index) =>
+        items.findIndex((video) => video.channel_id === item.channel_id) ===
+        index,
+    )
+    .slice(0, 4);
   return (
     <section
       className="catalogue"
@@ -185,65 +202,136 @@ export default function VideoList({
           </div>
         </div>
       </>
-      {state.status === "loading" && (
-        <LoadingState
-          label={items.length ? "Loading more videos…" : "Loading videos…"}
-        />
-      )}
-      {state.status === "error" && (
-        <div className="error" role="alert" data-testid="catalogue-error">
-          <p>{state.error.message}</p>
-          <button onClick={retry}>Retry videos</button>
-        </div>
-      )}
-      {state.status === "ready" && items.length === 0 && !search && (
-        <div className="empty-channel">
-          <div className="empty-frame">
-            <Icon name="film" />
-            <span className="empty-frame-corner" />
-          </div>
-          <h2>No videos yet</h2>
-          <p className="muted">
-            {channelID
-              ? "No videos have been published on this channel yet."
-              : following
-                ? "Follow channels to see their latest videos here."
-                : "There are no published videos to explore yet."}
-          </p>
-          {owner && (
-            <p className="empty-hint">Publish your first video from Studio.</p>
+      <div className={spotlight ? "discovery-layout" : ""}>
+        <div className="discovery-feed">
+          {state.status === "loading" &&
+            (items.length ? (
+              <LoadingState label="Loading more videos…" />
+            ) : (
+              <div
+                className="catalogue-skeleton"
+                role="status"
+                aria-label="Loading videos"
+              >
+                <div className="skeleton-poster" />
+                <div className="skeleton-line" />
+                <div className="skeleton-line short" />
+                <span className="sr-only">Loading videos…</span>
+              </div>
+            ))}
+          {state.status === "error" && (
+            <div className="error" role="alert" data-testid="catalogue-error">
+              <p>{state.error.message}</p>
+              <button onClick={retry}>Retry videos</button>
+            </div>
           )}
-          <Link className="secondary-button" href={owner ? "/studio" : "/"}>
-            {owner ? "Upload a video" : "Back to explore"}
-            <Icon name="arrow" />
-          </Link>
+          {state.status === "ready" && items.length === 0 && !search && (
+            <div className="empty-channel">
+              <div className="empty-frame">
+                <Icon name="film" />
+                <span className="empty-frame-corner" />
+              </div>
+              <h2>No videos yet</h2>
+              <p className="muted">
+                {channelID
+                  ? "No videos have been published on this channel yet."
+                  : following
+                    ? "Follow channels to see their latest videos here."
+                    : "There are no published videos to explore yet."}
+              </p>
+              {owner && (
+                <p className="empty-hint">
+                  Publish your first video from Studio.
+                </p>
+              )}
+              <Link className="secondary-button" href={owner ? "/studio" : "/"}>
+                {owner ? "Upload a video" : "Back to explore"}
+                <Icon name="arrow" />
+              </Link>
+            </div>
+          )}
+          {search && state.status === "ready" && matches.length === 0 && (
+            <div className="search-empty">
+              <Icon name="search" />
+              <h2>No matching videos</h2>
+              <p className="muted">Try a different title, creator or tag.</p>
+              <button className="text-button" onClick={() => setQuery("")}>
+                Clear search
+              </button>
+            </div>
+          )}
+          {spotlight && matches[0] && <VideoCard item={matches[0]} featured />}
+          <div className="video-grid">
+            {(spotlight ? matches.slice(1) : matches).map((item) => (
+              <VideoCard key={item.id} item={item} />
+            ))}
+          </div>
+          {state.status === "ready" && state.value.next_cursor && (
+            <button
+              className="secondary-button"
+              onClick={() => setCursor(state.value.next_cursor)}
+            >
+              Load more
+              <Icon name="arrow" />
+            </button>
+          )}
         </div>
-      )}
-      {search && state.status === "ready" && matches.length === 0 && (
-        <div className="search-empty">
-          <Icon name="search" />
-          <h2>No matching videos</h2>
-          <p className="muted">Try a different title, creator or tag.</p>
-          <button className="text-button" onClick={() => setQuery("")}>
-            Clear search
-          </button>
-        </div>
-      )}
-      {featured && matches[0] && <VideoCard item={matches[0]} featured />}
-      <div className="video-grid">
-        {(featured ? matches.slice(1) : matches).map((item) => (
-          <VideoCard key={item.id} item={item} />
-        ))}
+        {spotlight && (
+          <aside
+            className="discovery-aside"
+            aria-label="Discover channels and your library"
+          >
+            {channels.length > 0 && (
+              <section className="discovery-panel">
+                <div className="section-heading">
+                  <h2>Channels</h2>
+                  <Icon name="channel" />
+                </div>
+                <p className="muted">Meet the creators behind these videos.</p>
+                <div className="discovery-channels">
+                  {channels.map((channel) => (
+                    <Link
+                      key={channel.channel_id}
+                      href={`/channel?id=${channel.channel_id}`}
+                    >
+                      <Avatar name={channel.channel_title} />
+                      <span>
+                        <strong>{channel.channel_title}</strong>
+                        <small>@{channel.channel_handle}</small>
+                      </span>
+                      <Icon name="arrow" />
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+            <section className="library-invitation">
+              <span className="invitation-icon">
+                <Icon name="bookmark" />
+              </span>
+              <h2>Make room for your favorites.</h2>
+              <p>
+                Keep videos in playlists and find the latest from channels you
+                follow.
+              </p>
+              <Link className="secondary-button" href="/library">
+                Open your library
+                <Icon name="arrow" />
+              </Link>
+            </section>
+            {me?.channel && (
+              <Link className="creator-shortcut" href="/studio">
+                <Icon name="plus" />
+                <span>
+                  <strong>Share your next video</strong>
+                  <small>Open Creator studio</small>
+                </span>
+                <Icon name="arrow" />
+              </Link>
+            )}
+          </aside>
+        )}
       </div>
-      {state.status === "ready" && state.value.next_cursor && (
-        <button
-          className="secondary-button"
-          onClick={() => setCursor(state.value.next_cursor)}
-        >
-          Load more
-          <Icon name="arrow" />
-        </button>
-      )}
     </section>
   );
 }

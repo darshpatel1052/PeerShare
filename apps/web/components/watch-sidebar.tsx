@@ -17,7 +17,6 @@ export default function WatchSidebar({ video }: { video: VideoDetail }) {
           imageURL={state.status === "ready" ? state.value.banner_url : ""}
         />
         <div className="creator-panel-body">
-          <span className="eyebrow">The channel</span>
           <Link className="creator" href={`/channel?id=${video.channel_id}`}>
             <Avatar name={video.channel_title} />
             <span>

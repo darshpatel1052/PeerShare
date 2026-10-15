@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-14T21:25:30.538Z",
+  "originalVideo": true,
+  "originalChannel": true,
+  "mediaAndArtworkHashesMatched": true,
+  "signInAvailabilityPreserved": true,
+  "googleEnabled": true,
+  "operatorServicesEnabled": true,
+  "productionBrowserCasesPassedInitially": 24,
+  "productionBrowserCasesInitially": 25,
+  "correctedPublishingJourneyPassed": true,
+  "changeAfterInitialRun": "Distinct accessible names for summary/filter buttons",
+  "normalInAppBrowserPlayback": true,
+  "normalInAppBrowserPlaybackSeconds": 5.6,
+  "publicDeployment": false
+}

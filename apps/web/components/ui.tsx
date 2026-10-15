@@ -1,4 +1,5 @@
 export type IconName =
+  | "upload"
   | "plus"
   | "bookmark"
   | "list"
@@ -28,6 +29,11 @@ export type IconName =
   | "minimize"
   | "chevron";
 const paths: Record<IconName, React.ReactNode> = {
+  upload: (
+    <>
+      <path d="M12 16V3m-5 5 5-5 5 5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4" />
+    </>
+  ),
   plus: <path d="M12 5v14M5 12h14" />,
   bookmark: <path d="M6 3h12v18l-6-4-6 4V3Z" />,
   list: (

@@ -27,11 +27,7 @@ test("product theme, catalogue search, channel tools and phone layouts work", as
   ).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
   expect(
-    await page.evaluate(
-      () =>
-        document.fonts.check('400 14px "Manrope"') &&
-        document.fonts.check('700 40px "Barlow Condensed"'),
-    ),
+    await page.evaluate(() => document.fonts.check('400 14px "Manrope"')),
   ).toBe(true);
   await capture("explore-desktop");
   await page.getByLabel("Search videos").fill("nothing-matches-this-title");
