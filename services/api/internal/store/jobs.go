@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -300,7 +301,14 @@ func (s *Store) AttemptReferenced(ctx context.Context, attempt string) (bool, er
 const OrphanGrace = 10 * time.Minute
 
 // After the orphan grace period and a successful disk sweep, settle terminal jobs to verified stored sizes.
-func (s *Store) SettleReservations(ctx context.Context) error {
+func (s *Store) SettleReservations(ctx context.Context, completedSweep ...time.Time) error {
+	before := time.Now()
+	if len(completedSweep) > 0 {
+		before = completedSweep[0]
+	}
+	// A fenced worker can take at most 30 minutes to stop. Keep its allowance
+	// until a later complete sweep has covered all of its possible writes.
+	before = before.Add(-encoder.AttemptTimeout - OrphanGrace)
 	tx, err := s.Pool.Begin(ctx)
 	if err != nil {
 		return err
@@ -309,7 +317,7 @@ func (s *Store) SettleReservations(ctx context.Context) error {
 	if _, err = tx.Exec(ctx, "SELECT pg_advisory_xact_lock(20061014)"); err != nil {
 		return err
 	}
-	_, err = tx.Exec(ctx, `UPDATE catalog.upload_sessions u SET reserved_bytes=u.expected_bytes+COALESCE(j.output_bytes,0) FROM catalog.processing_jobs j JOIN catalog.videos v ON v.id=j.video_id WHERE u.video_id=j.video_id AND u.state='completed' AND u.parts_cleaned AND NOT u.cleanup_done AND v.deleted_at IS NULL AND j.state IN ('ready','failed','cancelled') AND (j.state<>'ready' OR j.output_bytes IS NOT NULL) AND j.updated_at<now()-interval '10 minutes'`)
+	_, err = tx.Exec(ctx, `UPDATE catalog.upload_sessions u SET reserved_bytes=u.expected_bytes+COALESCE(j.output_bytes,0) FROM catalog.processing_jobs j JOIN catalog.videos v ON v.id=j.video_id WHERE u.video_id=j.video_id AND u.state='completed' AND u.parts_cleaned AND NOT u.cleanup_done AND v.deleted_at IS NULL AND j.state IN ('ready','failed','cancelled') AND (j.state<>'ready' OR j.output_bytes IS NOT NULL) AND j.updated_at<$1`, before)
 	if err != nil {
 		return err
 	}

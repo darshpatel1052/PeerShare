@@ -435,7 +435,7 @@ func (s *Store) Fail(ctx context.Context, r *pb.FailRequest) (*pb.JobSnapshot, e
 	if err := validateAttempt(r.Attempt); err != nil {
 		return nil, err
 	}
-	allowed := map[string]bool{"source_unavailable": true, "source_corrupt": true, "unsupported_media": true, "storage_unavailable": true, "processing_failed": true, "dependency_unavailable": true, "output_too_large": true, "shutdown": true}
+	allowed := map[string]bool{"source_unavailable": true, "source_corrupt": true, "unsupported_media": true, "storage_unavailable": true, "processing_failed": true, "processing_interrupted": true, "dependency_unavailable": true, "output_too_large": true, "shutdown": true}
 	if !allowed[r.ErrorCode] {
 		return nil, status.Error(codes.InvalidArgument, "invalid bounded failure code")
 	}

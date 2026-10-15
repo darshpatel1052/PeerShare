@@ -1078,6 +1078,14 @@ export interface components {
     };
     UploadsPage: {
       items: components["schemas"]["Upload"][];
+      next_cursor: string | null;
+      total: number;
+      counts: {
+        all: number;
+        draft: number;
+        published: number;
+        unpublished: number;
+      };
     };
   };
   responses: {
@@ -1707,14 +1715,19 @@ export interface operations {
   };
   listUploads: {
     parameters: {
-      query?: never;
+      query?: {
+        cursor?: string;
+        limit?: number;
+        state?: "all" | "draft" | "published" | "unpublished";
+        q?: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
     };
     requestBody?: never;
     responses: {
-      /** @description Recent upload and processing sessions owned by the signed-in creator. */
+      /** @description Paginated creator library with whole-library publication counts and title/description search. */
       200: {
         headers: {
           [name: string]: unknown;

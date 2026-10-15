@@ -15,11 +15,26 @@ import { Icon, LoadingState } from "./ui";
 
 const CHUNK = 8 * 1024 * 1024;
 const MAX_SOURCE = 250 * 1024 * 1024;
-type Page = { items: Upload[] };
+type LibraryFilter = "all" | "draft" | "published" | "unpublished";
+type Page = {
+  items: Upload[];
+  next_cursor: string | null;
+  counts: Record<LibraryFilter, number>;
+  total: number;
+};
 
 export default function Studio() {
   const auth = useAuth();
-  const [uploads, setUploads] = useState<Upload[]>([]);
+  return <StudioContents key={auth.me?.user.id ?? "guest"} />;
+}
+function StudioContents() {
+  const auth = useAuth();
+  const [listing, setListing] = useState<{ path: string; page: Page } | null>(
+    null,
+  );
+  const [cursors, setCursors] = useState<Array<string | null>>([null]);
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [title, setTitle] = useState("");
@@ -30,9 +45,11 @@ export default function Studio() {
   const fileInput = useRef<HTMLInputElement>(null);
   const [editing, setEditing] = useState<Upload | null>(null);
   const [deleting, setDeleting] = useState("");
-  const [filter, setFilter] = useState<
-    "all" | "draft" | "published" | "unpublished"
-  >("all");
+  const [filter, updateFilter] = useState<LibraryFilter>("all");
+  const setFilter = (value: LibraryFilter) => {
+    updateFilter(value);
+    setCursors([null]);
+  };
   const [preview, setPreview] = useState("");
   useEffect(() => () => transfer.current?.abort(), []);
   const [busyID, setBusyID] = useState("");
@@ -41,10 +58,25 @@ export default function Studio() {
   const [submittedID, setSubmittedID] = useState("");
   const [bytesSent, setBytesSent] = useState(0);
 
+  const params = new URLSearchParams({ state: filter, q: query });
+  const cursor = cursors.at(-1);
+  if (cursor) params.set("cursor", cursor);
+  const path = `/uploads?${params}`;
+  const activePath = useRef(path);
+  activePath.current = path;
+  const uploads = listing?.path === path ? listing.page.items : [];
+  const counts = listing?.page.counts ?? {
+    all: 0,
+    draft: 0,
+    published: 0,
+    unpublished: 0,
+  };
+  const total = listing?.path === path ? listing.page.total : 0;
+  const nextCursor = listing?.path === path ? listing.page.next_cursor : null;
   const refresh = useCallback(async () => {
-    const page = await api<Page>("/uploads");
-    setUploads(page.items);
-  }, []);
+    const page = await api<Page>(path);
+    if (activePath.current === path) setListing({ path, page });
+  }, [path]);
   useEffect(() => {
     if (!auth.me) return;
     let active = true;
@@ -196,6 +228,10 @@ export default function Studio() {
       "Upload complete. Your video is being prepared and stays private until you publish.",
     );
     setSubmittedID(upload.id);
+    setFilter("draft");
+    setSearch("");
+    setQuery("");
+    setPreview("");
     setFile(null);
     if (fileInput.current) fileInput.current.value = "";
     setTitle("");
@@ -432,7 +468,7 @@ export default function Studio() {
           {error || notice}
         </div>
       )}
-      <div className="studio-overview" aria-label="Recent upload summary">
+      <div className="studio-overview" aria-label="Channel library summary">
         {(
           [
             ["Published", "published", "channel"],
@@ -454,12 +490,7 @@ export default function Studio() {
               <Icon name={icon} />
               {label}
             </span>
-            <strong>
-              {
-                uploads.filter((upload) => upload.publication_state === state)
-                  .length
-              }
-            </strong>
+            <strong>{counts[state]}</strong>
             <Icon name="arrow" />
           </button>
         ))}
@@ -591,7 +622,7 @@ export default function Studio() {
               <p>Keep track of what’s live and what’s next.</p>
             </div>
             <span className="eyebrow">
-              {uploads.length} {uploads.length === 1 ? "video" : "videos"}
+              {counts.all} {counts.all === 1 ? "video" : "videos"}
             </span>
           </div>
           <div
@@ -614,21 +645,40 @@ export default function Studio() {
                       : value === "published"
                         ? "Published"
                         : "Unpublished"}
-                  <span>
-                    {
-                      uploads.filter(
-                        (upload) =>
-                          value === "all" || upload.publication_state === value,
-                      ).length
-                    }
-                  </span>
+                  <span>{counts[value]}</span>
                 </button>
               ),
             )}
           </div>
-          {uploads.filter(
-            (upload) => filter === "all" || upload.publication_state === filter,
-          ).length === 0 ? (
+          <form
+            className="studio-search"
+            role="search"
+            aria-label="Search video library"
+            onSubmit={(event) => {
+              event.preventDefault();
+              setQuery(search.trim());
+              setCursors([null]);
+            }}
+          >
+            <label className="sr-only" htmlFor="studio-search">
+              Search your videos
+            </label>
+            <input
+              id="studio-search"
+              type="search"
+              maxLength={100}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search your videos"
+            />
+            <button className="secondary-button" type="submit">
+              <Icon name="search" />
+              Search
+            </button>
+          </form>
+          {listing?.path !== path ? (
+            <LoadingState label="Loading your videos…" />
+          ) : uploads.length === 0 ? (
             <div className="studio-empty">
               <Icon name="film" />
               <h3>
@@ -651,305 +701,317 @@ export default function Studio() {
               </p>
             </div>
           ) : (
-            uploads
-              .filter(
-                (upload) =>
-                  filter === "all" || upload.publication_state === filter,
-              )
-              .map((upload) => (
-                <article className="upload-card" key={upload.id}>
-                  {upload.thumbnail_url && (
-                    <img
-                      className="library-thumbnail"
-                      src={upload.thumbnail_url}
-                      alt={`Thumbnail for ${upload.title}`}
-                    />
-                  )}
-                  <div className="upload-card-head">
-                    <div>
-                      <span className="eyebrow">
-                        {upload.publication_state === "published"
-                          ? "Published"
-                          : upload.publication_state === "unpublished"
-                            ? "Unpublished"
-                            : "Draft"}
-                      </span>
-                      <h3>{upload.title}</h3>
-                    </div>
-                    <span
-                      className={`state-pill state-${upload.processing_state}`}
-                    >
-                      {upload.processing_state === "ready"
-                        ? "Ready"
-                        : upload.processing_state === "processing"
-                          ? "Preparing"
-                          : upload.processing_state === "pending"
-                            ? "Pending"
-                            : upload.processing_state === "failed"
-                              ? "Needs attention"
-                              : "Cancelled"}
+            uploads.map((upload) => (
+              <article className="upload-card" key={upload.id}>
+                {upload.thumbnail_url && (
+                  <img
+                    className="library-thumbnail"
+                    src={upload.thumbnail_url}
+                    alt={`Thumbnail for ${upload.title}`}
+                  />
+                )}
+                <div className="upload-card-head">
+                  <div>
+                    <span className="eyebrow">
+                      {upload.publication_state === "published"
+                        ? "Published"
+                        : upload.publication_state === "unpublished"
+                          ? "Unpublished"
+                          : "Draft"}
                     </span>
+                    <h3>{upload.title}</h3>
                   </div>
-                  <p className="muted">
-                    {upload.processing_state === "processing"
-                      ? "Preparing your video…"
-                      : upload.state === "open"
-                        ? `Upload ${Math.round((upload.parts.reduce((sum, part) => sum + part.bytes, 0) / upload.expected_bytes) * 100)}% complete`
-                        : upload.state === "expired"
-                          ? "Upload expired. Start again with your source file."
-                          : upload.state === "aborted"
-                            ? "Upload cancelled."
-                            : upload.processing_state === "ready"
-                              ? upload.publication_state === "published"
-                                ? "Live on your channel"
-                                : upload.publication_state === "unpublished"
-                                  ? "Hidden from your channel"
-                                  : "Ready to publish"
-                              : upload.processing_stage}
+                  <span
+                    className={`state-pill state-${upload.processing_state}`}
+                  >
+                    {upload.processing_state === "ready"
+                      ? "Ready"
+                      : upload.processing_state === "processing"
+                        ? "Preparing"
+                        : upload.processing_state === "pending"
+                          ? "Pending"
+                          : upload.processing_state === "failed"
+                            ? "Needs attention"
+                            : "Cancelled"}
+                  </span>
+                </div>
+                <p className="muted">
+                  {upload.processing_state === "processing"
+                    ? "Preparing your video…"
+                    : upload.state === "open"
+                      ? `Upload ${Math.round((upload.parts.reduce((sum, part) => sum + part.bytes, 0) / upload.expected_bytes) * 100)}% complete`
+                      : upload.state === "expired"
+                        ? "Upload expired. Start again with your source file."
+                        : upload.state === "aborted"
+                          ? "Upload cancelled."
+                          : upload.processing_state === "ready"
+                            ? upload.publication_state === "published"
+                              ? "Live on your channel"
+                              : upload.publication_state === "unpublished"
+                                ? "Hidden from your channel"
+                                : "Ready to publish"
+                            : upload.processing_stage}
+                </p>
+                {upload.processing_state === "processing" && (
+                  <progress
+                    max={100}
+                    value={upload.progress}
+                    aria-label="Processing progress"
+                  />
+                )}
+                {upload.error_code && (
+                  <p className="error">
+                    {upload.error_code === "unsupported_media"
+                      ? "This source is not a supported MP4 video. Choose a video up to 10 minutes, 3840 × 2160 and at least 144 pixels high."
+                      : upload.error_code === "source_corrupt"
+                        ? "The source failed its integrity check. Delete this draft and upload the original file again."
+                        : `We couldn’t prepare this video. Retry processing or upload it again.`}
                   </p>
-                  {upload.processing_state === "processing" && (
-                    <progress
-                      max={100}
-                      value={upload.progress}
-                      aria-label="Processing progress"
-                    />
-                  )}
-                  {upload.error_code && (
-                    <p className="error">
-                      {upload.error_code === "unsupported_media"
-                        ? "This source is not a supported MP4 video. Choose a video up to 10 minutes, 3840 × 2160 and at least 144 pixels high."
-                        : upload.error_code === "source_corrupt"
-                          ? "The source failed its integrity check. Delete this draft and upload the original file again."
-                          : `We couldn’t prepare this video. Retry processing or upload it again.`}
-                    </p>
-                  )}
-                  <div className="upload-actions">
-                    {upload.state === "open" && (
-                      <>
-                        <button
-                          type="button"
-                          className="secondary-button"
-                          disabled={!!busyID}
-                          onClick={() => void resume(upload)}
-                        >
-                          Resume with selected file
-                        </button>
-                        <button
-                          type="button"
-                          className="text-button"
-                          disabled={!!busyID}
-                          onClick={() => void abort(upload)}
-                        >
-                          Cancel upload
-                        </button>
-                      </>
-                    )}
-                    {upload.processing_state === "ready" && (
-                      <>
-                        <button
-                          type="button"
-                          disabled={!!busyID}
-                          onClick={() => void changePublication(upload)}
-                        >
-                          {upload.publication_state === "published"
-                            ? "Unpublish"
-                            : "Publish video"}
-                        </button>
-                        <button
-                          type="button"
-                          className="secondary-button"
-                          disabled={!!busyID}
-                          onClick={() =>
-                            setPreview(
-                              preview === upload.video_id
-                                ? ""
-                                : upload.video_id,
-                            )
-                          }
-                        >
-                          {preview === upload.video_id
-                            ? "Close preview"
-                            : "Preview video"}
-                        </button>
-                        {upload.publication_state === "published" && (
-                          <Link
-                            className="secondary-button"
-                            href={`/watch?v=${upload.video_id}`}
-                          >
-                            Watch video
-                          </Link>
-                        )}
-                      </>
-                    )}
-                    {upload.state === "completed" &&
-                      (upload.processing_state === "pending" ||
-                        upload.processing_state === "processing") && (
-                        <button
-                          className="text-button"
-                          disabled={!!busyID}
-                          onClick={() => void action(upload, "cancel")}
-                        >
-                          Cancel processing
-                        </button>
-                      )}
-                    {upload.state === "completed" &&
-                      (upload.processing_state === "failed" ||
-                        upload.processing_state === "cancelled") && (
-                        <button
-                          className="secondary-button"
-                          disabled={!!busyID}
-                          onClick={() => void action(upload, "retry")}
-                        >
-                          Retry processing
-                        </button>
-                      )}
-                    <button
-                      className="text-button"
-                      disabled={!!busyID}
-                      onClick={() => setEditing({ ...upload })}
-                    >
-                      Edit details
-                    </button>
-                    <button
-                      className="text-button"
-                      disabled={!!busyID}
-                      onClick={() => setDeleting(upload.id)}
-                    >
-                      {upload.publication_state === "draft"
-                        ? "Delete draft"
-                        : "Delete video"}
-                    </button>
-                  </div>
-                  {deleting === upload.id && (
-                    <div
-                      className="delete-confirmation"
-                      role="group"
-                      aria-label="Confirm deletion"
-                    >
-                      <p>
-                        Delete this video and its source? This cannot be undone.
-                      </p>
+                )}
+                <div className="upload-actions">
+                  {upload.state === "open" && (
+                    <>
                       <button
+                        type="button"
+                        className="secondary-button"
                         disabled={!!busyID}
-                        onClick={() => void action(upload, "delete")}
+                        onClick={() => void resume(upload)}
                       >
-                        Confirm delete
+                        Resume with selected file
                       </button>
+                      <button
+                        type="button"
+                        className="text-button"
+                        disabled={!!busyID}
+                        onClick={() => void abort(upload)}
+                      >
+                        Cancel upload
+                      </button>
+                    </>
+                  )}
+                  {upload.processing_state === "ready" && (
+                    <>
+                      <button
+                        type="button"
+                        disabled={!!busyID}
+                        onClick={() => void changePublication(upload)}
+                      >
+                        {upload.publication_state === "published"
+                          ? "Unpublish"
+                          : "Publish video"}
+                      </button>
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        disabled={!!busyID}
+                        onClick={() =>
+                          setPreview(
+                            preview === upload.video_id ? "" : upload.video_id,
+                          )
+                        }
+                      >
+                        {preview === upload.video_id
+                          ? "Close preview"
+                          : "Preview video"}
+                      </button>
+                      {upload.publication_state === "published" && (
+                        <Link
+                          className="secondary-button"
+                          href={`/watch?v=${upload.video_id}`}
+                        >
+                          Watch video
+                        </Link>
+                      )}
+                    </>
+                  )}
+                  {upload.state === "completed" &&
+                    (upload.processing_state === "pending" ||
+                      upload.processing_state === "processing") && (
+                      <button
+                        className="text-button"
+                        disabled={!!busyID}
+                        onClick={() => void action(upload, "cancel")}
+                      >
+                        Cancel processing
+                      </button>
+                    )}
+                  {upload.state === "completed" &&
+                    (upload.processing_state === "failed" ||
+                      upload.processing_state === "cancelled") && (
                       <button
                         className="secondary-button"
-                        onClick={() => setDeleting("")}
+                        disabled={!!busyID}
+                        onClick={() => void action(upload, "retry")}
                       >
-                        Keep video
+                        Retry processing
                       </button>
-                    </div>
-                  )}
-                  {editing?.id === upload.id && (
-                    <div className="video-edit-panel">
-                      <CreatorImagePicker
-                        kind="thumbnail"
-                        path={`/videos/${upload.video_id}/thumbnail`}
-                        revision={editing.revision}
-                        currentURL={editing.thumbnail_url}
-                        custom={editing.has_custom_thumbnail}
-                        onSaved={async () => {
-                          const updated = await api<Upload>(
-                            `/uploads/${upload.id}`,
-                          );
-                          setEditing((current) =>
-                            current?.id === upload.id
-                              ? {
-                                  ...current,
-                                  revision: updated.revision,
-                                  thumbnail_url: updated.thumbnail_url,
-                                  has_custom_thumbnail:
-                                    updated.has_custom_thumbnail,
-                                }
-                              : current,
-                          );
-                          await refresh();
-                        }}
-                      />
-                      <form
-                        className="account-form video-edit"
-                        onSubmit={saveDetails}
-                      >
-                        <label className="form-field">
-                          Edit video title
-                          <input
-                            required
-                            maxLength={200}
-                            value={editing.title}
-                            onChange={(e) =>
-                              setEditing({ ...editing, title: e.target.value })
-                            }
-                          />
-                        </label>
-                        <label className="form-field">
-                          Edit description
-                          <textarea
-                            maxLength={5000}
-                            value={editing.description}
-                            onChange={(e) =>
-                              setEditing({
-                                ...editing,
-                                description: e.target.value,
-                              })
-                            }
-                          />
-                        </label>
-                        <label className="form-field">
-                          Edit tags
-                          <input
-                            value={editing.tags.join(", ")}
-                            onChange={(e) =>
-                              setEditing({
-                                ...editing,
-                                tags: e.target.value.split(","),
-                              })
-                            }
-                          />
-                        </label>
-                        <div className="upload-actions">
-                          <button disabled={!!busyID}>
-                            Save video details
-                          </button>
-                          <button
-                            type="button"
-                            className="secondary-button"
-                            onClick={() => setEditing(null)}
-                          >
-                            Discard changes
-                          </button>
-                          <button
-                            type="button"
-                            className="text-button"
-                            onClick={async () => {
-                              try {
-                                const current = await api<Upload>(
-                                  `/uploads/${upload.id}`,
-                                );
-                                setEditing((selected) =>
-                                  selected?.id === upload.id
-                                    ? current
-                                    : selected,
-                                );
-                                setError("");
-                              } catch (cause) {
-                                report(cause);
+                    )}
+                  <button
+                    className="text-button"
+                    disabled={!!busyID}
+                    onClick={() => setEditing({ ...upload })}
+                  >
+                    Edit details
+                  </button>
+                  <button
+                    className="text-button"
+                    disabled={!!busyID}
+                    onClick={() => setDeleting(upload.id)}
+                  >
+                    {upload.publication_state === "draft"
+                      ? "Delete draft"
+                      : "Delete video"}
+                  </button>
+                </div>
+                {deleting === upload.id && (
+                  <div
+                    className="delete-confirmation"
+                    role="group"
+                    aria-label="Confirm deletion"
+                  >
+                    <p>
+                      Delete this video and its source? This cannot be undone.
+                    </p>
+                    <button
+                      disabled={!!busyID}
+                      onClick={() => void action(upload, "delete")}
+                    >
+                      Confirm delete
+                    </button>
+                    <button
+                      className="secondary-button"
+                      onClick={() => setDeleting("")}
+                    >
+                      Keep video
+                    </button>
+                  </div>
+                )}
+                {editing?.id === upload.id && (
+                  <div className="video-edit-panel">
+                    <CreatorImagePicker
+                      kind="thumbnail"
+                      path={`/videos/${upload.video_id}/thumbnail`}
+                      revision={editing.revision}
+                      currentURL={editing.thumbnail_url}
+                      custom={editing.has_custom_thumbnail}
+                      onSaved={async () => {
+                        const updated = await api<Upload>(
+                          `/uploads/${upload.id}`,
+                        );
+                        setEditing((current) =>
+                          current?.id === upload.id
+                            ? {
+                                ...current,
+                                revision: updated.revision,
+                                thumbnail_url: updated.thumbnail_url,
+                                has_custom_thumbnail:
+                                  updated.has_custom_thumbnail,
                               }
-                            }}
-                          >
-                            Reload saved details
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  )}
-                  {preview === upload.video_id && (
-                    <StudioPreview videoID={upload.video_id} />
-                  )}
-                </article>
-              ))
+                            : current,
+                        );
+                        await refresh();
+                      }}
+                    />
+                    <form
+                      className="account-form video-edit"
+                      onSubmit={saveDetails}
+                    >
+                      <label className="form-field">
+                        Edit video title
+                        <input
+                          required
+                          maxLength={200}
+                          value={editing.title}
+                          onChange={(e) =>
+                            setEditing({ ...editing, title: e.target.value })
+                          }
+                        />
+                      </label>
+                      <label className="form-field">
+                        Edit description
+                        <textarea
+                          maxLength={5000}
+                          value={editing.description}
+                          onChange={(e) =>
+                            setEditing({
+                              ...editing,
+                              description: e.target.value,
+                            })
+                          }
+                        />
+                      </label>
+                      <label className="form-field">
+                        Edit tags
+                        <input
+                          value={editing.tags.join(", ")}
+                          onChange={(e) =>
+                            setEditing({
+                              ...editing,
+                              tags: e.target.value.split(","),
+                            })
+                          }
+                        />
+                      </label>
+                      <div className="upload-actions">
+                        <button disabled={!!busyID}>Save video details</button>
+                        <button
+                          type="button"
+                          className="secondary-button"
+                          onClick={() => setEditing(null)}
+                        >
+                          Discard changes
+                        </button>
+                        <button
+                          type="button"
+                          className="text-button"
+                          onClick={async () => {
+                            try {
+                              const current = await api<Upload>(
+                                `/uploads/${upload.id}`,
+                              );
+                              setEditing((selected) =>
+                                selected?.id === upload.id ? current : selected,
+                              );
+                              setError("");
+                            } catch (cause) {
+                              report(cause);
+                            }
+                          }}
+                        >
+                          Reload saved details
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
+                {preview === upload.video_id && (
+                  <StudioPreview videoID={upload.video_id} />
+                )}
+              </article>
+            ))
+          )}
+          {(cursors.length > 1 || nextCursor) && (
+            <nav className="studio-pagination" aria-label="Video library pages">
+              <button
+                className="secondary-button"
+                disabled={cursors.length === 1}
+                onClick={() => setCursors((value) => value.slice(0, -1))}
+              >
+                Previous page
+              </button>
+              <span className="muted">
+                Page {cursors.length} · {total} results
+              </span>
+              <button
+                className="secondary-button"
+                disabled={!nextCursor}
+                onClick={() => {
+                  if (nextCursor) setCursors((value) => [...value, nextCursor]);
+                }}
+              >
+                Next page
+              </button>
+            </nav>
           )}
         </section>
       </div>

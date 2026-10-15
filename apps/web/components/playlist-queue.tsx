@@ -3,6 +3,7 @@ import Link from "next/link";
 import { type PlaylistDetail } from "../lib/api";
 import { useResource } from "../lib/use-resource";
 import { Icon } from "./ui";
+import { useAuth } from "./auth-provider";
 export default function PlaylistQueue({
   playlistID,
   videoID,
@@ -10,8 +11,11 @@ export default function PlaylistQueue({
   playlistID: string;
   videoID: string;
 }) {
+  const { me, loading } = useAuth();
   const { state, retry } = useResource<PlaylistDetail>(
-    `/playlists/${playlistID}`,
+    loading ? null : `/playlists/${playlistID}`,
+    false,
+    me?.user.id ?? "guest",
   );
   if (state.status === "error")
     return (

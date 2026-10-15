@@ -138,7 +138,7 @@ func RunWorker(ctx context.Context, client *Client, consumer, producer *kgo.Clie
 func processAttempt(parent context.Context, client *Client, job *pb.JobSnapshot, uploads, media string, logger *slog.Logger, objects *objectstore.Remote) {
 	parent, span := otel.Tracer("peerscreen/media").Start(parent, "process_video_attempt", trace.WithAttributes(attribute.String("peerscreen.job.id", job.Spec.JobId), attribute.String("peerscreen.attempt.id", job.AttemptId)))
 	defer span.End()
-	ctx, cancel := context.WithTimeout(parent, 30*time.Minute)
+	ctx, cancel := context.WithTimeout(parent, encoder.AttemptTimeout)
 	defer cancel()
 	attempt := &pb.Attempt{JobId: job.Spec.JobId, AttemptId: job.AttemptId, WorkerId: job.WorkerId, LeaseEpoch: job.LeaseEpoch}
 	var progressMu sync.Mutex
@@ -192,9 +192,11 @@ func processAttempt(parent context.Context, client *Client, job *pb.JobSnapshot,
 		err = objects.UploadAttempt(ctx, media, encodeJob, result)
 	}
 	if err == nil {
+		accepted := false
 		// Keep heartbeating while retrying an ambiguous acceptance response. The output remains immutable.
 		for ctx.Err() == nil {
 			_, err = client.CompleteJob(ctx, &pb.CompleteRequest{Attempt: attempt, OutputDescriptorKey: result.DescriptorKey})
+			accepted = err == nil
 			if err == nil || status.Code(err) == codes.FailedPrecondition || status.Code(err) == codes.InvalidArgument {
 				break
 			}
@@ -202,14 +204,21 @@ func processAttempt(parent context.Context, client *Client, job *pb.JobSnapshot,
 				break
 			}
 		}
-	} else {
+		if !accepted && err == nil {
+			err = ctx.Err()
+		}
+	}
+	if err != nil {
 		code, permanent := "dependency_unavailable", false
 		var failed *encoder.Failure
 		if errors.As(err, &failed) {
 			code, permanent = failed.Code, failed.Permanent
 		}
+		if ctx.Err() != nil {
+			code, permanent = "processing_interrupted", false
+		}
 		if parent.Err() != nil {
-			code = "shutdown"
+			code, permanent = "shutdown", false
 		}
 		cleanup, stop := context.WithTimeout(context.Background(), 5*time.Second)
 		_, _ = client.FailJob(cleanup, &pb.FailRequest{Attempt: attempt, ErrorCode: code, Permanent: permanent})

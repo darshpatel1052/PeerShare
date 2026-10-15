@@ -236,7 +236,11 @@ func TestIntegrationTransientRetryAndExhaustion(t *testing.T) {
 		if job.Attempts != index {
 			t.Fatal("wrong attempt count")
 		}
-		failed, err := f.worker.FailJob(ctx, &pb.FailRequest{Attempt: attempt(job), ErrorCode: "storage_unavailable"})
+		code := "storage_unavailable"
+		if index == 1 {
+			code = "processing_interrupted"
+		}
+		failed, err := f.worker.FailJob(ctx, &pb.FailRequest{Attempt: attempt(job), ErrorCode: code, Permanent: false})
 		if err != nil {
 			t.Fatal(err)
 		}

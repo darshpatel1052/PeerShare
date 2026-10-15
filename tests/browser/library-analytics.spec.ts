@@ -554,3 +554,76 @@ test("real playback qualifies once across sharing changes and owner analytics re
     await context.close();
   }
 });
+
+test("signing out removes a private watch queue and its automatic next video", async ({
+  page,
+}) => {
+  test.setTimeout(120000);
+  const source = await generateSource(2);
+  try {
+    const channel = await createCreator(page);
+    const first = await uploadVideo(
+      page,
+      channel.id,
+      source.payload,
+      "Private queue first",
+    );
+    const second = await uploadVideo(
+      page,
+      channel.id,
+      source.payload,
+      "Private queue second",
+    );
+    const response = await page.request.post("/api/v1/playlists", {
+      headers: { Origin: origin, "Idempotency-Key": crypto.randomUUID() },
+      data: { title: "Personal screening queue", visibility: "private" },
+    });
+    expect(response.status()).toBe(201);
+    const playlist = await response.json();
+    let revision = playlist.revision;
+    for (const video of [first, second]) {
+      const added = await page.request.post(
+        `/api/v1/playlists/${playlist.id}/items`,
+        {
+          headers: { Origin: origin },
+          data: { video_id: video.id, revision },
+        },
+      );
+      expect(added.status()).toBe(200);
+      revision = (await added.json()).playlist.revision;
+    }
+    await page.goto(`/watch/?v=${first.id}&playlist=${playlist.id}`);
+    await expect(
+      page.getByRole("navigation", { name: "Playlist videos" }),
+    ).toBeVisible();
+    await expect(page.getByTestId("player-status")).toHaveText("Ready to play");
+    await page.getByRole("button", { name: "Workspace", exact: true }).click();
+    await page.getByRole("button", { name: "Sign out", exact: true }).click();
+    await expect(
+      page.getByRole("navigation", { name: "Playlist videos" }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByText("Personal screening queue", { exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByText("This playlist is unavailable.", { exact: true }),
+    ).toBeVisible();
+    await page
+      .locator("video")
+      .evaluate((element: HTMLVideoElement) =>
+        element.dispatchEvent(new Event("ended")),
+      );
+    await page.waitForTimeout(300);
+    expect(new URL(page.url()).searchParams.get("v")).toBe(first.id);
+    await page.getByRole("button", { name: "Play", exact: true }).click();
+    await expect
+      .poll(() =>
+        page
+          .locator("video")
+          .evaluate((element: HTMLVideoElement) => element.currentTime),
+      )
+      .toBeGreaterThan(0.2);
+  } finally {
+    await source.close();
+  }
+});

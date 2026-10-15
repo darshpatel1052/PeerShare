@@ -94,7 +94,7 @@ func (s *Store) DistributedJobs(ctx context.Context) ([]string, error) {
 }
 
 // Read-model update + inbox insert commit together. Generations, versions, cancellation, and deletion all gate it.
-func (s *Store) ApplyMediaSnapshot(ctx context.Context, job *pb.JobSnapshot) error {
+func (s *Store) ApplyMediaSnapshot(ctx context.Context, job *pb.JobSnapshot, acknowledgedCommand ...string) error {
 	if job == nil || job.Spec == nil || job.Version < 1 {
 		return errors.New("invalid media snapshot")
 	}
@@ -112,14 +112,37 @@ func (s *Store) ApplyMediaSnapshot(ctx context.Context, job *pb.JobSnapshot) err
 	if err != nil {
 		return err
 	}
+	if generation != job.Spec.GenerationId || videoID != job.Spec.VideoId {
+		return tx.Commit(ctx)
+	}
+	var command, commandID string
+	var commandSent bool
+	if err = tx.QueryRow(ctx, "SELECT command,COALESCE(command_id::text,''),command_sent_at IS NOT NULL FROM catalog.media_submissions WHERE job_id=$1 FOR UPDATE", job.Spec.JobId).Scan(&command, &commandID, &commandSent); err != nil {
+		return err
+	}
+	if len(acknowledgedCommand) > 0 && acknowledgedCommand[0] != "" && acknowledgedCommand[0] == commandID {
+		if command == "retry" {
+			if _, err = tx.Exec(ctx, "UPDATE catalog.media_submissions SET command='',command_id=NULL,command_sent_at=NULL WHERE job_id=$1", job.Spec.JobId); err != nil {
+				return err
+			}
+			command = ""
+		} else {
+			commandSent = true
+			if _, err = tx.Exec(ctx, "UPDATE catalog.media_submissions SET command_sent_at=now() WHERE job_id=$1", job.Spec.JobId); err != nil {
+				return err
+			}
+		}
+	}
 	tag, err := tx.Exec(ctx, "INSERT INTO catalog.media_event_inbox(event_id,job_id,media_version) VALUES($1,$2,$3) ON CONFLICT(event_id) DO NOTHING", job.EventId, job.Spec.JobId, job.Version)
 	if err != nil {
 		return err
 	}
 	// A locally requested cancel/retry is not an authoritative media decision.
 	// Reapply an already-seen ready snapshot if that local intent hid completion.
-	reconcileReady := job.State == "ready" && state != "ready" && job.Version == version
-	if ((tag.RowsAffected() == 0 || job.Version == version) && !reconcileReady) || job.Version < version || generation != job.Spec.GenerationId || videoID != job.Spec.VideoId {
+	retireCancellation := job.State == "cancelled" && command == "cancel" && commandSent
+	reconcileTerminal := retireCancellation || (job.Version == version && state != job.State &&
+		(job.State == "ready" || (command != "retry" && (job.State == "failed" || job.State == "cancelled"))))
+	if ((tag.RowsAffected() == 0 || job.Version == version) && !reconcileTerminal) || job.Version < version || generation != job.Spec.GenerationId || videoID != job.Spec.VideoId {
 		return tx.Commit(ctx)
 	}
 	var live bool
@@ -129,11 +152,8 @@ func (s *Store) ApplyMediaSnapshot(ctx context.Context, job *pb.JobSnapshot) err
 	if !live {
 		return tx.Commit(ctx)
 	}
-	var cancellation bool
-	if err = tx.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM catalog.media_submissions WHERE job_id=$1 AND command='cancel')", job.Spec.JobId).Scan(&cancellation); err != nil {
-		return err
-	}
-	if job.State == "ready" || job.State == "cancelled" {
+	cancellation := command == "cancel"
+	if job.State == "ready" || retireCancellation {
 		// The coordinator serializes completion and cancellation under its job
 		// lock. A completed encode wins a late cancellation; deletion still wins
 		// above. Retire the resolved command so reconciliation can stop.
@@ -163,7 +183,15 @@ func (s *Store) ApplyMediaSnapshot(ctx context.Context, job *pb.JobSnapshot) err
 		mediaState = "cancelled"
 		processing = "cancelled"
 	}
+	// An event describing the previous cancelled/failed attempt cannot consume
+	// a retry that has not received its own coordinator acknowledgement yet.
+	if command == "retry" && (job.State == "cancelled" || job.State == "cancel_requested" || job.State == "failed") {
+		mediaState, processing = "queued", "pending"
+	}
 	stage, progress := job.Stage, job.Progress
+	if mediaState == "queued" {
+		stage, progress = "queued", 0
+	}
 	if mediaState == "cancelled" {
 		stage = "cancelled"
 		progress = 0

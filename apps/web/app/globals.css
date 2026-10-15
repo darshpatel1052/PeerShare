@@ -4055,3 +4055,19 @@ html[data-theme="light"] .cover-orbit {
     animation: none;
   }
 }
+
+.studio-search,
+.studio-pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+.studio-search input {
+  flex: 1;
+  min-width: 0;
+}
+.studio-pagination {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}

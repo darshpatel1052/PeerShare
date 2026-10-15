@@ -29,24 +29,26 @@ import (
 )
 
 type App struct {
-	Objects        *objectstore.Remote
-	mediaSlots     chan struct{}
-	mediaAdmission chan struct{}
-	objectSweepAt  time.Time
-	objectCursors  [2]*string
-	Media          *mediasvc.Client
-	Google         *googleAuth
-	Config         config.Config
-	Store          *store.Store
-	Redis          *redis.Client
-	Hasher         *auth.Hasher
-	Limiter        *ratelimit.Limiter
-	Logger         *slog.Logger
-	metrics        requestMetrics
-	analytics      *analyticsCache
-	dummyHash      string
-	partSlots      chan struct{}
-	imageSlots     chan struct{}
+	Objects            *objectstore.Remote
+	mediaSlots         chan struct{}
+	mediaAdmission     chan struct{}
+	objectSweepAt      time.Time
+	objectCursors      [2]*string
+	objectSweepDone    [2]bool
+	objectSweepStarted time.Time
+	Media              *mediasvc.Client
+	Google             *googleAuth
+	Config             config.Config
+	Store              *store.Store
+	Redis              *redis.Client
+	Hasher             *auth.Hasher
+	Limiter            *ratelimit.Limiter
+	Logger             *slog.Logger
+	metrics            requestMetrics
+	analytics          *analyticsCache
+	dummyHash          string
+	partSlots          chan struct{}
+	imageSlots         chan struct{}
 }
 type requestIDKey struct{}
 type identityKey struct{}

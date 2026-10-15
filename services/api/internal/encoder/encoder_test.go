@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -138,4 +139,51 @@ func TestIntegrationAdaptiveMediaAndDescriptorValidation(t *testing.T) {
 			t.Fatal("traversal accepted")
 		}
 	})
+}
+
+// Stop an actual child process during both source probing and encoding. The
+// same valid input must remain retryable after either interruption.
+func TestInterruptedMediaSubprocessDoesNotRejectSource(t *testing.T) {
+	for _, stage := range []string{"probe", "encode"} {
+		t.Run(stage, func(t *testing.T) {
+			bin, root, media := t.TempDir(), t.TempDir(), t.TempDir()
+			marker := filepath.Join(bin, "started")
+			block := "#!/bin/sh\nprintf started > \"$TEST_PROCESS_MARKER\"\nexec /bin/sleep 60\n"
+			probe := "#!/bin/sh\nprintf '%s' '{\"format\":{\"duration\":\"3\",\"format_name\":\"mov,mp4\"},\"streams\":[{\"codec_type\":\"video\",\"width\":1280,\"height\":720}]}'\n"
+			if stage == "probe" {
+				probe = block
+			}
+			for name, script := range map[string]string{"ffprobe": probe, "ffmpeg": block} {
+				if err := os.WriteFile(filepath.Join(bin, name), []byte(script), 0755); err != nil {
+					t.Fatal(err)
+				}
+			}
+			t.Setenv("PATH", bin)
+			t.Setenv("TEST_PROCESS_MARKER", marker)
+			source := []byte{0, 0, 0, 24, 'f', 't', 'y', 'p', 'i', 's', 'o', 'm', 0, 0, 0, 0, 'i', 's', 'o', 'm', 0, 0, 0, 0}
+			if err := os.WriteFile(filepath.Join(root, "source.mp4"), source, 0600); err != nil {
+				t.Fatal(err)
+			}
+			hash := sha256.Sum256(source)
+			job := Job{ID: uuid.NewString(), VideoID: uuid.NewString(), GenerationID: uuid.NewString(), AttemptID: uuid.NewString(), SourceKey: "source.mp4", SourceBytes: int64(len(source)), SourceHash: hash[:]}
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+			done := make(chan error, 1)
+			go func() { _, err := Process(ctx, job, root, media, func(string, int) error { return nil }); done <- err }()
+			for {
+				if _, err := os.Stat(marker); err == nil {
+					break
+				}
+				if ctx.Err() != nil {
+					t.Fatal("media subprocess never started")
+				}
+				time.Sleep(5 * time.Millisecond)
+			}
+			cancel()
+			var failure *Failure
+			if err := <-done; !errors.As(err, &failure) || failure.Permanent || !errors.Is(err, context.Canceled) {
+				t.Fatalf("%s cancellation incorrectly classified: %v", stage, err)
+			}
+		})
+	}
 }

@@ -22,6 +22,8 @@ import (
 	"time"
 )
 
+const AttemptTimeout = 30 * time.Minute
+
 const RecipeVersion = "h264-aac-hls-v2"
 const MaxSourceBytes int64 = 250 * 1024 * 1024
 const MaxOutputBytes int64 = 220 * 1024 * 1024
@@ -60,9 +62,15 @@ type Failure struct {
 	Cause     error
 }
 
-func (f *Failure) Error() string                             { return f.Code }
-func (f *Failure) Unwrap() error                             { return f.Cause }
-func failure(code string, permanent bool, cause error) error { return &Failure{code, permanent, cause} }
+func (f *Failure) Error() string { return f.Code }
+func (f *Failure) Unwrap() error { return f.Cause }
+func failure(code string, permanent bool, cause error) error {
+	// An interrupted subprocess says nothing about the validity of its input.
+	if errors.Is(cause, context.Canceled) || errors.Is(cause, context.DeadlineExceeded) {
+		return &Failure{"processing_interrupted", false, cause}
+	}
+	return &Failure{code, permanent, cause}
+}
 
 type boundedOutput struct {
 	data []byte
@@ -367,6 +375,9 @@ func probeMedia(ctx context.Context, source string) (probeResult, error) {
 	cmd.Stdout = out
 	cmd.Stderr = io.Discard
 	if err = cmd.Run(); err != nil {
+		if ctx.Err() != nil {
+			return result, ctx.Err()
+		}
 		return result, errors.New("unsupported source")
 	}
 	if err = json.Unmarshal(out.data, &result); err != nil {
@@ -384,6 +395,9 @@ func probeSegment(ctx context.Context, path string) (probeResult, error) {
 	cmd.Stdout = out
 	cmd.Stderr = io.Discard
 	if err := cmd.Run(); err != nil {
+		if ctx.Err() != nil {
+			return result, ctx.Err()
+		}
 		return result, err
 	}
 	return result, json.Unmarshal(out.data, &result)

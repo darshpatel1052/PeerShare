@@ -150,15 +150,35 @@ func (a *App) getUpload(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, u)
 }
 func (a *App) listOwnedUploads(w http.ResponseWriter, r *http.Request) {
-	items, err := a.Store.OwnedUploads(r.Context(), identity(r).ID)
+	query := r.URL.Query()
+	state := query.Get("state")
+	if state == "" {
+		state = "all"
+	}
+	search := strings.TrimSpace(query.Get("q"))
+	limit := 30
+	if raw := query.Get("limit"); raw != "" {
+		value, err := strconv.Atoi(raw)
+		if err != nil || value < 1 || value > 50 {
+			a.error(w, r, 400, "invalid_limit", "Choose a page size between 1 and 50.")
+			return
+		}
+		limit = value
+	}
+	cursor, err := store.DecodeCursor(query.Get("cursor"))
+	if err != nil || !validText(search, 0, 100) || (state != "all" && state != "draft" && state != "published" && state != "unpublished") {
+		a.error(w, r, 400, "invalid_filter", "Choose a valid library filter, search, and page.")
+		return
+	}
+	page, err := a.Store.OwnedUploadsPage(r.Context(), identity(r).ID, state, search, cursor, limit)
 	if err != nil {
 		a.storeError(w, r, err)
 		return
 	}
-	for i := range items {
-		a.decorateUpload(&items[i])
+	for i := range page.Items {
+		a.decorateUpload(&page.Items[i])
 	}
-	writeJSON(w, 200, map[string]any{"items": items})
+	writeJSON(w, 200, page)
 }
 func (a *App) presignParts(w http.ResponseWriter, r *http.Request) {
 	if !a.creatorAccess(w, r) {

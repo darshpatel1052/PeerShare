@@ -1,0 +1,24 @@
+{
+  "recordedAt": "2026-10-15T11:53:07.673Z",
+  "source": "working tree after 4e689dd",
+  "integration": {
+    "passedTestsIncludingSubcases": 92,
+    "passedTopLevel": 65,
+    "failures": 0,
+    "scope": "isolated PostgreSQL, Redis, Kafka, gRPC, FFmpeg; race detector"
+  },
+  "focusedFollowup": {
+    "packages": ["httpapi", "mediasvc", "encoder"],
+    "raceDetector": true,
+    "log": "focused-go.txt"
+  },
+  "browser": {
+    "passed": 1,
+    "scenario": "sign out from private playlist on Watch; private queue and automatic-next removed; public playback continues"
+  },
+  "build": "12 static pages exported",
+  "limitations": [
+    "DNS/CloudFront application cutover and final PeerShare UI are separate release work.",
+    "Full integration preceded the last cancellation-correlation followup; focused followup validates that ordering."
+  ]
+}

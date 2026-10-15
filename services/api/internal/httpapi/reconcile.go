@@ -19,7 +19,7 @@ func (a *App) reconcileMedia(ctx context.Context) {
 		return
 	}
 	a.reconcileCreatorImages()
-	a.sweepObjects(ctx)
+	sweepStarted, objectsSwept := a.sweepObjects(ctx)
 	a.measureLegacyOutputs(ctx)
 	candidates, err := a.Store.CleanupCandidates(ctx)
 	if err != nil {
@@ -68,6 +68,9 @@ func (a *App) reconcileMedia(ctx context.Context) {
 			key, _ := filepath.Rel(a.Config.UploadDir, path)
 			var referenced bool
 			e := a.Store.Pool.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM catalog.upload_parts WHERE storage_key=$1)", filepath.ToSlash(key)).Scan(&referenced)
+			if e != nil {
+				swept = false
+			}
 			if e == nil && !referenced {
 				if e = os.Remove(path); e != nil && !os.IsNotExist(e) {
 					swept = false
@@ -77,8 +80,13 @@ func (a *App) reconcileMedia(ctx context.Context) {
 		if filepath.Dir(path) == filepath.Join(a.Config.UploadDir, "sources") {
 			key, _ := filepath.Rel(a.Config.UploadDir, path)
 			referenced, e := a.Store.SourceReferenced(ctx, filepath.ToSlash(key))
+			if e != nil {
+				swept = false
+			}
 			if e == nil && !referenced {
-				_ = os.Remove(path)
+				if e = os.Remove(path); e != nil && !os.IsNotExist(e) {
+					swept = false
+				}
 			}
 		}
 		return nil
@@ -114,8 +122,8 @@ func (a *App) reconcileMedia(ctx context.Context) {
 		}
 		return filepath.SkipDir
 	})
-	if swept {
-		_ = a.Store.SettleReservations(ctx)
+	if swept && objectsSwept {
+		_ = a.Store.SettleReservations(ctx, sweepStarted)
 	}
 }
 

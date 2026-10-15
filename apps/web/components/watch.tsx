@@ -15,6 +15,7 @@ import {
 } from "../lib/playback-capture";
 import SaveVideo from "./save-video";
 import PlaylistQueue from "./playlist-queue";
+import { useAuth } from "./auth-provider";
 import {
   createPlayer,
   emptyStats,
@@ -27,8 +28,14 @@ export default function Watch() {
   const id = resourceID(params.get("v"), "video");
   const playlistID = resourceID(params.get("playlist"), "playlist");
   const autoplay = params.get("autoplay") === "1" && Boolean(playlistID);
+  const auth = useAuth();
+  const accountScope = auth.loading ? "loading" : (auth.me?.user.id ?? "guest");
+  const currentAccount = useRef(accountScope);
+  currentAccount.current = accountScope;
   const queue = useResource<PlaylistDetail>(
-    playlistID ? `/playlists/${playlistID}` : null,
+    playlistID && !auth.loading ? `/playlists/${playlistID}` : null,
+    false,
+    accountScope,
   );
   const resource = useResource<VideoDetail>(id ? `/videos/${id}` : null);
   const metadata =
@@ -77,12 +84,16 @@ export default function Watch() {
     const index = items.findIndex((item) => item.id === metadata.id);
     const next = index >= 0 ? items[index + 1] : undefined;
     const ended = () => {
-      if (next && next.id !== metadata.id)
+      if (
+        currentAccount.current === accountScope &&
+        next &&
+        next.id !== metadata.id
+      )
         router.push(`/watch?v=${next.id}&playlist=${playlistID}&autoplay=1`);
     };
     element.addEventListener("ended", ended);
     return () => element.removeEventListener("ended", ended);
-  }, [queue.state, metadata, playlistID, router]);
+  }, [queue.state, metadata, playlistID, router, accountScope]);
 
   useEffect(() => {
     if (!metadata || !video.current) return;

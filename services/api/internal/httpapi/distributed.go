@@ -82,10 +82,7 @@ func (a *App) dispatchSubmissions(ctx context.Context) {
 				job, err = a.Media.RetryJob(ctx, request)
 			}
 			if err == nil {
-				err = a.Store.ApplyMediaSnapshot(ctx, job)
-			}
-			if err == nil {
-				err = a.Store.MediaSubmissionSent(ctx, item.Spec.JobId, item.CommandID)
+				err = a.Store.ApplyMediaSnapshot(ctx, job, item.CommandID)
 			}
 		}
 		if err != nil {

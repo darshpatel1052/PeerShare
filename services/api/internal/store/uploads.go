@@ -157,37 +157,85 @@ func (s *Store) Upload(ctx context.Context, ownerID, id string) (Upload, error) 
 	}
 	return u, rows.Err()
 }
+
+type UploadCounts struct {
+	All         int `json:"all"`
+	Draft       int `json:"draft"`
+	Published   int `json:"published"`
+	Unpublished int `json:"unpublished"`
+}
+type UploadsPage struct {
+	Items      []Upload     `json:"items"`
+	NextCursor *string      `json:"next_cursor"`
+	Counts     UploadCounts `json:"counts"`
+	Total      int          `json:"total"`
+}
+
 func (s *Store) OwnedUploads(ctx context.Context, ownerID string) ([]Upload, error) {
-	rows, err := s.Pool.Query(ctx, uploadSelect+"WHERE u.owner_id=$1 AND v.deleted_at IS NULL ORDER BY u.created_at DESC LIMIT 30", ownerID)
-	if err != nil {
-		return nil, err
+	page, err := s.OwnedUploadsPage(ctx, ownerID, "all", "", nil, 30)
+	return page.Items, err
+}
+
+// The cursor follows creation time and UUID, so later uploads do not shift older
+// pages. Filters apply in SQL across the creator's entire non-deleted library.
+func (s *Store) OwnedUploadsPage(ctx context.Context, ownerID, state, query string, cursor *Cursor, limit int) (UploadsPage, error) {
+	page := UploadsPage{Items: []Upload{}}
+	if limit < 1 || limit > 50 {
+		return page, ErrUploadConflict
 	}
-	ids := []string{}
+	if state != "all" && state != "draft" && state != "published" && state != "unpublished" {
+		return page, ErrUploadConflict
+	}
+	var after any
+	var afterID any
+	if cursor != nil {
+		after, afterID = cursor.PublishedAt, cursor.ID
+	}
+	// strpos treats user text literally, including percent and underscore.
+	match := ` (strpos(lower(v.title),lower($3))>0 OR strpos(lower(v.description),lower($3))>0) `
+	err := s.Pool.QueryRow(ctx, `SELECT count(*),count(*) FILTER(WHERE v.publication_state='draft'),count(*) FILTER(WHERE v.publication_state='published'),count(*) FILTER(WHERE v.publication_state='unpublished'),count(*) FILTER(WHERE ($2='all' OR v.publication_state=$2) AND `+match+`) FROM catalog.upload_sessions u JOIN catalog.videos v ON v.id=u.video_id WHERE u.owner_id=$1 AND v.deleted_at IS NULL`, ownerID, state, query).Scan(&page.Counts.All, &page.Counts.Draft, &page.Counts.Published, &page.Counts.Unpublished, &page.Total)
+	if err != nil {
+		return page, err
+	}
+	rows, err := s.Pool.Query(ctx, `SELECT u.id,u.created_at FROM catalog.upload_sessions u JOIN catalog.videos v ON v.id=u.video_id WHERE u.owner_id=$1 AND v.deleted_at IS NULL AND ($2='all' OR v.publication_state=$2) AND `+match+` AND ($4::timestamptz IS NULL OR (u.created_at,u.id)<($4,$5::uuid)) ORDER BY u.created_at DESC,u.id DESC LIMIT $6`, ownerID, state, query, after, afterID, limit+1)
+	if err != nil {
+		return page, err
+	}
+	type entry struct {
+		id      string
+		created time.Time
+	}
+	entries := []entry{}
 	for rows.Next() {
-		u, e := scanUpload(rows)
-		if e != nil {
+		var item entry
+		if err = rows.Scan(&item.id, &item.created); err != nil {
 			rows.Close()
-			return nil, e
+			return page, err
 		}
-		ids = append(ids, u.ID)
+		entries = append(entries, item)
 	}
 	err = rows.Err()
 	rows.Close()
 	if err != nil {
-		return nil, err
+		return page, err
 	}
-	out := []Upload{}
-	for _, id := range ids {
-		u, e := s.Upload(ctx, ownerID, id)
+	if len(entries) > limit {
+		entries = entries[:limit]
+		last := entries[len(entries)-1]
+		token := EncodeCursor(Video{ID: last.id, PublishedAt: last.created})
+		page.NextCursor = &token
+	}
+	for _, item := range entries {
+		upload, e := s.Upload(ctx, ownerID, item.id)
 		if errors.Is(e, ErrNotFound) {
 			continue
 		}
 		if e != nil {
-			return nil, e
+			return page, e
 		}
-		out = append(out, u)
+		page.Items = append(page.Items, upload)
 	}
-	return out, nil
+	return page, nil
 }
 func (u Upload) PartCount() int { return int((u.ExpectedBytes + PartBytes - 1) / PartBytes) }
 func (u Upload) PartSize(number int) int64 {
