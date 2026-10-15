@@ -1,0 +1,51 @@
+{
+  "checkedAt": "2026-10-15T12:56:12.654Z",
+  "scope": "Actual anonymous public 480p HLS segment objects paced by fragment duration, SHA-256 verification; synthetic clients, no video decoding",
+  "release": "4e689dd031e433012795937b37132b231d55000f",
+  "dnsResolution": "Explicit configured EIP; TLS/SNI hostname verification unchanged",
+  "receivedBytes": 186893153,
+  "results": [
+    {
+      "clients": 1,
+      "seconds": 10,
+      "startedAt": "2026-10-15T12:54:51.089Z",
+      "finishedAt": "2026-10-15T12:55:04.578Z",
+      "passed": true,
+      "verifiedSegments": 3,
+      "verifiedPayloadBytes": 976472,
+      "failureRate": 0,
+      "lateRate": 0,
+      "p95MS": 725.8,
+      "p99MS": 749.96,
+      "receivedBytes": 982662
+    },
+    {
+      "clients": 25,
+      "seconds": 30,
+      "startedAt": "2026-10-15T12:55:05.656Z",
+      "finishedAt": "2026-10-15T12:55:37.235Z",
+      "passed": true,
+      "verifiedSegments": 200,
+      "verifiedPayloadBytes": 61715700,
+      "failureRate": 0,
+      "lateRate": 0,
+      "p95MS": 1685.3999999999999,
+      "p99MS": 1784.5199999999995,
+      "receivedBytes": 61969938
+    },
+    {
+      "clients": 50,
+      "seconds": 30,
+      "startedAt": "2026-10-15T12:55:38.766Z",
+      "finishedAt": "2026-10-15T12:56:12.654Z",
+      "passed": false,
+      "verifiedSegments": 400,
+      "verifiedPayloadBytes": 123431400,
+      "failureRate": 0,
+      "lateRate": 0.0975,
+      "p95MS": 4381.4999999999945,
+      "p99MS": 5404.509999999998,
+      "receivedBytes": 123940553
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # PeerShare
 
+[Open PeerShare](https://peershare.darshpatel.dev) · [Benchmark report](docs/benchmarks/report.md) · [Learning guides](docs/README.md)
+
 A video platform for watching, publishing and sharing. Creators upload an MP4, add artwork and publish to their own channel. Viewers discover videos, follow creators and build private or public playlists. Optional peer delivery lets browsers share verified video segments while HTTP remains available.
 
 ## What you can do
@@ -68,11 +70,11 @@ The guides explain what each component does, how it is used and why it was chose
 
 An isolated catalogue containing **100,000 video records and 10,000 synthetic accounts** sustained **200 offered operations/sec** across three two-minute runs: **72,002 validated operations, p95 ≤55 ms, p99 ≤99 ms, zero failures and zero dropped iterations**. The application ran on the existing 2-vCPU, 8-GiB Mumbai host; an external workstation generated load through a private tunnel. This measures the documented API mix, not concurrent video viewers or maximum server capacity.
 
-The campaign also records failing stress levels, recovery, Redis cache behavior and real 720p/1080p media processing. Read the [benchmark protocol](docs/benchmarks/protocol.md), [report](docs/benchmarks/report.md) and [learning guide](docs/learning/phase-6/04-benchmarking-a-video-system.md) before quoting numbers. Historical evidence stays tied to the exact release and workload measured.
+Three eight-browser playback comparisons measured **34.7–48.7% less origin media response-body traffic**, including sharing setup. The report also records generator frame drops, failing load levels, Redis cache behavior and real 720p/1080p media processing. Read the [benchmark protocol](docs/benchmarks/protocol.md), [report](docs/benchmarks/report.md) and [learning guide](docs/learning/phase-6/04-benchmarking-a-video-system.md) before quoting numbers. Historical evidence stays tied to the exact release and workload measured.
 
 ## Deployment and operations
 
-The AWS deployment uses a single Mumbai host, private S3, immutable images, an HTTPS gateway and CloudFront. The account remains on its Free plan with a bounded demo lifetime. Public routing is being moved to **peershare.darshpatel.dev**; the existing infrastructure identifiers remain compatible with stored data.
+The AWS deployment uses a single Mumbai host, private S3, immutable images, an HTTPS gateway and CloudFront. The account remains on its Free plan with a bounded demo lifetime. The public product is live at [peershare.darshpatel.dev](https://peershare.darshpatel.dev); the existing infrastructure identifiers remain compatible with stored data.
 
 Use [the deployment runbook](docs/runbooks/aws-deployment.md) and [cost plan](docs/runbooks/aws-cost-plan.md) for operating the host. `npm run operations` adds private Grafana, Prometheus and Jaeger. The [observability guide](docs/learning/phase-5/06-observability.md) connects those signals to upload processing, playback and API traffic. `npm run kube -- up` runs the separate local Helm/kind exercise; it does not provision EKS.
 

@@ -21,3 +21,9 @@ Processing events describe coordinator state, while commands describe newer crea
 A React request cache also has an ownership boundary: URL alone is insufficient for a private playlist. Adding account identity to the resource scope clears the visible result synchronously during render, aborts the older request and reloads under the new session. The video player can continue because public playback has separate authorization.
 
 Storage allowance should become available when abandoned objects are actually gone. The sweeper now tracks completion of both paginated bucket walks and retries unsuccessful pages. Its conservative settlement cutoff covers the maximum lifetime of a stopped worker, so a late write is still covered by the earlier reservation.
+
+## Final product and deployment review
+
+The same authorized independent reviewer checked the completed operator workspace and domain migration. Three deployment findings were corrected in `7b10aee`: the API and gateway use the same stable trusted client-IP header, the legacy redirect hostname is present in Envoy's virtual-host domains, and a domain update atomically changes both HTTP/WSS origins while retaining all credential lines. Focused unit tests, the real Envoy rehearsal and application integration checks cover these changes.
+
+The reviewer found no additional concrete blocker in the inspected CloudFront configuration, static export paths or header forwarding. This was a read-only source review, separate from live cutover verification. It also reconciled the final HLS and peer tables against raw records, including the failed 50-client deadline condition and aggregate dropped-frame limitations. The operator workspace reuses the existing role model and transactional job actions; it does not grant ordinary creators access to private operator data.

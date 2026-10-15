@@ -1,6 +1,6 @@
 openapi: 3.1.1
 info:
-  title: PeerScreen catalogue API
+  title: PeerShare catalogue API
   version: 1.0.0
   description: Identity, creator media and public catalogue contract. Mutations require the exact configured Origin header. Cookie sessions are stored as hashes and checked against PostgreSQL on each authenticated request.
 servers:
@@ -73,7 +73,7 @@ paths:
   /api/v1/auth/google/callback:
     get:
       operationId: finishGoogleAuthentication
-      description: Consumes matching state and browser binding once, exchanges code with PKCE, validates signed ID token and nonce, then creates an existing database-backed PeerScreen session or explicitly connects the identity. No provider access or refresh tokens are persisted.
+      description: Consumes matching state and browser binding once, exchanges code with PKCE, validates signed ID token and nonce, then creates an existing database-backed PeerShare session or explicitly connects the identity. No provider access or refresh tokens are persisted.
       parameters:
         - name: state
           in: query

@@ -1,0 +1,218 @@
+{
+  "checkedAt": "2026-10-15T17:11:55.630Z",
+  "release": "7b10aeee685dc4ce2fb2a1edeb0b048eb2c41f78",
+  "base": "https://peershare.darshpatel.dev",
+  "dns": "Normal public DNS; no address override or TLS bypass",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "RefreshHit from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/account/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "RefreshHit from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/channel/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "RefreshHit from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/studio/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "RefreshHit from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/watch/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "RefreshHit from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/library/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "RefreshHit from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/playlist/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "RefreshHit from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/following/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "RefreshHit from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/analytics/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "Miss from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/settings/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "RefreshHit from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/operator/",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "Miss from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/api/v1/videos",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "Miss from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/api/v1/operator/jobs",
+      "status": 401,
+      "edge": "DEL54-P3",
+      "cache": "Error from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/metrics",
+      "status": 403,
+      "edge": "DEL54-P3",
+      "cache": "Error from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/api/v1/videos/a2003d75-8ca2-4198-aead-fd33e5933ff6",
+      "status": 404,
+      "edge": "DEL54-P3",
+      "cache": "Error from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/api/v1/videos/853f24f7-c632-4909-8e82-f0b5ba26401b",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "Miss from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/media/videos/853f24f7-c632-4909-8e82-f0b5ba26401b/bf770da7-b508-43c4-a0f9-69ea1b20660b/b3231766-370b-4007-9396-84248e4439c2/thumbnail.jpg",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "Miss from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/media/videos/853f24f7-c632-4909-8e82-f0b5ba26401b/bf770da7-b508-43c4-a0f9-69ea1b20660b/b3231766-370b-4007-9396-84248e4439c2/master.m3u8",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "Miss from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/media/videos/853f24f7-c632-4909-8e82-f0b5ba26401b/bf770da7-b508-43c4-a0f9-69ea1b20660b/b3231766-370b-4007-9396-84248e4439c2/integrity.json",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "Miss from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    },
+    {
+      "path": "/_next/static/chunks/app/account/page-b97885022c8d438e.js",
+      "status": 200,
+      "edge": "DEL54-P3",
+      "cache": "Miss from cloudfront",
+      "age": null,
+      "nosniff": "nosniff"
+    }
+  ],
+  "scope": "Public release smoke check; two browser contexts on one workstation, not a capacity or cross-network benchmark",
+  "publishedVideos": 19,
+  "originalAssets": {
+    "thumbnail": {
+      "sha256": "7e743d6bed5c542d03dbf7bf30cfab140e4a485c6aeb69784a6fe40ef8498ff1",
+      "unchanged": true
+    },
+    "manifest": {
+      "sha256": "bafe5396e47f35079661c77c6a29046944451e4e10bd9b57853cf8679372b225",
+      "unchanged": true
+    },
+    "integrity": {
+      "sha256": "c3e738e746db89bee55d2a091f40754e3851b813294732f2f76f7cd1ef3dd989",
+      "unchanged": true
+    }
+  },
+  "retainedChunk": {
+    "path": "/_next/static/chunks/app/account/page-b97885022c8d438e.js",
+    "sha256": "ad8852849dd00a09f11ce493b01bc85931f4649eda8a343c3721b6c4ed0cb26e"
+  },
+  "legacyRedirect": {
+    "status": 308,
+    "location": "https://peershare.darshpatel.dev/watch/?v=853f24f7-c632-4909-8e82-f0b5ba26401b"
+  },
+  "browser": "156.0.8078.4",
+  "peerPlayback": [
+    {
+      "httpBytes": 224472,
+      "peerBytes": 36472,
+      "uploadedBytes": 94940,
+      "rejectedSegments": 0,
+      "currentTime": 11.6185,
+      "height": 480
+    },
+    {
+      "httpBytes": 166004,
+      "peerBytes": 94940,
+      "uploadedBytes": 36472,
+      "rejectedSegments": 0,
+      "currentTime": 4.6003,
+      "height": 480
+    }
+  ],
+  "sharingOff": {
+    "checked": false,
+    "playbackContinued": true
+  },
+  "trackerSockets": ["wss://peershare.darshpatel.dev/tracker"],
+  "pageErrors": [],
+  "passed": true
+}

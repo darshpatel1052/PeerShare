@@ -21,11 +21,13 @@ The normal user's original video, channel and artwork were preserved through the
 - `npm run kube -- up`: run the same images in a separate local Kubernetes environment on port 3400. Follow the [Helm exercise](../learning/phase-6/02-kubernetes.md) to inspect probes, Services, migrations and API scaling.
 - The packaged HTTPS rehearsal and prior real outage experiments are available when explaining routing and recovery. They support the product; they are not the first screen of its demonstration.
 
-## Public release and later CloudFront cutover
+## PeerShare public release
 
-The app is live at [peerscreen.darshpatel.dev](https://peerscreen.darshpatel.dev), using direct HTTPS/WSS on the existing host with private S3. The user confirmed production Google sign-in and the existing workspace, and reported successful cross-network peer playback. The [manual record](../evidence/phase-6/user-confirmations.json) distinguishes that report from instrumented browser evidence.
+The public product address is [peershare.darshpatel.dev](https://peershare.darshpatel.dev). CloudFront serves its static frontend from private S3 and routes uncached API, media and WebSocket traffic to the existing HTTPS origin. The old PeerScreen hostname is retained for the origin and a public redirect. The [deployment runbook](aws-deployment.md) records the exact cutover configuration and final verification evidence.
 
-CloudFront account verification remains deferred. Keep the Free plan and the existing certificate/origin records. Once AWS approves, follow the [AWS deployment runbook](aws-deployment.md): review the complete Terraform plan, enable the distribution, update only the final `peerscreen` routing record in Name.com, and coordinate origin trust/firewall/certificate changes. Recheck public routes, Google callback, WSS, media authorization and the original artwork/media after cutover. Do not create another host or restore an old data snapshot during an application update.
+The user previously confirmed production Google sign-in and their existing workspace on the direct deployment, and reported successful cross-network peer playback. The [manual record](../evidence/phase-6/user-confirmations.json) distinguishes that report from instrumented browser evidence. Sign in again on the new hostname because session cookies belong to their specific host; the account and channel are unchanged.
+
+The project owner's account also has **Platform operations** in the workspace navigation. It lists real processing jobs, storage and audited job actions. Ordinary creator accounts do not receive operator access. Start a demonstration with discovery, publishing and playback before opening these operating tools.
 
 The host's fixed shutdown deadline is unchanged. A stopped host requires a deliberate bounded restart; waiting does not grant another free 24-hour window. Retained disks, storage and the address can still incur retention costs.
 

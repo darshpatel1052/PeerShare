@@ -77,7 +77,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** @description Consumes matching state and browser binding once, exchanges code with PKCE, validates signed ID token and nonce, then creates an existing database-backed PeerScreen session or explicitly connects the identity. No provider access or refresh tokens are persisted. */
+    /** @description Consumes matching state and browser binding once, exchanges code with PKCE, validates signed ID token and nonce, then creates an existing database-backed PeerShare session or explicitly connects the identity. No provider access or refresh tokens are persisted. */
     get: operations["finishGoogleAuthentication"];
     put?: never;
     post?: never;

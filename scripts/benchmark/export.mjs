@@ -59,6 +59,7 @@ for (const label of ["before-index", "before-index-bounded", "after-index"])
     true,
   );
 for (const [from, to] of [
+  [".local/benchmark/media/cleanup.json", "temporary-video-cleanup.json"],
   [".local/benchmark/stopped.json", "catalogue-processes-stopped.json"],
   [
     ".local/evidence/public-release-preservation.json",

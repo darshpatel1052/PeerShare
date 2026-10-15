@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-15T12:16:51.985Z",
+  "checkedAt": "2026-10-15T13:12:58.009Z",
   "scope": "Allowlisted raw measurements only; no credential/session/fixture files; SHA-256 fingerprints of delivered raw artifacts",
   "files": [
     {
@@ -523,9 +523,104 @@
       "sha256": "fcd3784712486f607cb8914b9b441f2a720c4701a628078063576f0326ac24f3"
     },
     {
+      "path": "raw/public-peers-v1/peer-comparison.json",
+      "bytes": 29469,
+      "sha256": "58172c4b063564ac5f9e566941ae25c847b7d55d6ea36b5a5015a11e3668bd11"
+    },
+    {
+      "path": "raw/public-peers-v1/peer-watch.png",
+      "bytes": 162452,
+      "sha256": "2bd1113f3caad3015612eeddcbffc05f114d6a0092ea6041ad083f204286f6a8"
+    },
+    {
+      "path": "raw/public-peers-v1/round-1-http-only-counters.json",
+      "bytes": 7846,
+      "sha256": "78a73f6d147a3191f52443cc6340bb9735b4865a5c19f1c6a52c2ed7395c0cc2"
+    },
+    {
+      "path": "raw/public-peers-v1/round-1-peer-assisted-counters.json",
+      "bytes": 12138,
+      "sha256": "9f3f73b0b225168b9baa731fe5ba557f2c1507d24aff38f9813f1c42178202bc"
+    },
+    {
+      "path": "raw/public-peers-v1/round-2-http-only-counters.json",
+      "bytes": 12426,
+      "sha256": "ae49a64037b9e5ae725644b4b28807f94335b8abe5c1c479f2553044aa5fa4e9"
+    },
+    {
+      "path": "raw/public-peers-v1/round-2-peer-assisted-counters.json",
+      "bytes": 13529,
+      "sha256": "f81d82e42bdc810f5fa88fbc6eb7ee6091b73de3ad0ce3e8378e266c5f2992f7"
+    },
+    {
+      "path": "raw/public-peers-v1/round-3-http-only-counters.json",
+      "bytes": 14082,
+      "sha256": "7b663c17892113b80fba1d7ee520895255bcec752637dd0452f6cb08091f863d"
+    },
+    {
+      "path": "raw/public-peers-v1/round-3-peer-assisted-counters.json",
+      "bytes": 14089,
+      "sha256": "48f5009e61163fe08af970575544f3cf5fe17655d0274e18ebc5296d96f0feea"
+    },
+    {
       "path": "raw/public-release-preservation.json",
       "bytes": 1005,
       "sha256": "db5a5640b3356e90c6ce05c7a900f4869a3ca39fb5d6326b3616fffa15b054b8"
+    },
+    {
+      "path": "raw/public-segments-after/campaign.json",
+      "bytes": 1534,
+      "sha256": "0ed969001c850bc23d182b8d9cb2b332af863fe754df63de010087923e692c31"
+    },
+    {
+      "path": "raw/public-segments-after/clients-1/generator.json",
+      "bytes": 96,
+      "sha256": "a9d05dbe5aaae141360e692af350a9da91015d8bd5aa6d8289e4e368f801aeeb"
+    },
+    {
+      "path": "raw/public-segments-after/clients-1/server-counters.json",
+      "bytes": 3974,
+      "sha256": "31c1c5a19033b0cebaae15dc33de0d50171c575c4928c049c1ac8d53f7ed7c3e"
+    },
+    {
+      "path": "raw/public-segments-after/clients-1/summary.json",
+      "bytes": 6044,
+      "sha256": "c2d5452928fc7609e856e9ed8b3f1622652413057b18b2c9bac6d0aeee2ac819"
+    },
+    {
+      "path": "raw/public-segments-after/clients-25/generator.json",
+      "bytes": 96,
+      "sha256": "7b0e2a6783a51d30f0438e2a261dce066bfaa63650ceabfd5086800153a770f8"
+    },
+    {
+      "path": "raw/public-segments-after/clients-25/server-counters.json",
+      "bytes": 3980,
+      "sha256": "c3d12ed269ff3e8027a9907cb6d24874222cb2d136495a92b12cb5394399a0d5"
+    },
+    {
+      "path": "raw/public-segments-after/clients-25/summary.json",
+      "bytes": 6092,
+      "sha256": "d8e6d7e8f0415bcd853355706062b2eb971defa732b40e50cb497fd26cfe933e"
+    },
+    {
+      "path": "raw/public-segments-after/clients-50/generator.json",
+      "bytes": 98,
+      "sha256": "193e525d6f7e8816889bf19fa80c85ea79066856710b063bb6af8ceaad2f3b52"
+    },
+    {
+      "path": "raw/public-segments-after/clients-50/server-counters.json",
+      "bytes": 3985,
+      "sha256": "76701b29630b6c8d96c1ac37f096d64b3e7a82de30f61817fc349c2b4024c062"
+    },
+    {
+      "path": "raw/public-segments-after/clients-50/summary.json",
+      "bytes": 6151,
+      "sha256": "1540a4656ef0a71fae5f34f93b0b2bcc7cdaa73edce6a79f248f14c65a296e31"
+    },
+    {
+      "path": "raw/public-segments-after/resources.jsonl",
+      "bytes": 61782,
+      "sha256": "d6d58cf625bb0a6cd39836bad20686b1dc2ff5a70c22c464df4d7416e580ddef"
     },
     {
       "path": "raw/public-segments-before/campaign.json",
@@ -566,6 +661,11 @@
       "path": "raw/public-segments-before/resources.jsonl",
       "bytes": 34740,
       "sha256": "3a0f344e6dffdba923c6c1d96149a245c5906c8a8b5105e5203da4d114b1c86e"
+    },
+    {
+      "path": "raw/temporary-video-cleanup.json",
+      "bytes": 292,
+      "sha256": "58f90c11124f7b2388d8c0fdf52e8182378f2b607fcff18e59415848e8167f35"
     }
   ]
 }

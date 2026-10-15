@@ -1,14 +1,14 @@
 # From working code to a measured public product
 
-This chapter first describes the verified direct HTTPS release, then its transition to PeerShare through CloudFront. The distribution is now deployed; the current hostname cutover is recorded in the deployment runbook. The original delivery path was browser → HTTPS Envoy gateway → Go catalogue or static frontend/tracker. Media requests still pass Go's current PostgreSQL ownership/publication check before it reads private S3 objects.
+This chapter first describes the verified direct HTTPS release, then its transition to PeerShare through CloudFront. The distribution and PeerShare hostname cutover are now deployed; [live evidence](../../evidence/phase-6/peershare-cloudfront/) records normal DNS, preserved media and WSS peer playback. The original delivery path was browser → HTTPS Envoy gateway → Go catalogue or static frontend/tracker. Media requests still pass Go's current PostgreSQL ownership/publication check before it reads private S3 objects.
 
 ## HTTPS and CloudFront solve different problems
 
-HTTPS authenticates the server hostname and encrypts the connection. The free public certificate belongs to `peerscreen.darshpatel.dev`; the older origin certificate belongs to `origin-peerscreen.darshpatel.dev`. A valid certificate for one does not validate the other. DNS must point the requested hostname to the server before HTTP-01 issuance can succeed.
+HTTPS authenticates the server hostname and encrypts the connection. The public edge uses an ACM certificate for `peershare.darshpatel.dev`. CloudFront connects to the retained `peerscreen.darshpatel.dev` origin using its separate Certbot certificate; the older `origin-peerscreen.darshpatel.dev` certificate is retained. A valid certificate for one does not validate the other. DNS must point the requested hostname to the server before HTTP-01 issuance can succeed.
 
 A CDN places delivery closer to viewers and can cache selected responses. It is not necessary to have HTTPS, secure cookies, OIDC or WSS. Direct mode serves these through the existing EC2 host while AWS reviews the CloudFront case. It has one-region latency and the host's capacity. No additional VM or load balancer was provisioned for the change.
 
-Terraform's `enable_cloudfront` input makes the chosen path explicit. Direct mode adds public 443 access and creates no distribution. CloudFront mode uses its managed origin-facing prefix list and a private origin header. In direct mode, client-IP information comes from the real connection; a viewer cannot supply a trusted CloudFront address. Database ports, metrics and operator panels remain private. All S3 public-access blocks remain enabled.
+Terraform's `enable_cloudfront` input makes the chosen path explicit. Direct mode adds public 443 access and creates no distribution. CloudFront mode uses its managed origin-facing prefix list and a private origin header. In direct mode, client-IP information comes from the real connection; a viewer cannot supply a trusted CloudFront address. Database ports and metrics remain private. The application operator workspace is available over public HTTPS only to a current operator session; ordinary viewers cannot access its data. All S3 public-access blocks remain enabled.
 
 The eventual CDN cutover needs coordinated DNS, gateway trust, certificate and network-rule changes. Creating a distribution alone would not finish it. The [deployment runbook](../../runbooks/aws-deployment.md) records that procedure.
 

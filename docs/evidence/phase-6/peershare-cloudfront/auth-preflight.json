@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-10-15T13:27:07.847Z",
+  "scope": "Actual CloudFront origin and Google redirect configuration check; does not claim user completed Google sign-in on the new hostname",
+  "googleStartStatus": 200,
+  "googleAuthHost": "accounts.google.com",
+  "googleCallback": "https://peershare.darshpatel.dev/api/v1/auth/google/callback",
+  "googleFlowCookieSecure": true
+}

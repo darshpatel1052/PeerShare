@@ -94,16 +94,48 @@ Independent output inspection checked all seven jobs, fourteen renditions, manif
 
 ## Video delivery
 
+### Verified HLS segment clients
+
 The first anonymous HLS trial at 25 simulated playback clients exposed a real admission bottleneck: 107 of 200 segment requests passed full size/hash checks; 93 returned 503, a 46.5% failure rate. Four concurrent S3 reads per API immediately rejected excess requests. Those failed results are retained.
 
-Release `4e689dd` adds bounded waiting behind the same four active reads per API, without increasing simultaneous media-buffer allocation. A matched repeat and fresh-browser HTTP/peer comparison are still being completed. They will be reported separately from the catalogue campaign and will not be inferred from older one-video examples.
+Release `4e689dd` adds bounded waiting behind the same four active reads per API, without increasing simultaneous media-buffer allocation. The repeat used the same source, fixed 480p rendition, paced fragment requests and full SHA-256 verification.
 
-A simulated segment client is not a decoding browser. Peer tests must compare equivalent complete playback, fresh browser caches and consent setup, report real decoded playback and rejected segments, and preserve each repeated run. Server payload reduction is not measured AWS billing savings.
+| Condition    | Simulated clients | Segment requests | Verified payload bytes | Request failures | Late fragments | p95 request ms | Result |
+| ------------ | ----------------: | ---------------: | ---------------------: | ---------------: | -------------: | -------------: | ------ |
+| Before queue |                25 |              200 |             32,584,724 |            46.5% |        See raw |         465.50 | Fail   |
+| After queue  |                 1 |                3 |                976,472 |               0% |             0% |         725.80 | Pass   |
+| After queue  |                25 |              200 |             61,715,700 |               0% |             0% |       1,685.40 | Pass   |
+| After queue  |                50 |              400 |            123,431,400 |               0% |          9.75% |       4,381.50 | Fail   |
+
+The 50-client level failed its playback deadline criterion despite having no HTTP failures. The campaign stopped there; 100 clients were not attempted. A simulated segment client does not run a page or decode video, so this is not a claim of 25 or 50 smooth browser viewers. The one-client probe is deliberately short and is not a sustained capacity result.
+
+During this campaign the workstation's network egress changed, and the legacy origin DNS records stopped resolving. The after-queue and browser trials explicitly resolved the configured application hostname to its existing AWS EIP, retaining normal TLS/SNI certificate verification. Raw records name that override. These trials measure actual public AWS HTTPS/WSS, but do not verify normal DNS or CloudFront delivery. The before/after latency difference is not a controlled network comparison; lower HTTP rejection follows the admission change, while latency also includes the changed path and bounded waiting.
+
+### Three real-browser HTTP/peer comparisons
+
+Each condition opened eight fresh, cache-disabled Chromium contexts on one external Linux workstation. All viewers played the same approximately 30-second clip at 480p to its end. One viewer began four seconds ahead in both conditions. The peer condition enabled sharing through the product UI; the extra media traffic during consent setup is reported separately and included in the conservative reduction figure.
+
+The origin metric sums actual media-route response-body counters across both public API replicas, including partial responses, manifests and integrity descriptors. It excludes HTTP/TLS overhead and is not an AWS billing metric. Browser counters separately report verified media payload. Other media requests on the quiet demo site could inflate a measured origin window.
+
+| Pair | HTTP-only origin body bytes | Peer playback origin body bytes | Peer consent setup body bytes | Verified peer payload bytes | Reduction including setup | Reduction excluding setup |
+| ---- | --------------------------: | ------------------------------: | ----------------------------: | --------------------------: | ------------------------: | ------------------------: |
+| 1    |                  22,466,292 |                       9,448,652 |                     5,217,006 |                  10,447,724 |                    34.72% |                    57.94% |
+| 2    |                  21,823,709 |                       9,448,652 |                     1,757,086 |                  10,447,724 |                    48.65% |                    56.70% |
+| 3    |                  22,466,155 |                       9,448,652 |                     4,276,312 |                  10,447,724 |                    38.91% |                    57.94% |
+
+All 48 viewer runs reached the clip end with verified segments and zero rejected segments. Across the three peer conditions, browsers received **31,343,172 verified peer payload bytes**. The conservative measured reduction in origin media response-body bytes, including consent setup, was **34.7–48.7%**. This is evidence of actual browser-to-browser transfer, not a projection from the catalogue API rate.
+
+There is a material rendering limit: the eight-context headless generator reported **23.6–29.2% dropped video frames in aggregate per condition** across conditions, and wall time exceeded source duration. Some HTTP viewers requested an extra fragment; per-viewer frame, request and playback counters are preserved. Completion and integrity checks passed, but equivalent perfectly rendered frames were not established. Do not advertise this experiment as smooth eight-viewer rendering capacity or a perfectly matched decoded-frame efficiency result. It supports measured origin-byte reduction for these complete playback runs. A hardware-separated viewing study would be needed to measure user-perceived playback capacity.
+
+These contexts share one workstation and network. The separate user-reported cross-network test has no supplied device counters. Neither experiment establishes an arbitrary NAT traversal success rate. The temporary public measurement clip was unpublished after the final run; the normal editorial catalogue remains available.
+
+![Repeated peer comparisons, including consent setup traffic](figures/peer-delivery.png)
 
 ## Resume wording supported now
 
 - Built a Go/Next.js video platform with resumable publishing, adaptive HLS, private S3, Google OIDC, Kafka/gRPC media services and opt-in verified WebRTC delivery.
 - Load-tested an isolated 100k-video catalogue at 200 offered operations/sec across three two-minute trials on a 2-vCPU/8-GiB AWS host: 72,002 validated operations, p95 ≤55 ms, p99 ≤99 ms, zero request failures or dropped iterations.
+- Reduced origin media response-body bytes by 34.7–48.7%, including sharing setup, in three eight-browser 30-second HTTP/peer comparisons; verified 31.3 MB of peer payload across those runs.
 - Processed a 120-second 1080p source into 480p/720p HLS in 94.1 seconds after upload completion; verified fourteen renditions across seven real pipeline jobs.
 
 Do not describe the 10,000 synthetic accounts as active customers, the 100,000 rows as encoded videos, the 200 API operations/sec as video viewers, or the failed stress spike as successful throughput. Multi-network playback was user-reported; no device counters were supplied. No billed cost-saving percentage is established.
