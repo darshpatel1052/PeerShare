@@ -39,6 +39,7 @@ services:
     environment:
       <<: *storage
       UPLOADS_ENABLED: "true"
+      CREATOR_APPROVAL_REQUIRED: "false"
     volumes:
       - /srv/peerscreen/roles/catalogue:/run/aws:ro
     logging: *logs

@@ -1,0 +1,6 @@
+# The ordinary development app has no Envoy gateway. Gateway rehearsals retain
+# the complete scrape configuration from operations.yml.
+services:
+  prometheus:
+    volumes:
+      - ../operations/prometheus-development.yml:/etc/prometheus/prometheus.yml:ro

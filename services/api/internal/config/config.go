@@ -13,33 +13,34 @@ import (
 )
 
 type Config struct {
-	TrustedProxies        []netip.Prefix
-	ReplicaDiagnostics    bool
-	ReadOnly              bool
-	STUNURLs              []string
-	MediaAddress          string
-	CatalogRPCToken       string
-	KafkaServers          string
-	ExposeOperatorFixture bool
-	GoogleClientID        string
-	GoogleClientSecret    string
-	DatabaseURL           string
-	RedisURL              string
-	AnalyticsRedisURL     string
-	ListenAddr            string
-	AppOrigin             string
-	MediaBaseURL          string
-	TrackerURL            string
-	Environment           string
-	RegistrationEnabled   bool
-	UploadsEnabled        bool
-	CookieName            string
-	SecureCookies         bool
-	SessionTTL            time.Duration
-	AuthLimit             int64
-	RatePrefix            string
-	UploadDir             string
-	MediaDir              string
+	TrustedProxies          []netip.Prefix
+	ReplicaDiagnostics      bool
+	ReadOnly                bool
+	STUNURLs                []string
+	MediaAddress            string
+	CatalogRPCToken         string
+	KafkaServers            string
+	ExposeOperatorFixture   bool
+	GoogleClientID          string
+	GoogleClientSecret      string
+	DatabaseURL             string
+	RedisURL                string
+	AnalyticsRedisURL       string
+	ListenAddr              string
+	AppOrigin               string
+	MediaBaseURL            string
+	TrackerURL              string
+	Environment             string
+	RegistrationEnabled     bool
+	UploadsEnabled          bool
+	CreatorApprovalRequired bool
+	CookieName              string
+	SecureCookies           bool
+	SessionTTL              time.Duration
+	AuthLimit               int64
+	RatePrefix              string
+	UploadDir               string
+	MediaDir                string
 }
 
 const DefaultSTUNURL = "stun:stun.cloudflare.com:3478"
@@ -106,6 +107,13 @@ func Load() (Config, error) {
 	cfg.SecureCookies = cfg.Environment == "production"
 	cfg.RegistrationEnabled = !cfg.SecureCookies
 	cfg.UploadsEnabled = !cfg.SecureCookies
+	if raw := os.Getenv("CREATOR_APPROVAL_REQUIRED"); raw != "" {
+		enabled, err := strconv.ParseBool(raw)
+		if err != nil {
+			return cfg, errors.New("CREATOR_APPROVAL_REQUIRED must be a boolean")
+		}
+		cfg.CreatorApprovalRequired = enabled
+	}
 	if raw := os.Getenv("UPLOADS_ENABLED"); raw != "" {
 		enabled, err := strconv.ParseBool(raw)
 		if err != nil {

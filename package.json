@@ -13,6 +13,7 @@
   },
   "scripts": {
     "dev": "node scripts/dev.mjs",
+    "dev:observed": "node scripts/operations.mjs",
     "web-build": "npm run build --workspace=@peershare/web",
     "typecheck": "tsc --noEmit -p apps/web/tsconfig.json",
     "format": "prettier --write .",

@@ -15,9 +15,19 @@ func TestProductionRejectsUnsafeBrowserDefaults(t *testing.T) {
 	t.Setenv("MEDIA_BASE_URL", "https://media.peerscreen.example/")
 	t.Setenv("TRACKER_URL", "wss://peerscreen.example/tracker")
 	cfg, err := Load()
-	if err != nil || !cfg.SecureCookies || cfg.CookieName != "__Host-peerscreen_session" || cfg.RegistrationEnabled || cfg.UploadsEnabled {
+	if err != nil || !cfg.SecureCookies || cfg.CookieName != "__Host-peerscreen_session" || cfg.RegistrationEnabled || cfg.UploadsEnabled || cfg.CreatorApprovalRequired {
 		t.Fatal("production cookie/admission configuration invalid")
 	}
+	t.Setenv("CREATOR_APPROVAL_REQUIRED", "true")
+	cfg, err = Load()
+	if err != nil || !cfg.CreatorApprovalRequired {
+		t.Fatal("explicit invitation policy must remain available")
+	}
+	t.Setenv("CREATOR_APPROVAL_REQUIRED", "invalid")
+	if _, err := Load(); err == nil {
+		t.Fatal("invalid invitation policy accepted")
+	}
+	t.Setenv("CREATOR_APPROVAL_REQUIRED", "false")
 	t.Setenv("REGISTRATION_ENABLED", "true")
 	if _, err := Load(); err == nil {
 		t.Fatal("production signup must stay disabled until an admission policy exists")

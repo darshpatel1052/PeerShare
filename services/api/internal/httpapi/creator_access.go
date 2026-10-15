@@ -9,7 +9,7 @@ import (
 )
 
 func (a *App) creatorAccess(w http.ResponseWriter, r *http.Request) bool {
-	if a.Config.Environment != "production" {
+	if !a.Config.CreatorApprovalRequired {
 		return true
 	}
 	allowed, err := a.Store.CreatorAllowed(r.Context(), identity(r).ID)

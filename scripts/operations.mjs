@@ -23,7 +23,12 @@ const value = (await readFile(file, "utf8"))
 if (!value) throw new Error("Invalid private operator settings");
 process.env.GRAFANA_ADMIN_PASSWORD = value[1];
 process.env.PEERSCREEN_WITH_OPERATIONS = "true";
-const options = { overlays: ["deploy/compose/operations.yml"] };
+const options = {
+  overlays: [
+    "deploy/compose/operations.yml",
+    "deploy/compose/operations-development.yml",
+  ],
+};
 if ((process.argv[2] || "up") === "up") {
   await compose(
     ["up", "-d", "--no-build", "prometheus", "grafana", "jaeger"],

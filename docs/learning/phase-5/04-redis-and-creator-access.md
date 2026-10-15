@@ -22,7 +22,9 @@ Go's `atomic.Uint64` supports concurrent counter increments without locking the 
 
 ## Production creator permission
 
-Account identity, channel ownership and permission to start expensive work are distinct. Production registration remains closed for the initial release. Existing/restored accounts can sign in. A signed-in account receives creator permission only when its user ID has a nonexpired row in `catalog.creator_access`.
+Every signed-in account can create a channel, upload and publish by default, subject to ownership, rate and storage limits. Operator status is only for platform administration. Production registration remains closed; existing/restored accounts can sign in. The hosted deployment explicitly sets `CREATOR_APPROVAL_REQUIRED=false`.
+
+An optional invitation policy can be enabled with `CREATOR_APPROVAL_REQUIRED=true`. Only in that mode does a creator need a nonexpired row in `catalog.creator_access`; selecting production mode alone does not require approval.
 
 The table contains `user_id` (primary/foreign key), `granted_at` and `expires_at`. An operator with server access uses:
 
@@ -33,14 +35,14 @@ The table contains `user_id` (primary/foreign key), `granted_at` and `expires_at
 
 The grant lasts 1–720 hours. This command grants permission to an **existing** PeerShare account; it does not invite an email, create an account or connect a Google identity. No public administrative endpoint is added. PostgreSQL's clock decides whether the grant remains live. The existing owners are not silently approved during migration.
 
-Production channel creation, artwork writes, new uploads, part grants/transfer, completion and processing retries check this permission. New upload setup and processing retries additionally use a shared per-user Redis limit of ten requests per minute. Existing PostgreSQL quota checks still serialize creator/platform storage reservations. These controls serve different purposes: request rate, permission and total capacity.
+When invitation-only access is explicitly enabled, channel creation, artwork writes, new uploads, part grants/transfer, completion and processing retries check this permission. New upload setup and processing retries additionally use a shared per-user Redis limit of ten requests per minute. Existing PostgreSQL quota checks still serialize creator/platform storage reservations. These controls serve different purposes: request rate, permission and total capacity.
 
-Revoked creators can inspect or abort an old upload and remove their videos. Already accepted processing work follows its existing job state; revoking permission does not pretend that a queued job was cancelled. Development keeps the normal open local creator workflow. `UPLOADS_ENABLED` is a separate deployment switch; production defaults to false, and enabling it does not bypass approval.
+Revoked creators can inspect or abort an old upload and remove their videos. Already accepted processing work follows its existing job state; revoking permission does not pretend that a queued job was cancelled. `UPLOADS_ENABLED` is a separate deployment switch; production defaults to false and the hosted application enables it. Enabling uploads does not bypass an explicitly enabled invitation policy.
 
 ## Hands-on exercise
 
 Sign in to the local app, open Analytics twice, and inspect the private cache counters through the internal API metrics. Play your video and press Refresh: the new report is read from PostgreSQL. Inspect `analytics_cache.go`, then follow its call to `AnalyticsScope` and `CreatorAnalytics` to see how cache data and database authority differ.
 
-In the isolated production rehearsal, grant a creator for a bounded period, start an upload, revoke the permission and try sending another part. That operation is refused while abort remains available. Do not run expiry/revocation experiments against another person's account.
+In an isolated rehearsal with `CREATOR_APPROVAL_REQUIRED=true`, grant a creator for a bounded period, start an upload, revoke the permission and try sending another part. That operation is refused while abort remains available. Do not run expiry/revocation experiments against another person's account.
 
 References: [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/), [Redis eviction policies](https://redis.io/docs/latest/develop/reference/eviction/). The exact bounds above are PeerShare's implementation choices.

@@ -192,7 +192,7 @@ The guides connect what the user does to the React component, API, Go implementa
 
 The hosted application uses **CloudFront, private S3 and one Mumbai EC2 host**, with two API replicas sharing that machine. The database and Kafka broker are single instances. AWS runs within the selected Free plan and credits with a bounded demo lifetime; the demo can be offline outside that window. [Deployment runbook](docs/runbooks/aws-deployment.md) · [Cost and retention plan](docs/runbooks/aws-cost-plan.md) · [Verified CloudFront cutover](docs/evidence/phase-6/peershare-cloudfront/README.md).
 
-Public registration is closed and publishing requires creator approval. Password recovery, email verification, a TURN relay and multi-host availability remain future work. Native HLS has different measurement capabilities from the verified Chromium path. Existing database, cookie, environment and protocol identifiers retain some `peerscreen` prefixes for compatibility; historical records keep their original names and release hashes.
+Public registration is closed. Every signed-in account can create a channel and publish within existing upload, rate and storage limits; platform operations remain restricted to operators. Invitation-only creator access is an explicit opt-in (`CREATOR_APPROVAL_REQUIRED=true`) and is disabled on the hosted application. Password recovery, email verification, a TURN relay and multi-host availability remain future work. Native HLS has different measurement capabilities from the verified Chromium path. Existing database, cookie, environment and protocol identifiers retain some `peerscreen` prefixes for compatibility; historical records keep their original names and release hashes.
 
 <details>
 <summary><strong>Development checks and private operator tools</strong></summary>
@@ -208,7 +208,7 @@ npm run test:browser
 
 Dependency-based suites share a disposable test project and run sequentially. The normal app's data is retained. The [review resolution](docs/reviews/2026-10-15-review-resolution.md) records the latest product fixes.
 
-- `npm run operations` starts private Grafana, Prometheus and Jaeger. [Observability guide](docs/learning/phase-5/06-observability.md).
+- `npm run dev:observed` (also `npm run operations`) starts the development app with private Grafana, Prometheus and Jaeger collecting real application metrics and traces. This profile is not enabled on the hosted EC2 deployment. [Observability guide](docs/learning/phase-5/06-observability.md).
 - `npm run kube -- up` starts the separate local Helm/kind exercise. It does not provision EKS. [Kubernetes guide](docs/learning/phase-6/02-kubernetes.md).
 - The [media, gateway and recovery runbooks](docs/runbooks) explain the supporting checks.
 

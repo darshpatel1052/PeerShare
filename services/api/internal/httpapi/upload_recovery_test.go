@@ -447,6 +447,8 @@ func TestIntegrationRealTranscodePrivatePreviewPublicationAndDeletion(t *testing
 	}
 	c := client()
 	u, me := newUpload(t, f, c, payload)
+	// Ordinary production members can transfer and publish without invitations.
+	f.App.Config.Environment = "production"
 	completeBytes(t, f, c, u, payload)
 	job := claim(t, f)
 	if err = f.App.processMediaJob(ctx, job); err != nil {
