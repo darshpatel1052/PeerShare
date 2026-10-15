@@ -103,6 +103,60 @@ func TestIntegrationSubscriptionsReplayFollowingAndSearch(t *testing.T) {
 	libraryRequest(t, f, viewer, "GET", "/api/v1/videos?q="+strings.Repeat("a", 121), nil, 400, nil, nil)
 	libraryRequest(t, f, viewer, "POST", "/api/v1/channels/"+channel.ID+"/subscription", map[string]any{}, 403, nil, map[string]string{"Origin": "https://invalid.example"})
 }
+
+func TestIntegrationSearchMergesChannelAndTextMatchesWithoutDuplicates(t *testing.T) {
+	f := setup(t)
+	owner := client()
+	registerUser(t, f, owner)
+	channel := createChannel(t, f, owner, "compass-workshop")
+	mustExec(t, f, `UPDATE catalog.channels SET title='Compass Workshop' WHERE id=$1`, channel.ID)
+	both := libraryVideo(t, f, channel.ID, "Compass navigation")
+	channelOnly := libraryVideo(t, f, channel.ID, "River navigation")
+	hidden := libraryVideo(t, f, channel.ID, "Compass private cut")
+	mustExec(t, f, `UPDATE catalog.videos SET publication_state='unpublished' WHERE id=$1`, hidden)
+	fixture := libraryVideo(t, f, channel.ID, "Compass fixture")
+	mustExec(t, f, `UPDATE catalog.videos SET source_kind='fixture' WHERE id=$1`, fixture)
+	f.App.Config.ExposeOperatorFixture = false
+	otherOwner := client()
+	registerUser(t, f, otherOwner)
+	other := createChannel(t, f, otherOwner, "river-workshop")
+	textOnly := libraryVideo(t, f, other.ID, "Compass film")
+	seen := map[string]bool{}
+	path := "/api/v1/videos?q=compass&limit=1"
+	for range 4 {
+		var page store.VideosPage
+		libraryRequest(t, f, client(), "GET", path, nil, 200, &page, nil)
+		for _, v := range page.Items {
+			if seen[v.ID] {
+				t.Fatal("a video matching both branches appeared twice")
+			}
+			seen[v.ID] = true
+		}
+		if page.NextCursor == nil {
+			break
+		}
+		path = "/api/v1/videos?q=compass&limit=1&cursor=" + *page.NextCursor
+	}
+	if len(seen) != 3 || !seen[both] || !seen[channelOnly] || !seen[textOnly] {
+		t.Fatalf("search lost a match or exposed a hidden video: %v", seen)
+	}
+	var page store.VideosPage
+	libraryRequest(t, f, client(), "GET", "/api/v1/videos?q=compass&channel_id="+channel.ID, nil, 200, &page, nil)
+	if len(page.Items) != 2 {
+		t.Fatal("channel filter did not apply to both search branches")
+	}
+	viewer := client()
+	registerUser(t, f, viewer)
+	libraryRequest(t, f, viewer, "POST", "/api/v1/channels/"+other.ID+"/subscription", map[string]any{}, 200, nil, nil)
+	libraryRequest(t, f, viewer, "GET", "/api/v1/videos?q=compass&feed=following", nil, 200, &page, nil)
+	if len(page.Items) != 1 || page.Items[0].ID != textOnly {
+		t.Fatal("following filter did not apply to both search branches")
+	}
+	libraryRequest(t, f, client(), "GET", "/api/v1/videos?q=unmatched-9zz", nil, 200, &page, nil)
+	if len(page.Items) != 0 {
+		t.Fatal("absent term returned a video")
+	}
+}
 func TestIntegrationPlaylistsOwnershipVisibilityOrderAndReplay(t *testing.T) {
 	f := setup(t)
 	owner := client()

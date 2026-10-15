@@ -269,6 +269,11 @@ test("three viewers exchange verified uploaded media with measured HTTP baseline
     };
     await mkdir(".local/evidence", { recursive: true });
     await writeFile(
+      `.local/evidence/phase-4-uploaded-peer-${report.checkedAt.replaceAll(":", "-")}.json`,
+      JSON.stringify(report, null, 2) + "\n",
+      { flag: "wx" },
+    );
+    await writeFile(
       ".local/evidence/phase-4-uploaded-peer.json",
       JSON.stringify(report, null, 2) + "\n",
     );

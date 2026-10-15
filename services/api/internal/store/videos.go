@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"strings"
 	"time"
@@ -66,13 +67,37 @@ func (s *Store) Videos(ctx context.Context, limit int, channelID *string, cursor
 }
 
 func (s *Store) SearchVideos(ctx context.Context, limit int, channelID *string, cursor *Cursor, includeFixture bool, query, followingUserID string) (VideosPage, error) {
-	var afterTime *time.Time
-	var afterID *string
-	if cursor != nil {
-		afterTime = &cursor.PublishedAt
-		afterID = &cursor.ID
+	args := []any{limit + 1}
+	bind := func(value any) string {
+		args = append(args, value)
+		return fmt.Sprintf("$%d", len(args))
 	}
-	rows, err := s.Pool.Query(ctx, "SELECT "+videoColumns+" FROM catalog.videos v JOIN catalog.channels c ON c.id=v.channel_id WHERE "+visibleVideo+` AND ($1::uuid IS NULL OR v.channel_id=$1) AND ($2::timestamptz IS NULL OR (v.published_at,v.id)<($2,$3::uuid)) AND ($5 OR v.source_kind<>'fixture') AND ($6='' OR v.search_document @@ websearch_to_tsquery('pg_catalog.simple',$6) OR strpos(lower(c.title),lower($6))>0) AND ($7='' OR EXISTS(SELECT 1 FROM catalog.subscriptions sub WHERE sub.user_id=NULLIF($7,'')::uuid AND sub.channel_id=v.channel_id)) ORDER BY v.published_at DESC,v.id DESC LIMIT $4`, channelID, afterTime, afterID, limit+1, includeFixture, query, followingUserID)
+	conditions := []string{visibleVideo}
+	if channelID != nil {
+		conditions = append(conditions, "v.channel_id="+bind(*channelID)+"::uuid")
+	}
+	if cursor != nil {
+		conditions = append(conditions, "(v.published_at,v.id)<("+bind(cursor.PublishedAt)+"::timestamptz,"+bind(cursor.ID)+"::uuid)")
+	}
+	if !includeFixture {
+		conditions = append(conditions, "v.source_kind<>'fixture'")
+	}
+	if followingUserID != "" {
+		conditions = append(conditions, "EXISTS(SELECT 1 FROM catalog.subscriptions sub WHERE sub.user_id="+bind(followingUserID)+"::uuid AND sub.channel_id=v.channel_id)")
+	}
+	where := strings.Join(conditions, " AND ")
+	order := " ORDER BY v.published_at DESC,v.id DESC LIMIT $1"
+	statement := "SELECT " + videoColumns + " FROM catalog.videos v JOIN catalog.channels c ON c.id=v.channel_id WHERE " + where + order
+	if query != "" {
+		term := bind(query)
+		// An OR spanning video text and channel title forces PostgreSQL to test
+		// unrelated video rows, particularly for absent terms. Find each branch's
+		// newest page independently, then deduplicate before the final page limit.
+		// Applying the same cursor/visibility/following filters in both branches
+		// preserves ordering and ensures a video matching both appears only once.
+		statement = "WITH matching_channels AS MATERIALIZED (SELECT id FROM catalog.channels WHERE strpos(lower(title),lower(" + term + "::text))>0), candidates AS ((SELECT v.id,v.published_at FROM catalog.videos v WHERE " + where + " AND v.search_document @@ websearch_to_tsquery('pg_catalog.simple'," + term + "::text)" + order + ") UNION (SELECT v.id,v.published_at FROM catalog.videos v JOIN matching_channels mc ON mc.id=v.channel_id WHERE " + where + order + ")) SELECT " + videoColumns + " FROM candidates hit JOIN catalog.videos v ON v.id=hit.id JOIN catalog.channels c ON c.id=v.channel_id" + order
+	}
+	rows, err := s.Pool.Query(ctx, statement, args...)
 	if err != nil {
 		return VideosPage{}, err
 	}

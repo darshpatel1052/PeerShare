@@ -256,6 +256,9 @@ test("viewer follows, searches unloaded videos, saves and reorders a private pla
     await viewer
       .getByRole("button", { name: "Save changes", exact: true })
       .click();
+    await expect(
+      viewer.getByText("Public playlist", { exact: true }),
+    ).toBeVisible();
     await guest.reload();
     await expect(
       guest.getByRole("heading", { name: "Weekend films", exact: true }),
