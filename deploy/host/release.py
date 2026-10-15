@@ -47,6 +47,10 @@ def rollout(sha):
                    '-f', 'deploy/compose/local.yml', '-f', 'deploy/compose/gateway.yml',
                    '-f', 'deploy/compose/production.yml', '--profile', 'app']
         run(command + ['pull', 'api', 'web'], timeout=600)
+        previous_web = subprocess.run(['docker', 'inspect', '-f', '{{.Config.Image}}', 'peerscreen-web-1'], capture_output=True, text=True, timeout=15)
+        if previous_web.returncode == 0 and previous_web.stdout.strip().startswith(settings['repositories']['web'] + ':'):
+            run(['python3', str(directory / 'deploy/host/retain-assets.py'), previous_web.stdout.strip()])
+        run(['python3', str(directory / 'deploy/host/retain-assets.py'), settings['repositories']['web'] + ':' + sha])
         run(command + ['up', '-d', '--no-build', '--wait', '--wait-timeout', '120',
                        'postgres', 'redis', 'redis-cache', 'kafka'])
         # This one-host showcase accepts a brief maintenance window. Stop the

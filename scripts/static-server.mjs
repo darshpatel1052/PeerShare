@@ -21,6 +21,7 @@ export function createStaticServer({
   mediaRoot,
   allowedOrigin = "http://localhost:3000",
   apiTarget,
+  retainedAssetsRoot,
 }) {
   const delivery = new Map();
   const testRuntime = process.env.PEERSCREEN_TEST_RUNTIME === "true";
@@ -149,7 +150,7 @@ export function createStaticServer({
         response.end("Not found");
         return;
       }
-      const root = resolve(isMedia ? mediaRoot : (webRoot ?? mediaRoot));
+      let root = resolve(isMedia ? mediaRoot : (webRoot ?? mediaRoot));
       const relative =
         isMedia && webRoot ? path.slice("/media/".length) : path.slice(1);
       let file = resolve(root, relative);
@@ -158,7 +159,25 @@ export function createStaticServer({
         response.end();
         return;
       }
-      if ((await stat(file)).isDirectory()) file = resolve(file, "index.html");
+      let info;
+      try {
+        info = await stat(file);
+      } catch (error) {
+        // Only immutable frontend chunks may fall back to retained releases.
+        // HTML and private media always use the current application paths.
+        if (
+          error.code !== "ENOENT" ||
+          !webRoot ||
+          !retainedAssetsRoot ||
+          !path.startsWith("/_next/static/")
+        )
+          throw error;
+        root = resolve(retainedAssetsRoot);
+        file = resolve(root, path.slice("/_next/".length));
+        if (!file.startsWith(root + sep)) throw Error("Invalid asset path");
+        info = await stat(file);
+      }
+      if (info.isDirectory()) file = resolve(file, "index.html");
       const realRoot = await realpath(root);
       file = await realpath(file);
       if (!file.startsWith(realRoot + sep)) {
@@ -166,12 +185,14 @@ export function createStaticServer({
         response.end();
         return;
       }
-      const info = await stat(file);
+      info = await stat(file);
       if (!info.isFile()) throw new Error("Not a file");
       response.writeHead(200, {
         "Content-Type": mimeTypes[extname(file)] ?? "application/octet-stream",
         "Content-Length": info.size,
-        "Cache-Control": "no-store",
+        "Cache-Control": path.startsWith("/_next/static/")
+          ? "public,max-age=31536000,immutable"
+          : "no-store",
       });
       if (request.method === "HEAD") response.end();
       else

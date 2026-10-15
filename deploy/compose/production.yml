@@ -71,6 +71,10 @@ services:
     restart: unless-stopped
   web:
     image: ${WEB_IMAGE:?}
+    environment:
+      RETAINED_ASSETS_ROOT: /app/.local/release-assets/_next
+    volumes:
+      - /srv/peerscreen/assets/_next:/app/.local/release-assets/_next:ro
     logging: *logs
     restart: unless-stopped
   postgres:

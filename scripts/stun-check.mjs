@@ -4,13 +4,24 @@ import { mkdir, writeFile } from "node:fs/promises";
 // An intentional network check against the running app. Routine tests keep
 // STUN off. Only candidate types/counts are retained, never SDP or addresses.
 const base = process.env.PEERSCREEN_CHECK_ORIGIN || "http://localhost:3000";
+const origin = new URL(base);
+if (
+  origin.origin !== base ||
+  !["localhost", "127.0.0.1", "peerscreen.darshpatel.dev"].includes(
+    origin.hostname,
+  )
+)
+  throw Error("Use the authorized local or public PeerScreen origin");
 const response = await fetch(`${base}/api/v1/videos?limit=1`);
 if (!response.ok) throw new Error("The running catalogue is unavailable");
 const video = (await response.json()).items[0];
 if (!video) throw new Error("Publish a video before checking discovery");
 const browser = await chromium.launch();
 try {
-  const page = await browser.newPage({ ignoreHTTPSErrors: true });
+  const page = await browser.newPage({
+    ignoreHTTPSErrors:
+      origin.hostname === "localhost" || origin.hostname === "127.0.0.1",
+  });
   await page.addInitScript(() => {
     const Original = window.RTCPeerConnection;
     window.__peerDiscovery = {
@@ -68,6 +79,9 @@ try {
   const record = {
     checkedAt: new Date().toISOString(),
     scope: "real running player, one host, public STUN; address discovery only",
+    origin: base,
+    tlsErrorsIgnored:
+      origin.hostname === "localhost" || origin.hostname === "127.0.0.1",
     browser: browser.version(),
     noConnectionsBeforeOptIn: before === 0,
     stunConfigured: observed.configured,

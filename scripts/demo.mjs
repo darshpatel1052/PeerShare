@@ -29,6 +29,7 @@ const web = createStaticServer({
   mediaRoot,
   allowedOrigin,
   apiTarget: backend.target,
+  retainedAssetsRoot: process.env.RETAINED_ASSETS_ROOT,
 });
 const media = createStaticServer({
   mediaRoot,

@@ -11,14 +11,24 @@ import {
   type Channel,
   type ChannelCreate,
   type ChannelEdit,
+  type AuthOptions,
 } from "../lib/api";
+import { useResource } from "../lib/use-resource";
 import { useAuth } from "./auth-provider";
 import CreatorImagePicker from "./creator-image-picker";
 import GoogleSignIn from "./google-sign-in";
 import AuthFeedback from "./auth-feedback";
 export default function Account() {
   const auth = useAuth();
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [selectedMode, setMode] = useState<"login" | "register">("login");
+  const options = useResource<AuthOptions>(
+    !auth.loading && !auth.me ? "/auth/options" : null,
+  );
+  const registrationEnabled =
+    options.state.status === "ready" &&
+    options.state.value.registration_enabled;
+  const mode =
+    selectedMode === "register" && registrationEnabled ? "register" : "login";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -260,20 +270,28 @@ export default function Account() {
                   : "Create account"}
             </button>
           </form>
-          <p className="auth-switch">
-            {mode === "login"
-              ? "New to PeerScreen? "
-              : "Already have an account? "}
-            <button
-              className="text-button"
-              onClick={() => {
-                setMode(mode === "login" ? "register" : "login");
-                setError("");
-              }}
-            >
-              {mode === "login" ? "Create an account" : "Sign in instead"}
-            </button>
-          </p>
+          {registrationEnabled && (
+            <p className="auth-switch">
+              {mode === "login"
+                ? "New to PeerScreen? "
+                : "Already have an account? "}
+              <button
+                className="text-button"
+                onClick={() => {
+                  setMode(mode === "login" ? "register" : "login");
+                  setError("");
+                }}
+              >
+                {mode === "login" ? "Create an account" : "Sign in instead"}
+              </button>
+            </p>
+          )}
+          {options.state.status === "ready" && !registrationEnabled && (
+            <p className="muted">
+              PeerScreen is currently invite-only. Sign in with your existing
+              account to continue.
+            </p>
+          )}
         </section>
       </main>
     );

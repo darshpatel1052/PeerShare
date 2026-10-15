@@ -23,6 +23,19 @@ test("Google availability is honest and callback errors explain account linking"
     .toBe(false);
   await page.route("**/api/v1/auth/options", (route) =>
     route.fulfill({
+      json: { google_enabled: true, registration_enabled: false },
+    }),
+  );
+  await page.reload();
+  await expect(
+    page.getByText("PeerScreen is currently invite-only.", { exact: false }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Create an account", exact: true }),
+  ).toHaveCount(0);
+  await page.unroute("**/api/v1/auth/options");
+  await page.route("**/api/v1/auth/options", (route) =>
+    route.fulfill({
       json: { google_enabled: true, registration_enabled: true },
     }),
   );

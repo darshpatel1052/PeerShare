@@ -27,7 +27,10 @@ test("three viewers exchange verified uploaded media with measured HTTP baseline
   page,
   browser,
 }, info) => {
-  test.setTimeout(300000);
+  const repeats = Number(process.env.PEERSCREEN_PEER_BENCHMARK_REPEATS || 1);
+  if (!Number.isInteger(repeats) || repeats < 1 || repeats > 3)
+    throw Error("Use one to three media measurement rounds");
+  test.setTimeout(300000 * repeats);
   const source = await generateSource(32);
   const channel = await createCreator(page, "Delivery studio");
   try {
@@ -42,7 +45,7 @@ test("three viewers exchange verified uploaded media with measured HTTP baseline
         await page.request.get(`/__peerscreen-test/delivery?video=${video.id}`)
       ).json();
     const rounds = [];
-    for (let repeat = 0; repeat < 1; repeat++) {
+    for (let repeat = 0; repeat < repeats; repeat++) {
       for (const assisted of [false, true]) {
         const contexts = await Promise.all(
           Array.from({ length: 3 }, () => browser.newContext()),
@@ -225,7 +228,9 @@ test("three viewers exchange verified uploaded media with measured HTTP baseline
     const report = {
       checkedAt: new Date().toISOString(),
       baseCommit: execFileSync("git", ["rev-parse", "HEAD"]).toString().trim(),
-      workingTreeChanged: true,
+      workingTreeChanged: !!execFileSync("git", ["status", "--porcelain"])
+        .toString()
+        .trim(),
       sourceHashes: hashes,
       scope:
         "one Linux host; independent Chromium contexts; loopback tracker; STUN disabled; actual owned uploaded 32s 720p source; 480p measured then 720p seek/HTTP fallback",
@@ -246,7 +251,7 @@ test("three viewers exchange verified uploaded media with measured HTTP baseline
           "reported separately and excluded from measured-run bytes; does not represent total visitor cost",
       },
       rounds,
-      comparisons: [0].map((index) => {
+      comparisons: Array.from({ length: repeats }, (_, index) => {
         const baseline = rounds[index * 2],
           peer = rounds[index * 2 + 1];
         return {
