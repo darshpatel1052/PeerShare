@@ -1,5 +1,5 @@
 {
-  "name": "@peerscreen/web",
+  "name": "@peershare/web",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -7,8 +7,8 @@
     "build": "next build --webpack"
   },
   "dependencies": {
-    "@peerscreen/player": "0.0.0",
-    "@peerscreen/contracts": "0.0.0",
+    "@peershare/player": "0.0.0",
+    "@peershare/contracts": "0.0.0",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",

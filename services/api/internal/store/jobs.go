@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/encoder"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -124,6 +124,9 @@ func (s *Store) FinishProcessing(ctx context.Context, j Job, manifest, integrity
 	return tx.Commit(ctx)
 }
 func (s *Store) MutateJob(ctx context.Context, ownerID, videoID string, retry bool) error {
+	return s.mutateJob(ctx, ownerID, videoID, retry, nil)
+}
+func (s *Store) mutateJob(ctx context.Context, ownerID, videoID string, retry bool, audit *operatorAction) error {
 	tx, err := s.Pool.Begin(ctx)
 	if err != nil {
 		return err
@@ -201,6 +204,15 @@ func (s *Store) MutateJob(ctx context.Context, ownerID, videoID string, retry bo
 		}
 		if err = queueCommand(ctx, tx, videoID, "cancel"); err != nil {
 			return err
+		}
+	}
+	if audit != nil {
+		tag, err := tx.Exec(ctx, `INSERT INTO catalog.operator_actions(id,actor_id,job_id,video_id,action,note) SELECT $1,id,$3,$4,$5,$6 FROM catalog.users WHERE id=$2 AND role='operator'`, uuid.NewString(), audit.Actor, jobID, videoID, audit.Action, audit.Note)
+		if err != nil {
+			return err
+		}
+		if tag.RowsAffected() != 1 {
+			return ErrNotFound
 		}
 	}
 	return tx.Commit(ctx)

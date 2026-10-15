@@ -18,7 +18,7 @@ Open `http://localhost:3400`. This is a separate local environment with its own 
 
 ## Map the objects to concepts
 
-| Object              | PeerScreen use                                             | Why it exists                                                                                |
+| Object              | PeerShare use                                              | Why it exists                                                                                |
 | ------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | Deployment          | API, coordinator, worker, web, gateway and Redis processes | Maintains desired replicas and replaces exited containers                                    |
 | StatefulSet         | PostgreSQL and Kafka                                       | Stable pod identities for the stateful services in this small topology                       |

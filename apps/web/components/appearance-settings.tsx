@@ -9,7 +9,7 @@ export default function AppearanceSettings() {
       <div className="settings-heading">
         <div>
           <h2>Appearance</h2>
-          <p>Choose how PeerScreen looks on this device.</p>
+          <p>Choose how PeerShare looks on this device.</p>
         </div>
         <Icon name="sun" />
       </div>

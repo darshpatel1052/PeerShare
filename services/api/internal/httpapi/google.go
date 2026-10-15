@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/config"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/auth"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/config"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/store"
 	"golang.org/x/oauth2"
 )
 
@@ -264,7 +264,7 @@ func (a *App) finishGoogle(w http.ResponseWriter, r *http.Request) {
 	if !validText(display, 1, 80) {
 		display = strings.Split(email, "@")[0]
 		if !validText(display, 1, 80) {
-			display = "PeerScreen member"
+			display = "PeerShare member"
 		}
 	}
 	user, err := a.Store.GoogleUser(ctx, a.Google.Issuer, token.Subject, email, display, a.Config.RegistrationEnabled)

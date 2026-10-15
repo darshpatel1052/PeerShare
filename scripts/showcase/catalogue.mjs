@@ -7,7 +7,7 @@ export const series = [
     shade: "#10253d",
     motif: "nodes",
     description:
-      "Small, visual explanations of Go. An original PeerScreen showcase series.",
+      "Small, visual explanations of Go. An original PeerShare showcase series.",
     videos: [
       {
         slug: "goroutines",
@@ -99,7 +99,7 @@ export const series = [
     shade: "#382018",
     motif: "queue",
     description:
-      "Queues, messages and the work between services. An original PeerScreen showcase series.",
+      "Queues, messages and the work between services. An original PeerShare showcase series.",
     videos: [
       {
         slug: "outbox",
@@ -191,7 +191,7 @@ export const series = [
     shade: "#271b40",
     motif: "frames",
     description:
-      "The mechanics behind a better watch experience. An original PeerScreen showcase series.",
+      "The mechanics behind a better watch experience. An original PeerShare showcase series.",
     videos: [
       {
         slug: "adaptive-hls",
@@ -283,7 +283,7 @@ export const series = [
     shade: "#23301b",
     motif: "bars",
     description:
-      "Practical database decisions, drawn clearly. An original PeerScreen showcase series.",
+      "Practical database decisions, drawn clearly. An original PeerShare showcase series.",
     videos: [
       {
         slug: "cursor-pagination",
@@ -375,7 +375,7 @@ export const series = [
     shade: "#351d2e",
     motif: "grid",
     description:
-      "Layout, feedback and everyday product details. An original PeerScreen showcase series.",
+      "Layout, feedback and everyday product details. An original PeerShare showcase series.",
     videos: [
       {
         slug: "visual-hierarchy",
@@ -467,7 +467,7 @@ export const series = [
     shade: "#34291b",
     motif: "nodes",
     description:
-      "What happens between a click and a response. An original PeerScreen showcase series.",
+      "What happens between a click and a response. An original PeerShare showcase series.",
     videos: [
       {
         slug: "https",

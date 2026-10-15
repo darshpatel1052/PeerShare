@@ -57,12 +57,11 @@ export default function Navigation() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link href="/" className="brand" aria-label="PeerScreen home">
+        <Link href="/" className="brand" aria-label="PeerShare home">
           <BrandMark />
-          <span>
-            PeerScreen<span className="brand-period">.</span>
-          </span>
+          <span>PeerShare</span>
         </Link>
+        <span className="navigation-caption">Your daily discovery</span>
         <nav aria-label="Main navigation" className="main-navigation">
           <Link
             href="/"
@@ -122,6 +121,27 @@ export default function Navigation() {
             </Link>
           )}
         </nav>
+        {me?.user.role === "operator" && (
+          <Link
+            className={
+              pathname.startsWith("/operator")
+                ? "nav-link active operator-nav"
+                : "nav-link operator-nav"
+            }
+            href="/operator"
+          >
+            <Icon name="signal" />
+            Platform operations
+          </Link>
+        )}
+        <Link
+          className="rail-publish"
+          href={me?.channel ? "/studio" : "/account"}
+        >
+          <Icon name="plus" />
+          <span>Share a video</span>
+          <Icon name="arrow" />
+        </Link>
         <div className="account-nav">
           {me ? (
             <div className="profile-menu" ref={menu}>
@@ -166,6 +186,12 @@ export default function Navigation() {
                       <Icon name="bookmark" />
                       Your library
                     </Link>
+                    {me.user.role === "operator" && (
+                      <Link href="/operator">
+                        <Icon name="signal" />
+                        Platform operations
+                      </Link>
+                    )}
                     <Link href="/settings">
                       <Icon name="settings" />
                       Settings

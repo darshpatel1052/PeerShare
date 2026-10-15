@@ -7,8 +7,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/auth"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/store"
 	"github.com/google/uuid"
 )
 

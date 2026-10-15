@@ -5,11 +5,11 @@ test("production export supports direct watch/channel links and reload", async (
 }) => {
   await page.goto("/channel/?id=peerscreen-lab");
   await expect(
-    page.getByRole("heading", { name: "PeerScreen Lab", exact: true }),
+    page.getByRole("heading", { name: "PeerShare Lab", exact: true }),
   ).toBeVisible();
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "PeerScreen Lab", exact: true }),
+    page.getByRole("heading", { name: "PeerShare Lab", exact: true }),
   ).toBeVisible();
   await page.goto("/watch/?v=signal-garden");
   await expect(page.getByTestId("player-status")).toHaveText("Ready to play");

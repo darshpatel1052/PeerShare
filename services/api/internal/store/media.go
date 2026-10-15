@@ -6,8 +6,8 @@ import (
 	"errors"
 	"time"
 
-	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+	pb "github.com/darshpatel1052/PeerShare/services/api/gen/peerscreen/media/v1"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/encoder"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )

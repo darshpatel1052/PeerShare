@@ -1,4 +1,4 @@
-# Walk through PeerScreen
+# Walk through PeerShare
 
 Start with the product. The implementation details explain capabilities the viewer can actually use.
 
@@ -21,30 +21,21 @@ The normal user's original video, channel and artwork were preserved through the
 - `npm run kube -- up`: run the same images in a separate local Kubernetes environment on port 3400. Follow the [Helm exercise](../learning/phase-6/02-kubernetes.md) to inspect probes, Services, migrations and API scaling.
 - The packaged HTTPS rehearsal and prior real outage experiments are available when explaining routing and recovery. They support the product; they are not the first screen of its demonstration.
 
-## Public release sequence after AWS approval
+## Public release and later CloudFront cutover
 
-CloudFront account verification is the external dependency. The support case has been submitted; keep the existing Free plan. The initial immutable release and restored data were verified at the private AWS origin, with a fixed compute stop deadline. A stopped host needs a deliberate bounded restart; it is not a new free 24-hour window.
+The app is live at [peerscreen.darshpatel.dev](https://peerscreen.darshpatel.dev), using direct HTTPS/WSS on the existing host with private S3. The user confirmed production Google sign-in and the existing workspace, and reported successful cross-network peer playback. The [manual record](../evidence/phase-6/user-confirmations.json) distinguishes that report from instrumented browser evidence.
 
-1. Refresh the local AWS CLI login when required; the previous temporary operator session expired. Do not paste credentials into chat or Git.
-2. Select and publish the tested final commit. Stage compatible source/images and deploy through the existing [AWS runbook](aws-deployment.md), preserving database/media state.
-3. Review the full Terraform plan and complete CloudFront when AWS permits it. Add the final `peerscreen` routing record at Name.com using the actual returned distribution hostname. Keep the ACM validation record.
-4. Verify public HTTPS/static direct links/API/WSS, the existing video/artwork, cookie/session behavior and a bounded new upload. The configured Google callback still needs a real production sign-in check.
-5. Run the user's two-device/two-network exercise and retain the downloaded reports. Then perform the planned deployment benchmarks and final external review.
+CloudFront account verification remains deferred. Keep the Free plan and the existing certificate/origin records. Once AWS approves, follow the [AWS deployment runbook](aws-deployment.md): review the complete Terraform plan, enable the distribution, update only the final `peerscreen` routing record in Name.com, and coordinate origin trust/firewall/certificate changes. Recheck public routes, Google callback, WSS, media authorization and the original artwork/media after cutover. Do not create another host or restore an old data snapshot during an application update.
 
-## Benchmark preparation
+The host's fixed shutdown deadline is unchanged. A stopped host requires a deliberate bounded restart; waiting does not grant another free 24-hour window. Retained disks, storage and the address can still incur retention costs.
 
-The bounded metadata-load harness is ready for that later measurement:
+## Demonstrate the measured system
 
-```sh
-npm run benchmark:api -- --help
-npm run benchmark:api -- --base https://peerscreen.darshpatel.dev --requests 200 --concurrency 8 --repeats 3
-```
+Use the [benchmark report](../benchmarks/report.md) and its raw evidence for resume figures. It separates the 100,000-record metadata campaign, actual upload/transcode jobs, paced fragment clients and real browser peer exchange. The [protocol](../benchmarks/protocol.md) provides reproduction commands and traffic bounds; [learning notes](../learning/phase-6/04-benchmarking-a-video-system.md) explain the data, Go queries, indexes, Redis and statistics.
 
-It performs public catalogue GETs, consumes the whole response, and records commit/dirty state, Node/CPU/RAM, page size, concurrency, repeats, successes/errors, successful throughput and p50/p95/p99 response latency. Ten warmup requests run before measurement. Each round has a finite request count and a sixty-second deadline. The private output is `.local/evidence/api-benchmark.json`. No account cookie, email, source payload or AWS credentials are used.
+Start with the visible product: the public Explore page now contains 18 original showcase videos across six channels, each uploaded, processed and published through real APIs. The showcase accounts are labelled editorial, and the large synthetic account/database fixture stays private. Demonstrate search, channels, Following and playlists before showing infrastructure or load results.
 
-These measurements describe metadata requests under that workload, not browser rendering, HLS startup or WebRTC. The existing `tests/browser/uploaded-peer.spec.ts` is the separate controlled real-media experiment: three independent viewers, HTTP baseline/peer-assisted rounds, actual gateway body-byte observations, fixed renditions and explicit cache/consent conditions. Its `.local/evidence/phase-4-uploaded-peer.json` includes source/host/browser details and repeated samples. Keep local and public-device results separate.
-
-Use repeated runs and record other workload on the host. A percentile is a value below which a specified fraction of observations falls; throughput is completed requests divided by elapsed time. A fast quiet local run does not establish a production capacity limit or billed CDN savings. Full deployment benchmarking remains after public release, as requested.
+The old `benchmark:api` command remains useful for a small public read-only smoke test. Its short closed-loop results are not the sustained capacity campaign. Browser media measurements must retain complete matching raw output in a unique run directory; the test runner also writes a timestamped record to prevent later regression tests from destroying earlier evidence.
 
 ## Current scope
 

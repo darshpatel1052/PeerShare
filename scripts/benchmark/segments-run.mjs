@@ -117,6 +117,9 @@ try {
               : "Actual private owner-authenticated") +
             " 480p HLS segment objects paced by fragment duration, SHA-256 verification; synthetic clients, no video decoding",
           release: fixture.release,
+          dnsResolution: process.env.BENCHMARK_DNS_OVERRIDE
+            ? "Explicit configured EIP; TLS/SNI hostname verification unchanged"
+            : "Public DNS",
           receivedBytes: bytes,
           results,
         },

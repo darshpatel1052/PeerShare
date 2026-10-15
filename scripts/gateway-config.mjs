@@ -1,7 +1,10 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-export function gatewayConfig(origin, { originHost, originSecret } = {}) {
+export function gatewayConfig(
+  origin,
+  { originHost, originSecret, legacyRedirectHost } = {},
+) {
   const parsed = new URL(origin);
   if (
     parsed.protocol !== "https:" ||
@@ -54,6 +57,26 @@ export function gatewayConfig(origin, { originHost, originSecret } = {}) {
       item.match.headers = [
         { name: "x-peerscreen-origin", string_match: { exact: originSecret } },
       ];
+    if (legacyRedirectHost) {
+      if (
+        !/^[a-z0-9.-]+$/.test(legacyRedirectHost) ||
+        legacyRedirectHost === parsed.host
+      )
+        throw new Error("Use a distinct legacy hostname");
+      routes.push({
+        match: {
+          prefix: "/",
+          headers: [
+            { name: ":authority", string_match: { exact: legacyRedirectHost } },
+          ],
+        },
+        redirect: {
+          https_redirect: true,
+          host_redirect: parsed.hostname,
+          response_code: "PERMANENT_REDIRECT",
+        },
+      });
+    }
     routes.push({ match: { prefix: "/" }, direct_response: { status: 403 } });
   }
   const hcm = {
@@ -109,7 +132,11 @@ export function gatewayConfig(origin, { originHost, originSecret } = {}) {
       virtual_hosts: [
         {
           name: "peerscreen",
-          domains: originHost ? [parsed.host, originHost] : [parsed.host],
+          domains: [
+            ...new Set(
+              [parsed.host, originHost, legacyRedirectHost].filter(Boolean),
+            ),
+          ],
           routes,
         },
       ],

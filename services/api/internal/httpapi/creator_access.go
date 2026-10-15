@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/ratelimit"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/ratelimit"
 )
 
 func (a *App) creatorAccess(w http.ResponseWriter, r *http.Request) bool {

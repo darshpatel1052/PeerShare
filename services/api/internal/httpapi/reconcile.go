@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/store"
 )
 
 // Reconciliation repeats after any crash. Capacity is released only after filesystem cleanup succeeds.

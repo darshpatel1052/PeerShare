@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-15T07:58:32.005Z",
+  "scope": "Actual anonymous public 480p HLS segment objects paced by fragment duration, SHA-256 verification; synthetic clients, no video decoding",
+  "release": "0734601d6e1acaecc5527e9a35df3e63367acfb9",
+  "receivedBytes": 33794887,
+  "results": [
+    {
+      "clients": 1,
+      "seconds": 10,
+      "startedAt": "2026-10-15T07:57:46.227Z",
+      "finishedAt": "2026-10-15T07:57:59.470Z",
+      "passed": true,
+      "verifiedSegments": 3,
+      "verifiedPayloadBytes": 976472,
+      "failureRate": 0,
+      "lateRate": 0,
+      "p95MS": 356.5,
+      "p99MS": 364.9,
+      "receivedBytes": 982682
+    },
+    {
+      "clients": 25,
+      "seconds": 30,
+      "startedAt": "2026-10-15T07:58:00.396Z",
+      "finishedAt": "2026-10-15T07:58:32.005Z",
+      "passed": false,
+      "verifiedSegments": 107,
+      "verifiedPayloadBytes": 32584724,
+      "failureRate": 0.465,
+      "lateRate": 0,
+      "p95MS": 465.49999999999994,
+      "p99MS": 500.58,
+      "receivedBytes": 32812205
+    }
+  ]
+}

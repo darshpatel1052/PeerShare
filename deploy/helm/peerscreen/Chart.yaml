@@ -2,6 +2,6 @@ apiVersion: v2
 name: peerscreen
 version: 0.1.0
 appVersion: "1"
-description: Local single-node PeerScreen exercise with real application services
+description: Local single-node PeerShare exercise with real application services
 kubeVersion: ">=1.35.0-0"
 type: application

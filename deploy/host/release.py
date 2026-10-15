@@ -10,6 +10,27 @@ import sys
 ROOT = Path('/srv/peerscreen')
 
 
+def update_public_origins(runtime, domain):
+    # Domain is public configuration, not a credential. Keep both public
+    # origins consistent with host.json while retaining every secret value.
+    origins = {'PEERSCREEN_GATEWAY_ORIGIN': 'https://' + domain,
+               'PEERSCREEN_GATEWAY_WS_ORIGIN': 'wss://' + domain}
+    lines = runtime.read_text().splitlines()
+    seen = set()
+    updated = []
+    for line in lines:
+        key = line.partition('=')[0]
+        if key in origins:
+            updated.append(key + '=' + origins[key])
+            seen.add(key)
+        else:
+            updated.append(line)
+    updated.extend(key + '=' + value for key, value in origins.items() if key not in seen)
+    staged_runtime = runtime.with_name(runtime.name + '.new')
+    staged_runtime.write_text('\n'.join(updated) + '\n')
+    os.chmod(staged_runtime, 0o600)
+    os.replace(staged_runtime, runtime)
+
 def rollout(sha):
     if os.geteuid() != 0 or not re.fullmatch(r'[a-f0-9]{40}', sha):
         raise RuntimeError('Use the administrator and a full published commit SHA')
@@ -51,6 +72,7 @@ def rollout(sha):
         if previous_web.returncode == 0 and previous_web.stdout.strip().startswith(settings['repositories']['web'] + ':'):
             run(['python3', str(directory / 'deploy/host/retain-assets.py'), previous_web.stdout.strip()])
         run(['python3', str(directory / 'deploy/host/retain-assets.py'), settings['repositories']['web'] + ':' + sha])
+        update_public_origins(ROOT / 'runtime.env', settings['domain'])
         run(command + ['up', '-d', '--no-build', '--wait', '--wait-timeout', '120',
                        'postgres', 'redis', 'redis-cache', 'kafka'])
         # This one-host showcase accepts a brief maintenance window. Stop the

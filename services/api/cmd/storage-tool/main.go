@@ -14,7 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/aws/smithy-go"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/objectstore"
 	"github.com/google/uuid"
 )
 

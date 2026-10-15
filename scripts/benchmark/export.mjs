@@ -18,6 +18,7 @@ const allowed = new Set([
   "server-counters.json",
   "resources.jsonl",
   "pipeline.json",
+  "measured-source.mjs",
   "output-verification.json",
   "peer-comparison.json",
   "peer-watch.png",
@@ -37,7 +38,13 @@ async function tree(from, to, plans = false) {
 }
 for (const label of ["baseline-v1", "optimized-v1"])
   await tree(resolve(".local/benchmark/runs", label), join(raw, label));
-for (const label of ["pipeline-v1", "private-segments-v1", "public-peers-v1"]) {
+for (const label of [
+  "pipeline-v1",
+  "private-segments-v1",
+  "public-segments-before",
+  "public-segments-after",
+  "public-peers-v1",
+]) {
   try {
     await access(resolve(".local/benchmark/media", label));
     await tree(resolve(".local/benchmark/media", label), join(raw, label));

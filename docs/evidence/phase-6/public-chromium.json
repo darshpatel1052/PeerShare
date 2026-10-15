@@ -1,0 +1,56 @@
+{
+  "checkedAt": "2026-10-15T06:13:25.369Z",
+  "deployedRelease": "8609048604e91080555878845866dda61f262226",
+  "scope": "Actual public AWS HTTPS and WSS; browsers on one workstation. Not two-network evidence.",
+  "origin": "https://peerscreen.darshpatel.dev",
+  "browser": "chromium",
+  "browserVersion": "156.0.8078.4",
+  "tlsValidation": true,
+  "checks": {
+    "publicRoutes": true,
+    "privateMetricsAndFixture": true,
+    "anonymousAccountProtected": true,
+    "googleConfigured": true,
+    "correctGoogleCallbackAndPKCE": true,
+    "secureOAuthCookie": true,
+    "invalidCallbackHandled": true,
+    "originalMediaReadable": true,
+    "httpPlaybackAndIntegrity": true,
+    "customPlayPauseSeekMute": true,
+    "mobileNoOverflow": true,
+    "sharingOffHTTPFallback": true
+  },
+  "originalMediaSHA256": {
+    "manifest": "bafe5396e47f35079661c77c6a29046944451e4e10bd9b57853cf8679372b225",
+    "integrity": "c3e738e746db89bee55d2a091f40754e3851b813294732f2f76f7cd1ef3dd989"
+  },
+  "http": {
+    "http-bytes": 7163928,
+    "peer-bytes": 0,
+    "uploaded-bytes": 0,
+    "verified-segments": 36,
+    "rejected-segments": 0,
+    "peer-count": 0
+  },
+  "peer": {
+    "seed": {
+      "http-bytes": 562872,
+      "peer-bytes": 0,
+      "uploaded-bytes": 187624,
+      "verified-segments": 3,
+      "rejected-segments": 0,
+      "peer-count": 1
+    },
+    "receiver": {
+      "http-bytes": 375248,
+      "peer-bytes": 187624,
+      "uploaded-bytes": 0,
+      "verified-segments": 3,
+      "rejected-segments": 0,
+      "peer-count": 1
+    }
+  },
+  "pageErrors": 0,
+  "liveGoogleAuthentication": false,
+  "crossNetworkMediaVerified": false
+}

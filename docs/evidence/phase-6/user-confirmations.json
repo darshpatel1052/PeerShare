@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-10-15",
+  "scope": "User-reported manual checks during the deployment conversation; no automated device telemetry",
+  "productionGoogle": {
+    "url": "https://peerscreen.darshpatel.dev/account/",
+    "requestedCheck": "Complete Google sign-in using the linked account and confirm the existing workspace/channel appears",
+    "userReply": "yes it appears",
+    "result": "User confirmed the production account round trip and existing workspace"
+  },
+  "crossNetworkPlayback": {
+    "requestedCheck": "Two desktops/laptops on different connections, same published video, sharing enabled, overlapping playback; report peer/upload bytes and sharing-off fallback",
+    "userReply": "yes i checked it is indeed working great, but what if two devices on same internet we can also do peer sharing there right, otherwise they both would be requesting the server.",
+    "result": "User reported success",
+    "limitations": "Browser/network types, downloaded playback reports and byte counters were not supplied; this is not instrumented cross-network benchmark evidence"
+  }
+}

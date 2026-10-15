@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/objectstore"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/store"
 )
 
 // A bounded page each minute advances around both buckets. SQL/coordinator

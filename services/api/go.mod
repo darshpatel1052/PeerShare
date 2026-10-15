@@ -1,4 +1,4 @@
-module github.com/darshpatel1052/Peer-Screen/services/api
+module github.com/darshpatel1052/PeerShare/services/api
 
 go 1.27.0
 

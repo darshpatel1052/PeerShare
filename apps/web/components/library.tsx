@@ -100,9 +100,7 @@ function LibraryContents() {
     <>
       <div className="explore-heading">
         <div>
-          <h1>
-            Library<span className="accent-dot">.</span>
-          </h1>
+          <h1>Library</h1>
           <p className="muted">
             Your playlists and favorite channels, together.
           </p>

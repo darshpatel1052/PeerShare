@@ -1,8 +1,8 @@
 # Phase 5: deploy and operate the product
 
-Target hostname: **peerscreen.darshpatel.dev**, selected by the user on 14 October 2026. Account preflight confirmed the active Free plan and USD 100 remaining plan credits. The edge certificate is issued after the user's DNS validation; private storage, scoped roles and image repositories are provisioned. No plan upgrade or paid subscription was enabled. The private AWS origin was deployed and verified with preserved data; public CloudFront delivery awaits AWS account verification.
+PeerShare's public hostname is **peershare.darshpatel.dev**. The deployment uses CloudFront for the static frontend and an HTTPS gateway for API, private-media authorization and WebSocket peer discovery. The distribution and public certificate are issued; hostname/application cutover is tracked in the [deployment runbook](../../runbooks/aws-deployment.md). The original direct HTTPS release remains a compatibility path during the switch.
 
-This first checkpoint connects real peer discovery to a deployment foundation: STUN enabled after opt-in, a WebSocket-only tracker, one HTTPS/WSS gateway, two catalogue replicas, shared sessions and private operational measurements. The Terraform starter prepares a bounded Mumbai host, disks, private storage and image repositories. It is infrastructure preparation, not a finished public deployment.
+Start with the product journey: a creator publishes a video, the frontend arrives through the CDN, Go authorizes media access, and opted-in browsers discover one another through the tracker. This phase explains the AWS resources and networking behind that journey. The existing Mumbai host, private storage and database retain their identifiers and data. The AWS account remains on its active Free plan; no plan upgrade was enabled.
 
 1. [Peer discovery and the gateway](01-peer-and-gateway.md) explains STUN, ICE, signalling, HTTPS/WSS, replicas and trusted client addresses.
 2. [AWS resources and costs](02-aws-and-costs.md) explains Terraform, the selected resources, the 24-hour cost example and safe deployment/teardown.
@@ -13,7 +13,7 @@ This first checkpoint connects real peer discovery to a deployment foundation: S
 
 ```mermaid
 flowchart LR
- Browser[Browser: peerscreen.darshpatel.dev] --> CDN[CloudFront]
+ Browser[Browser: peershare.darshpatel.dev] --> CDN[CloudFront]
  CDN --> Static[(Private frontend S3)]
  CDN --> Gateway[Envoy HTTPS origin]
  Gateway --> Web[Static web app]

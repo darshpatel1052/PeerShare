@@ -1,6 +1,6 @@
 # Self-hosted typefaces
 
-PeerScreen uses Manrope for interface text and Barlow Condensed Bold for display headings. Both assets are served locally, so the interface does not contact a third-party font service.
+PeerShare uses Manrope for interface text and Barlow Condensed Bold for display headings. Both assets are served locally, so the interface does not contact a third-party font service.
 
 Downloaded on 13 October 2026 from the official Google Fonts repository:
 

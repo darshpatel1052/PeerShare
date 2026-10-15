@@ -963,6 +963,63 @@ paths:
         "401": { $ref: "#/components/responses/Error" }
         "404": { $ref: "#/components/responses/Error" }
         "503": { $ref: "#/components/responses/Error" }
+  /api/v1/operator/jobs:
+    get:
+      operationId: operatorJobs
+      security: [{ session: [] }]
+      parameters:
+        - {
+            name: state,
+            in: query,
+            schema:
+              {
+                type: string,
+                enum: [all, active, attention, ready],
+                default: all,
+              },
+          }
+        - { name: q, in: query, schema: { type: string, maxLength: 100 } }
+        - { name: cursor, in: query, schema: { type: string, maxLength: 512 } }
+      responses:
+        "200":
+          description: Operator-only processing jobs and logical storage reservation totals.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OperatorPage" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+  /api/v1/operator/jobs/{id}/{action}:
+    post:
+      operationId: operatorAction
+      security: [{ session: [] }]
+      parameters:
+        - { $ref: "#/components/parameters/ResourceID" }
+        - {
+            name: action,
+            in: path,
+            required: true,
+            schema: { type: string, enum: [retry, cancel] },
+          }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [note]
+              properties:
+                note: { type: string, minLength: 1, maxLength: 500 }
+      responses:
+        "200":
+          {
+            description: Action accepted and operator audit committed together.,
+          }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+
 components:
   securitySchemes:
     playback:
@@ -1505,3 +1562,49 @@ components:
             draft: { type: integer, minimum: 0 }
             published: { type: integer, minimum: 0 }
             unpublished: { type: integer, minimum: 0 }
+
+    OperatorJob:
+      type: object
+      required:
+        [
+          id,
+          video_id,
+          title,
+          channel,
+          state,
+          stage,
+          progress,
+          attempts,
+          error_code,
+          updated_at,
+          publication,
+        ]
+      properties:
+        id: { type: string, format: uuid }
+        video_id: { type: string, format: uuid }
+        title: { type: string }
+        channel: { type: string }
+        state:
+          { type: string, enum: [queued, running, ready, failed, cancelled] }
+        stage: { type: string }
+        progress: { type: integer, minimum: 0, maximum: 100 }
+        attempts: { type: integer, minimum: 0, maximum: 3 }
+        error_code: { type: [string, "null"] }
+        updated_at: { type: string, format: date-time }
+        publication: { type: string, enum: [draft, published, unpublished] }
+    OperatorPage:
+      type: object
+      required: [items, next_cursor, summary]
+      properties:
+        items:
+          { type: array, items: { $ref: "#/components/schemas/OperatorJob" } }
+        next_cursor: { type: [string, "null"] }
+        summary:
+          type: object
+          required: [active, ready, attention, reserved_bytes, capacity_bytes]
+          properties:
+            active: { type: integer }
+            ready: { type: integer }
+            attention: { type: integer }
+            reserved_bytes: { type: integer }
+            capacity_bytes: { type: integer }

@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/auth"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/mediasvc"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/store"
 	"github.com/google/uuid"
 	"github.com/twmb/franz-go/pkg/kgo"
 )

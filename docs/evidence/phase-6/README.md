@@ -14,8 +14,8 @@ The Kubernetes `verificationElapsedSeconds` starts after Helm readiness; it excl
 
 The browser cases also exercised real uploaded peer media, integrity enforcement, player controls, playlists, subscriptions and analytics. The earlier complete Go integration run passed 57 top-level cases / 82 including subcases with race detection. No Go implementation changed after that run; later changes are local orchestration, product presentation and the Helm exercise.
 
-The benchmark harness passed a ten-request functional check against the normal public catalogue API. Its timing is not presented as a capacity benchmark. Full deployment measurements and external review remain in the requested post-release sequence. The operations checkpoint's GitHub compatibility and image-publication runs succeeded; the final checkpoint has its own CI result and must be assessed separately.
+The historical ten-request benchmark smoke check is superseded by the [substantial benchmark report](../../benchmarks/report.md), with a private synthetic catalogue, sustained load, overload/recovery and actual media measurements. The operations checkpoint's GitHub compatibility and image-publication runs succeeded; the final checkpoint has its own CI result and must be assessed separately.
 
-Desktop Explore/watch captures use the normal user's original published video. Studio and mobile fixture captures use the isolated synthetic creator/source, never imported into normal data. Public CloudFront delivery, production Google sign-in and actual two-network media validation remain pending AWS approval/routing and device participation.
+Desktop Explore/watch captures use the normal user's original published video. Studio and mobile fixture captures use the isolated synthetic creator/source, never imported into normal data. Direct public HTTPS/WSS is live. The user confirmed production Google sign-in and reported cross-network playback success; [manual evidence](user-confirmations.json) states the missing device counters. CloudFront account verification remains deferred.
 
 [Learn the changes](../../learning/phase-6/README.md) · [Demo and handoff](../../runbooks/demo-and-handoff.md)

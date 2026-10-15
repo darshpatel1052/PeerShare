@@ -11,7 +11,7 @@ if (
     origin.hostname,
   )
 )
-  throw Error("Use the authorized local or public PeerScreen origin");
+  throw Error("Use the authorized local or public PeerShare origin");
 const response = await fetch(`${base}/api/v1/videos?limit=1`);
 if (!response.ok) throw new Error("The running catalogue is unavailable");
 const video = (await response.json()).items[0];

@@ -1,6 +1,6 @@
 syntax = "proto3";
 package peerscreen.media.v1;
-option go_package = "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1;mediav1";
+option go_package = "github.com/darshpatel1052/PeerShare/services/api/gen/peerscreen/media/v1;mediav1";
 
 // These are short control requests. Video bytes never travel through this service.
 service MediaCoordinator {

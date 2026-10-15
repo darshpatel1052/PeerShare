@@ -6,7 +6,11 @@ import { sql, privateError } from "../benchmark/host.mjs";
 import { awsRead, awsEnvironment } from "../aws-environment.mjs";
 const base = process.argv[2] || "https://peerscreen.darshpatel.dev";
 if (
-  !["http://localhost:3000", "https://peerscreen.darshpatel.dev"].includes(base)
+  ![
+    "http://localhost:3000",
+    "https://peerscreen.darshpatel.dev",
+    "https://peershare.darshpatel.dev",
+  ].includes(base)
 )
   throw Error("Use the authorized local or public deployment");
 const local = base.startsWith("http:"),

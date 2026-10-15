@@ -1,0 +1,40 @@
+{
+  "before": {
+    "checkedAt": "2026-10-15T07:27:22.704Z",
+    "replicas": [
+      "peerscreen-benchmark-bench-api-1",
+      "peerscreen-benchmark-bench-api-2"
+    ],
+    "counters": {
+      "peerscreen_analytics_cache_total{result=\"hit\"}": 4,
+      "peerscreen_analytics_cache_total{result=\"miss\"}": 70,
+      "peerscreen_analytics_cache_total{result=\"error\"}": 0,
+      "peerscreen_analytics_cache_total{result=\"bypass\"}": 0,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos\",status_class=\"2xx\"}": 13672802,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos/{id}\",status_class=\"2xx\"}": 311951,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/channels/{id}/analytics\",status_class=\"2xx\"}": 1124206,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/playlists/{id}\",status_class=\"2xx\"}": 712276,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /health/ready\",status_class=\"2xx\"}": 6080,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /health/ready\",status_class=\"5xx\"}": 50
+    }
+  },
+  "after": {
+    "checkedAt": "2026-10-15T07:28:24.528Z",
+    "replicas": [
+      "peerscreen-benchmark-bench-api-1",
+      "peerscreen-benchmark-bench-api-2"
+    ],
+    "counters": {
+      "peerscreen_analytics_cache_total{result=\"hit\"}": 30,
+      "peerscreen_analytics_cache_total{result=\"miss\"}": 207,
+      "peerscreen_analytics_cache_total{result=\"error\"}": 0,
+      "peerscreen_analytics_cache_total{result=\"bypass\"}": 0,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/channels/{id}/analytics\",status_class=\"2xx\"}": 4566814,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/playlists/{id}\",status_class=\"2xx\"}": 2277858,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /health/ready\",status_class=\"2xx\"}": 7696,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /health/ready\",status_class=\"5xx\"}": 50,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos\",status_class=\"2xx\"}": 40233569,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos/{id}\",status_class=\"2xx\"}": 921846
+    }
+  }
+}

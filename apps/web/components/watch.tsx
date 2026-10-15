@@ -16,11 +16,7 @@ import {
 import SaveVideo from "./save-video";
 import PlaylistQueue from "./playlist-queue";
 import { useAuth } from "./auth-provider";
-import {
-  createPlayer,
-  emptyStats,
-  type PlayerHandle,
-} from "@peerscreen/player";
+import { createPlayer, emptyStats, type PlayerHandle } from "@peershare/player";
 
 export default function Watch() {
   const params = useSearchParams();

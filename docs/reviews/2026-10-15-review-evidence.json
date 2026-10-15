@@ -1,0 +1,114 @@
+{
+  "reviewDateLocal": "2026-10-15 Asia/Kolkata",
+  "recordedAt": "2026-10-15T06:20:02.061143+00:00",
+  "sourceCommit": "8bbe7042b58c47a1fe2ced8560ff1a9ba233a4c2",
+  "applicationSourceChangedByReview": false,
+  "sourceHashes": {
+    "services/api/internal/mediasvc/worker.go": "c662200f6ce61e6debc563b72065ccc401b3b337fdc832bdbe4cbf7656078969",
+    "services/api/internal/encoder/encoder.go": "777344658a441b2db41ce971509317c184fa0dbc377734112077101d5e900c4c",
+    "services/api/internal/store/media.go": "904775dfef31dfdc7ab66ae851a9da0ab73ed5a5ee498859b183dd432e92d481",
+    "services/api/internal/store/jobs.go": "87163dac71e0105eec96e6e06b660f4103728cbdc6b3f1aabec5b6826d74aeb2",
+    "services/api/internal/store/uploads.go": "504f945f5d6c147e5109e535c71a4d4975bdaef5509a4fb332d70191a47f9a78",
+    "services/api/internal/httpapi/reconcile.go": "adccdb907e4ba4edb287628a6028118b773385c8436c8ff961e5fddddb1c9481",
+    "services/api/internal/httpapi/object_reconcile.go": "37b1761ab8ae6bd7ebdb8e321e491df53c1f8d06e0ce7ffb4f9e7ae7e24ca642",
+    "apps/web/components/studio.tsx": "9297ad35ac31b60034791a52533945026f0432a6a3c8456e6e428127416b7767",
+    "apps/web/components/watch.tsx": "58aec63f6e7e82f909695eac68785b5f36fbfc316fd3be9d2a97f4d70161766d",
+    "apps/web/components/playlist-queue.tsx": "2f3d51ad68356f340b13904d8d3a1774da7239402e2464a7f656e7caa9702bfa",
+    "apps/web/components/navigation.tsx": "c2222b448f618ce8d29c23ac806c013a3febc2ec4cda6cbb90267febd7a225c6",
+    "packages/player/src/index.ts": "99b688ab3724c8558b8c1a5bc5c48b2b322b4ded5d4c739dcd3c572cbe8d096d",
+    "packages/player/src/integrity.ts": "31d488875c661c456772b09b872dfdc7df27c69f565c4bd6c225d8d20e29fadb",
+    "tests/browser/uploaded-peer.spec.ts": "57d15adab5c8f8b0886c7bcad52db392b70afea9e60f9d42df578303d1da7760"
+  },
+  "checks": {
+    "productionBuild": "passed",
+    "format": "passed on clean 8bbe704; final full check stopped on newly added docs/evidence/phase-6/public-stun.json formatting",
+    "typescript": "passed",
+    "javascriptUnitTests": {
+      "passed": 9,
+      "failed": 0
+    },
+    "openAPITypes": "matched",
+    "protobuf": "matched",
+    "goVet": "passed",
+    "goUnitRaceTests": "passed",
+    "goIntegration": {
+      "topLevelPassed": 57,
+      "passedIncludingSubcases": 82,
+      "failed": 0,
+      "scope": "real isolated PostgreSQL, Redis, Kafka, gRPC, FFmpeg with race detector"
+    },
+    "browser": {
+      "startTime": "2026-10-15T06:10:50.076Z",
+      "duration": 247462.876,
+      "expected": 25,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "npmAudit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "additionalReproductions": [
+    {
+      "finding": "transient heartbeat classified permanent",
+      "scope": "actual worker loop and encoder classification with fake RPC and temporary ffmpeg/ffprobe shims; no DB",
+      "observed": "FailJob(error_code=\"processing_failed\", permanent=true)",
+      "assertion": "desired transient classification; fails as expected"
+    },
+    {
+      "finding": "retry lost after delayed cancellation",
+      "scope": "real disposable PostgreSQL and existing API/store helpers via Go overlay, race detector",
+      "observed": "command=\"\" state=\"cancelled\" after newer cancelled snapshot",
+      "assertion": "observed buggy behavior; passed"
+    },
+    {
+      "finding": "owned upload list silently truncated",
+      "scope": "real disposable PostgreSQL, 31 aborted owner uploads via Go overlay, race detector",
+      "observed": "30 returned; oldest still individually readable but omitted",
+      "assertion": "observed buggy behavior; passed"
+    }
+  ],
+  "sourceTracedNotFaultInjected": [
+    "S3 orphan reservation settlement",
+    "Watch private playlist cache after logout"
+  ],
+  "publicManualWalkthrough": {
+    "origin": "https://peerscreen.darshpatel.dev",
+    "observed": [
+      "real catalogue and original video",
+      "watch ready",
+      "playback advanced beyond 60 seconds",
+      "pause worked"
+    ],
+    "authenticationPerformed": false,
+    "peerOptInPerformed": false,
+    "twoNetworkProof": false
+  },
+  "historicalEvidenceOnlyNotRerun": [
+    "process SIGKILL recovery scripts",
+    "packaged S3 and operations rehearsals",
+    "AWS restore",
+    "kind/Helm exercise"
+  ],
+  "pendingProof": [
+    "physical two-network media transfer",
+    "completed production Google authentication",
+    "equivalent-workload offload and cost conclusions",
+    "CloudFront delivery"
+  ],
+  "normalRuntimePreserved": true,
+  "additionalEvidenceInspectedDuringReview": {
+    "awsMetadataRequests": 1800,
+    "awsMetadataFailures": 0,
+    "awsConcurrency8P95RangeMS": [45.499, 69.379],
+    "scope": "one-video catalogue; three finite 300-request rounds per concurrency 1/8; inspected existing output, not rerun",
+    "firefox": "public HTTP/control record inspected; peer exchange not established",
+    "packagingMismatch": "performance/media-three-rounds.json has one pair; README summarizes three different pairs"
+  }
+}

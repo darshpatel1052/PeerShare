@@ -1,6 +1,6 @@
 # Phase 4: viewer library, analytics and uploaded-media peer journeys
 
-The viewer features are implemented locally: Following, server search, private/public playlists with playback queues, browser reporting and creator Analytics. The two-device, two-network exercise remains pending. This guide focuses on building and understanding those features.
+The viewer features are implemented locally: Following, server search, private/public playlists with playback queues, browser reporting and creator Analytics. The user reported successful playback across two networks; the report did not include per-device byte counters, so it remains a user confirmation rather than an independently instrumented measurement. This guide focuses on building and understanding those features.
 
 Phase 4 connects the existing publishing pipeline to everyday viewer actions: follow channels, find videos beyond the loaded catalogue page, save an ordered playlist, and inspect creator playback measurements. It keeps the current theme, custom player, explicit sharing consent, accounts and service boundaries.
 

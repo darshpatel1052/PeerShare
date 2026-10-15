@@ -178,19 +178,17 @@ export default function Account() {
         <aside className="auth-identity">
           <div className="auth-brand">
             <BrandMark />
-            PeerScreen
+            PeerShare
           </div>
           <div className="auth-display">
-            YOUR
+            Watch something.
             <br />
-            OWN
-            <br />
-            <span>SCREEN.</span>
+            <span>Make something.</span>
           </div>
           <div className="auth-art" aria-hidden="true">
             <ChannelCover compact />
           </div>
-          <p>Your channel starts here.</p>
+          <p>Your videos, your channel, your community.</p>
           <Link href="/">
             Explore videos
             <Icon name="arrow" />
@@ -198,7 +196,7 @@ export default function Account() {
         </aside>
         <section className="auth-card">
           <span className="eyebrow">
-            {mode === "login" ? "Your workspace" : "Join PeerScreen"}
+            {mode === "login" ? "Your workspace" : "Join PeerShare"}
           </span>
           <h1>{mode === "login" ? "Welcome back." : "Create your account."}</h1>
           <p className="muted">
@@ -273,7 +271,7 @@ export default function Account() {
           {registrationEnabled && (
             <p className="auth-switch">
               {mode === "login"
-                ? "New to PeerScreen? "
+                ? "New to PeerShare? "
                 : "Already have an account? "}
               <button
                 className="text-button"
@@ -288,7 +286,7 @@ export default function Account() {
           )}
           {options.state.status === "ready" && !registrationEnabled && (
             <p className="muted">
-              PeerScreen is currently invite-only. Sign in with your existing
+              PeerShare is currently invite-only. Sign in with your existing
               account to continue.
             </p>
           )}

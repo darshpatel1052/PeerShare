@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("PeerScreen controls play, pause, seek, mute, adjust volume and enter fullscreen", async ({
+test("PeerShare controls play, pause, seek, mute, adjust volume and enter fullscreen", async ({
   page,
 }, info) => {
   await page.goto("/watch/?v=signal-garden");

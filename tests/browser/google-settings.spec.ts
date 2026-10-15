@@ -28,7 +28,7 @@ test("Google availability is honest and callback errors explain account linking"
   );
   await page.reload();
   await expect(
-    page.getByText("PeerScreen is currently invite-only.", { exact: false }),
+    page.getByText("PeerShare is currently invite-only.", { exact: false }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Create an account", exact: true }),

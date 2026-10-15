@@ -4,10 +4,14 @@ import Link from "next/link";
 import { BrandMark } from "../components/ui";
 import { AuthProvider } from "../components/auth-provider";
 import "./globals.css";
+import "./product-shell.css";
 import { ThemeProvider } from "../components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "PeerScreen",
+  title: {
+    default: "PeerShare · Watch, create and share",
+    template: "%s · PeerShare",
+  },
   description:
     "Discover videos, follow your curiosity, and publish on your own channel.",
   icons: { icon: "/icon.svg" },
@@ -34,7 +38,7 @@ export default function RootLayout({
           <div className="footer-inner">
             <span className="footer-brand">
               <BrandMark />
-              PeerScreen
+              PeerShare
             </span>
 
             <nav aria-label="Footer navigation">

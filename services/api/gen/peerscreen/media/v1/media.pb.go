@@ -709,7 +709,7 @@ const file_peerscreen_media_v1_media_proto_rawDesc = "" +
 	"\bClaimJob\x12!.peerscreen.media.v1.ClaimRequest\x1a .peerscreen.media.v1.JobSnapshot\x12W\n" +
 	"\fHeartbeatJob\x12%.peerscreen.media.v1.HeartbeatRequest\x1a .peerscreen.media.v1.JobSnapshot\x12U\n" +
 	"\vCompleteJob\x12$.peerscreen.media.v1.CompleteRequest\x1a .peerscreen.media.v1.JobSnapshot\x12M\n" +
-	"\aFailJob\x12 .peerscreen.media.v1.FailRequest\x1a .peerscreen.media.v1.JobSnapshotBTZRgithub.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1;mediav1b\x06proto3"
+	"\aFailJob\x12 .peerscreen.media.v1.FailRequest\x1a .peerscreen.media.v1.JobSnapshotBRZPgithub.com/darshpatel1052/PeerShare/services/api/gen/peerscreen/media/v1;mediav1b\x06proto3"
 
 var (
 	file_peerscreen_media_v1_media_proto_rawDescOnce sync.Once

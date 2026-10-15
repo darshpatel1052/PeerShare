@@ -1,0 +1,86 @@
+{
+  "checkedAt": "2026-10-15T06:08:09.165Z",
+  "commit": "8609048604e91080555878845866dda61f262226",
+  "workingTreeChanged": true,
+  "scope": "Closed-loop catalogue metadata GET requests, full response body consumed and JSON contract checked, warm HTTP connections; separate from video/WebRTC measurement. Client and server share this host for localhost runs.",
+  "label": "api-aws-c8",
+  "latencyDefinition": "Wall time through response consumption and JSON validation; successful responses only. Failures and status codes are reported separately.",
+  "throughputDefinition": "Successful requests / entire round wall time; bounded concurrency, not a sustained open-loop capacity test.",
+  "base": "https://peerscreen.darshpatel.dev",
+  "node": "v22.23.3",
+  "host": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+    "availableCPUs": 24,
+    "ramBytes": 16466096128
+  },
+  "dataset": {
+    "pageItems": 1,
+    "morePages": false
+  },
+  "warmupRequests": 10,
+  "requests": 300,
+  "concurrency": 8,
+  "repeats": 3,
+  "rounds": [
+    {
+      "repeat": 1,
+      "attempted": 300,
+      "successful": 300,
+      "failures": 0,
+      "statuses": {
+        "200": 300
+      },
+      "errors": {},
+      "stoppedByDeadline": false,
+      "elapsedSeconds": 1.662,
+      "successfulRequestsPerSecond": 180.47,
+      "successLatencyMS": {
+        "p50": 38.186,
+        "p95": 69.379,
+        "p99": 145.02
+      },
+      "metadataPayloadBytes": 195300,
+      "distinctReplicaHeaders": 0
+    },
+    {
+      "repeat": 2,
+      "attempted": 300,
+      "successful": 300,
+      "failures": 0,
+      "statuses": {
+        "200": 300
+      },
+      "errors": {},
+      "stoppedByDeadline": false,
+      "elapsedSeconds": 1.481,
+      "successfulRequestsPerSecond": 202.51,
+      "successLatencyMS": {
+        "p50": 37.165,
+        "p95": 45.499,
+        "p99": 65.881
+      },
+      "metadataPayloadBytes": 195300,
+      "distinctReplicaHeaders": 0
+    },
+    {
+      "repeat": 3,
+      "attempted": 300,
+      "successful": 300,
+      "failures": 0,
+      "statuses": {
+        "200": 300
+      },
+      "errors": {},
+      "stoppedByDeadline": false,
+      "elapsedSeconds": 1.611,
+      "successfulRequestsPerSecond": 186.27,
+      "successLatencyMS": {
+        "p50": 37.411,
+        "p95": 69.06,
+        "p99": 94.422
+      },
+      "metadataPayloadBytes": 195300,
+      "distinctReplicaHeaders": 0
+    }
+  ]
+}

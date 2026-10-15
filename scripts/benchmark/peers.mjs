@@ -29,6 +29,9 @@ if (
 const report = {
   checkedAt: null,
   release: fixture.release,
+  dnsResolution: process.env.BENCHMARK_DNS_OVERRIDE
+    ? "Explicit configured EIP; TLS/SNI hostname verification unchanged"
+    : "Public DNS",
   videoID: fixture.videoID,
   sourceSHA256: fixture.sourceSHA256,
   fixture,
@@ -86,7 +89,14 @@ async function sample(page) {
 }
 let browser;
 try {
-  browser = await chromium.launch({ headless: true });
+  browser = await chromium.launch({
+    headless: true,
+    args: process.env.BENCHMARK_DNS_OVERRIDE
+      ? [
+          `--host-resolver-rules=MAP peerscreen.darshpatel.dev ${process.env.BENCHMARK_DNS_OVERRIDE}`,
+        ]
+      : [],
+  });
   report.browser = browser.version();
   for (let repeat = 1; repeat <= 3; repeat++)
     for (const assisted of [false, true]) {

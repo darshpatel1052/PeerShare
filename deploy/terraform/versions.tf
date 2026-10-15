@@ -11,12 +11,12 @@ terraform {
 provider "aws" {
   region = var.region
   default_tags {
-    tags = { Project = "PeerScreen", ManagedBy = "Terraform", Environment = "showcase" }
+    tags = { Project = "PeerShare", ManagedBy = "Terraform", Environment = "showcase" }
   }
 }
 
 provider "aws" {
   alias  = "edge"
   region = "us-east-1"
-  default_tags { tags = { Project = "PeerScreen", ManagedBy = "Terraform", Environment = "showcase" } }
+  default_tags { tags = { Project = "PeerShare", ManagedBy = "Terraform", Environment = "showcase" } }
 }

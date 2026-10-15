@@ -8,9 +8,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/telemetry"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/mediasvc"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/objectstore"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/telemetry"
 )
 
 func main() {

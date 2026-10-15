@@ -31,7 +31,7 @@ The table contains `user_id` (primary/foreign key), `granted_at` and `expires_at
 /peerscreen creator-access revoke USER_ID
 ```
 
-The grant lasts 1–720 hours. This command grants permission to an **existing** PeerScreen account; it does not invite an email, create an account or connect a Google identity. No public administrative endpoint is added. PostgreSQL's clock decides whether the grant remains live. The existing owners are not silently approved during migration.
+The grant lasts 1–720 hours. This command grants permission to an **existing** PeerShare account; it does not invite an email, create an account or connect a Google identity. No public administrative endpoint is added. PostgreSQL's clock decides whether the grant remains live. The existing owners are not silently approved during migration.
 
 Production channel creation, artwork writes, new uploads, part grants/transfer, completion and processing retries check this permission. New upload setup and processing retries additionally use a shared per-user Redis limit of ten requests per minute. Existing PostgreSQL quota checks still serialize creator/platform storage reservations. These controls serve different purposes: request rate, permission and total capacity.
 
@@ -43,4 +43,4 @@ Sign in to the local app, open Analytics twice, and inspect the private cache co
 
 In the isolated production rehearsal, grant a creator for a bounded period, start an upload, revoke the permission and try sending another part. That operation is refused while abort remains available. Do not run expiry/revocation experiments against another person's account.
 
-References: [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/), [Redis eviction policies](https://redis.io/docs/latest/develop/reference/eviction/). The exact bounds above are PeerScreen's implementation choices.
+References: [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/), [Redis eviction policies](https://redis.io/docs/latest/develop/reference/eviction/). The exact bounds above are PeerShare's implementation choices.

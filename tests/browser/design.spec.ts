@@ -44,7 +44,7 @@ test("product theme, catalogue search, channel tools and phone layouts work", as
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Explore.", exact: true }),
+    page.getByRole("heading", { name: "Explore", exact: true }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Signal garden", exact: true }),

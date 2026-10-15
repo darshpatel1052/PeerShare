@@ -14,6 +14,20 @@ variable "app_domain" {
     error_message = "Use a DNS hostname, without a scheme or path."
   }
 }
+variable "origin_domain" {
+  type        = string
+  default     = null
+  description = "Existing HTTPS application origin; can remain stable when the public product hostname changes."
+  validation {
+    condition     = var.origin_domain == null ? true : can(regex("^[a-z0-9][a-z0-9.-]+\\.[a-z]{2,}$", var.origin_domain))
+    error_message = "Use an origin DNS hostname without a scheme or path."
+  }
+}
+variable "keep_direct_https" {
+  type        = bool
+  default     = false
+  description = "Retain direct HTTPS during a verified CloudFront/domain transition."
+}
 variable "enable_cloudfront" {
   type        = bool
   default     = true

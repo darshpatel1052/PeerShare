@@ -1,7 +1,7 @@
 output "public_ip" {
   value = aws_eip.app.public_ip
 }
-output "origin_domain" { value = "origin-${var.app_domain}" }
+output "origin_domain" { value = coalesce(var.origin_domain, "origin-${var.app_domain}") }
 output "certificate_dns_records" {
   value = [for record in aws_acm_certificate.frontend.domain_validation_options : { name = record.resource_record_name, type = record.resource_record_type, value = record.resource_record_value }]
 }

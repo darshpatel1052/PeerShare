@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
+	pb "github.com/darshpatel1052/PeerShare/services/api/gen/peerscreen/media/v1"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

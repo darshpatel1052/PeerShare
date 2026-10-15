@@ -312,7 +312,7 @@ test("sharing off and route departure close real WebRTC connections", async ({
       .getByRole("link", { name: "Explore", exact: true })
       .click();
     await expect(
-      viewer.getByRole("heading", { name: "Explore.", exact: true }),
+      viewer.getByRole("heading", { name: "Explore", exact: true }),
     ).toBeVisible();
     await expect
       .poll(() =>

@@ -41,6 +41,7 @@ const outputs = JSON.parse(
 const inputs = JSON.parse(
   await readFile(".local/aws/terraform/inputs.tfvars.json", "utf8"),
 );
+const originDomain = inputs.origin_domain || "origin-" + inputs.app_domain;
 const buckets = outputs.private_buckets.value;
 const repositories = outputs.image_repositories.value;
 async function aws(args) {
@@ -138,12 +139,12 @@ try {
       JSON.stringify(
         {
           region: inputs.region,
-          origin: "origin-" + inputs.app_domain,
+          origin: originDomain,
           domain: inputs.app_domain,
           certificate_domain:
             inputs.enable_cloudfront === false
               ? inputs.app_domain
-              : "origin-" + inputs.app_domain,
+              : originDomain,
           roles: outputs.runtime_roles.value,
           repositories,
           buckets,
@@ -159,8 +160,9 @@ try {
           ...(inputs.enable_cloudfront === false
             ? {}
             : {
-                originHost: "origin-" + inputs.app_domain,
+                originHost: originDomain,
                 originSecret: inputs.origin_secret,
+                legacyRedirectHost: inputs.legacy_domain,
               }),
         }),
         null,
@@ -427,11 +429,9 @@ echo 'Host roles, images and restored data prepared; origin certificate and appl
       JSON.stringify(
         {
           region: inputs.region,
-          origin: "origin-" + inputs.app_domain,
+          origin: originDomain,
           domain: inputs.app_domain,
-          certificate_domain: direct
-            ? inputs.app_domain
-            : "origin-" + inputs.app_domain,
+          certificate_domain: direct ? inputs.app_domain : originDomain,
           delivery: direct ? "direct-https" : "cloudfront",
           roles: outputs.runtime_roles.value,
           repositories,
@@ -449,8 +449,9 @@ echo 'Host roles, images and restored data prepared; origin certificate and appl
           direct
             ? {}
             : {
-                originHost: "origin-" + inputs.app_domain,
+                originHost: originDomain,
                 originSecret: inputs.origin_secret,
+                legacyRedirectHost: inputs.legacy_domain,
               },
         ),
         null,

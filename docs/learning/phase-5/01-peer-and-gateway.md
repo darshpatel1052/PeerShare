@@ -4,7 +4,7 @@ STUN was already supported by the Go playback contract and the player configurat
 
 ## Four concepts with different jobs
 
-| Concept              | Job in PeerScreen                                        | Data involved                                                              |
+| Concept              | Job in PeerShare                                         | Data involved                                                              |
 | -------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------- |
 | Tracker / signalling | Introduce viewers of the same accepted rendition/version | Peer identifiers and offer/answer descriptions                             |
 | STUN                 | Discover a network-mapped address candidate              | Small binding requests, not video segments                                 |

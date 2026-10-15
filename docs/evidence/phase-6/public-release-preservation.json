@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-10-15T07:48:11.508Z",
+  "release": "0734601d6e1acaecc5527e9a35df3e63367acfb9",
+  "originalVideoID": "853f24f7-c632-4909-8e82-f0b5ba26401b",
+  "originalChannelID": "a4f9c019-86c3-4a92-abc7-ec9ea2a1d2ad",
+  "hashes": {
+    "thumbnail": "7e743d6bed5c542d03dbf7bf30cfab140e4a485c6aeb69784a6fe40ef8498ff1",
+    "manifest": "bafe5396e47f35079661c77c6a29046944451e4e10bd9b57853cf8679372b225",
+    "integrity": "c3e738e746db89bee55d2a091f40754e3851b813294732f2f76f7cd1ef3dd989"
+  },
+  "originalAssetsPreserved": true,
+  "retainedPreviousOnlyChunk": {
+    "path": "/_next/static/chunks/app/account/page-b97885022c8d438e.js",
+    "sha256": "ad8852849dd00a09f11ce493b01bc85931f4649eda8a343c3721b6c4ed0cb26e",
+    "oldOnly": true,
+    "sourceRelease": "8609048604e91080555878845866dda61f262226",
+    "status": 200,
+    "actualSHA256": "ad8852849dd00a09f11ce493b01bc85931f4649eda8a343c3721b6c4ed0cb26e"
+  },
+  "authOptions": {
+    "google_enabled": true,
+    "registration_enabled": false
+  }
+}

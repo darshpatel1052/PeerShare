@@ -1,4 +1,4 @@
-import type { PlayerStats } from "@peerscreen/player";
+import type { PlayerStats } from "@peershare/player";
 import type {
   PlaybackAck,
   PlaybackMetrics,

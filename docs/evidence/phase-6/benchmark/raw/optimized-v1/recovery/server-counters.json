@@ -1,0 +1,46 @@
+{
+  "before": {
+    "checkedAt": "2026-10-15T07:38:17.493Z",
+    "replicas": [
+      "peerscreen-benchmark-bench-api-1",
+      "peerscreen-benchmark-bench-api-2"
+    ],
+    "counters": {
+      "peerscreen_analytics_cache_total{result=\"hit\"}": 2335,
+      "peerscreen_analytics_cache_total{result=\"miss\"}": 3888,
+      "peerscreen_analytics_cache_total{result=\"error\"}": 0,
+      "peerscreen_analytics_cache_total{result=\"bypass\"}": 0,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/playlists/{id}\",status_class=\"2xx\"}": 67260955,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/channels/{id}/analytics\",status_class=\"5xx\"}": 456,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /health/ready\",status_class=\"2xx\"}": 23360,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /health/ready\",status_class=\"5xx\"}": 50,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos\",status_class=\"2xx\"}": 1094286044,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos/{id}\",status_class=\"2xx\"}": 25101216,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/channels/{id}/analytics\",status_class=\"2xx\"}": 110812233,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos\",status_class=\"5xx\"}": 760,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos/{id}\",status_class=\"5xx\"}": 152
+    }
+  },
+  "after": {
+    "checkedAt": "2026-10-15T07:39:19.178Z",
+    "replicas": [
+      "peerscreen-benchmark-bench-api-1",
+      "peerscreen-benchmark-bench-api-2"
+    ],
+    "counters": {
+      "peerscreen_analytics_cache_total{result=\"hit\"}": 2348,
+      "peerscreen_analytics_cache_total{result=\"miss\"}": 3958,
+      "peerscreen_analytics_cache_total{result=\"error\"}": 0,
+      "peerscreen_analytics_cache_total{result=\"bypass\"}": 0,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/channels/{id}/analytics\",status_class=\"5xx\"}": 456,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /health/ready\",status_class=\"2xx\"}": 24992,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /health/ready\",status_class=\"5xx\"}": 50,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos\",status_class=\"2xx\"}": 1107415206,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos/{id}\",status_class=\"2xx\"}": 25415105,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/channels/{id}/analytics\",status_class=\"2xx\"}": 112376155,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/playlists/{id}\",status_class=\"2xx\"}": 68235257,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos/{id}\",status_class=\"5xx\"}": 152,
+      "peerscreen_http_response_body_bytes_total{method=\"GET\",route=\"GET /api/v1/videos\",status_class=\"5xx\"}": 760
+    }
+  }
+}

@@ -10,28 +10,38 @@ export async function startContainerApp({ test = false, overlays = [] } = {}) {
   await compose(["--profile", "app", "stop", "web", "api", "worker", "media"], {
     ...options,
   });
-  await compose(
-    [
-      "--profile",
-      "app",
-      "up",
-      "-d",
-      "--no-build",
-      "--wait",
-      "--wait-timeout",
-      "120",
-      "web",
-      "worker",
-    ],
-    options,
-  );
+  try {
+    await compose(
+      [
+        "--profile",
+        "app",
+        "up",
+        "-d",
+        "--no-build",
+        "--wait",
+        "--wait-timeout",
+        "120",
+        "web",
+        "worker",
+      ],
+      options,
+    );
+  } catch (error) {
+    // These commands emit bounded failure codes, never environment values.
+    const logs = await compose(
+      ["logs", "--no-color", "--tail", "25", "migrate", "media-migrate"],
+      { ...options, quiet: true },
+    ).catch(() => "");
+    if (logs) console.error(logs);
+    throw error;
+  }
 }
 
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   try {
     await startContainerApp();
     console.log(
-      `Containerized PeerScreen is ready at http://localhost:${process.env.PEERSCREEN_WEB_PORT || "3000"}.`,
+      `Containerized PeerShare is ready at http://localhost:${process.env.PEERSCREEN_WEB_PORT || "3000"}.`,
     );
   } catch (error) {
     console.error(error.message);

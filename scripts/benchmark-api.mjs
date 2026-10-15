@@ -31,7 +31,7 @@ if (
   )
 )
   throw Error(
-    "Use the local app or the authorized PeerScreen production hostname",
+    "Use the local app or the authorized PeerShare production hostname",
   );
 const settings = Object.fromEntries(
   ["requests", "concurrency", "repeats"].map((key) => [
@@ -59,7 +59,7 @@ if (!initial.ok)
   throw Error("The catalogue must be available before measurement");
 const catalogue = await initial.json();
 if (!Array.isArray(catalogue.items))
-  throw Error("Expected the actual PeerScreen catalogue contract");
+  throw Error("Expected the actual PeerShare catalogue contract");
 // The schema-check request is the first warmup request.
 for (let i = 1; i < 10; i++) {
   const response = await fetch(url, { signal: AbortSignal.timeout(5000) });

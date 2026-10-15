@@ -773,6 +773,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/operator/jobs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["operatorJobs"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/operator/jobs/{id}/{action}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["operatorAction"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1085,6 +1117,35 @@ export interface components {
         draft: number;
         published: number;
         unpublished: number;
+      };
+    };
+    OperatorJob: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      video_id: string;
+      title: string;
+      channel: string;
+      /** @enum {string} */
+      state: "queued" | "running" | "ready" | "failed" | "cancelled";
+      stage: string;
+      progress: number;
+      attempts: number;
+      error_code: string | null;
+      /** Format: date-time */
+      updated_at: string;
+      /** @enum {string} */
+      publication: "draft" | "published" | "unpublished";
+    };
+    OperatorPage: {
+      items: components["schemas"]["OperatorJob"][];
+      next_cursor: string | null;
+      summary: {
+        active: number;
+        ready: number;
+        attention: number;
+        reserved_bytes: number;
+        capacity_bytes: number;
       };
     };
   };
@@ -2582,6 +2643,63 @@ export interface operations {
       401: components["responses"]["Error"];
       404: components["responses"]["Error"];
       503: components["responses"]["Error"];
+    };
+  };
+  operatorJobs: {
+    parameters: {
+      query?: {
+        state?: "all" | "active" | "attention" | "ready";
+        q?: string;
+        cursor?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Operator-only processing jobs and logical storage reservation totals. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OperatorPage"];
+        };
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+    };
+  };
+  operatorAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: components["parameters"]["ResourceID"];
+        action: "retry" | "cancel";
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          note: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Action accepted and operator audit committed together. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components["responses"]["Error"];
+      403: components["responses"]["Error"];
+      404: components["responses"]["Error"];
+      409: components["responses"]["Error"];
     };
   };
 }

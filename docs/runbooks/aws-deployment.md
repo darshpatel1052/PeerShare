@@ -1,4 +1,4 @@
-# Deploy the bounded PeerScreen showcase
+# Deploy the bounded PeerShare showcase
 
 The live resource/application evidence is separate from this procedure. The account remains on its active Free plan; do not upgrade it to make a command succeed. The first host has an absolute 24-hour shutdown deadline. [Cost and retained resources](aws-cost-plan.md).
 

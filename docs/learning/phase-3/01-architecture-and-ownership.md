@@ -6,7 +6,7 @@ An API request needs a bounded answer: did this upload complete, may this creato
 
 Three executables come from one Go module. `cmd/peerscreen` starts the catalogue HTTP server. `cmd/media` starts the coordinator gRPC server and its scheduling/outbox loops. `cmd/worker` consumes dispatch notifications and invokes the encoder. Docker runs them in separate containers; native development starts the same binaries as separate child processes. A shared source module saves repeated generated-contract and dependency configuration. It does not give a worker database access.
 
-The API continues to own users, sessions, channels, uploads, publication and media HTTP visibility. Google identifies a PeerScreen user; it does not authorize internal worker commands. Your reported successful Google sign-in belongs to the product identity work, while the new services use independent credentials generated in ignored `.local/media.env`.
+The API continues to own users, sessions, channels, uploads, publication and media HTTP visibility. Google identifies a PeerShare user; it does not authorize internal worker commands. Your reported successful Google sign-in belongs to the product identity work, while the new services use independent credentials generated in ignored `.local/media.env`.
 
 The coordinator owns work scheduling, leases, retries, cancellation and acceptance. Its PostgreSQL login owns only the `media` schema. It cannot create or update catalogue tables. The API's login cannot write the media schema. The worker receives an RPC credential and filesystem roots but no PostgreSQL URL. Real permission tests exercise these denials rather than merely inspecting configuration names.
 

@@ -93,6 +93,7 @@ export default function VideoList({
     items: Video[];
   }>({ scope: "", items: [] });
   const [query, setQuery] = useState("");
+  const [topics, setTopics] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const scope = `${channelID ?? "all"}:${following}:${search}`;
   const items = collection.scope === scope ? collection.items : [];
@@ -112,6 +113,12 @@ export default function VideoList({
   const { state, retry } = useResource<VideosPage>(`/videos?${params}`);
   useEffect(() => {
     if (state.status !== "ready") return;
+    if (!search && !cursor)
+      setTopics(
+        [...new Set(state.value.items.flatMap((item) => item.tags))]
+          .filter((tag) => tag !== "showcase")
+          .slice(0, 7),
+      );
     setCollection((previous) => {
       const old = previous.scope === scope ? previous.items : [];
       return {
@@ -145,10 +152,10 @@ export default function VideoList({
       {(featured || following) && (
         <div className="explore-heading">
           <div>
-            <h1>
-              {following ? "Following" : "Explore"}
-              <span className="accent-dot">.</span>
-            </h1>
+            <span className="page-kicker">
+              {following ? "Your subscriptions" : "Find your next watch"}
+            </span>
+            <h1>{following ? "Following" : "Explore"}</h1>
             <p className="muted">
               {following
                 ? "The latest from channels you follow."
@@ -177,9 +184,6 @@ export default function VideoList({
                     ? "All videos"
                     : "Latest videos"}
             </span>
-            <span className="count-badge">
-              {query ? matches.length : items.length}
-            </span>
           </div>
           <div className="catalogue-search">
             <Icon name="search" />
@@ -202,6 +206,27 @@ export default function VideoList({
           </div>
         </div>
       </>
+      {(featured || following) && topics.length > 0 && (
+        <nav className="topic-tabs" aria-label="Browse video topics">
+          <button
+            className={!query ? "selected" : ""}
+            aria-pressed={!query}
+            onClick={() => setQuery("")}
+          >
+            All videos
+          </button>
+          {topics.map((topic) => (
+            <button
+              key={topic}
+              aria-pressed={query === topic}
+              className={query === topic ? "selected" : ""}
+              onClick={() => setQuery(topic)}
+            >
+              {topic}
+            </button>
+          ))}
+        </nav>
+      )}
       <div className={spotlight ? "discovery-layout" : ""}>
         <div className="discovery-feed">
           {state.status === "loading" &&

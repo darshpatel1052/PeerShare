@@ -452,9 +452,7 @@ try {
     await setup();
     if (exercise) await verify();
     else
-      console.log(
-        `PeerScreen kind: ${base}. Private kubeconfig: ${kubeconfig}`,
-      );
+      console.log(`PeerShare kind: ${base}. Private kubeconfig: ${kubeconfig}`);
   } else {
     await access(resolve(directory, "owner.json"));
     if (action === "status")

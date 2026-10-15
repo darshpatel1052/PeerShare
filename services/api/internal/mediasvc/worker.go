@@ -13,9 +13,9 @@ import (
 	"sync"
 	"time"
 
-	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
+	pb "github.com/darshpatel1052/PeerShare/services/api/gen/peerscreen/media/v1"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/encoder"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/objectstore"
 	"github.com/google/uuid"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"go.opentelemetry.io/otel"

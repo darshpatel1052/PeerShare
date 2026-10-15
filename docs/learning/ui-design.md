@@ -1,14 +1,14 @@
-# PeerScreen's product interface
+# PeerShare's product interface
 
 This checkpoint gives the existing application one visual identity across Explore, channels, playback, sign-in and the creator workspace. Authentication, ownership, revisions and media integrity still use the Phase 1 mechanisms. The new work changes how users see and operate those capabilities.
 
 ## Visual decisions and their purpose
 
-The default palette uses graphite surfaces, warm white text and one lime accent. Different surface levels distinguish the page, panels and controls without putting every element inside a card. Accent colour identifies primary actions, selection and the brand; secondary navigation stays quieter. The light variant changes the same semantic variables rather than duplicating every component's styles.
+The current PeerShare palette uses warm ivory surfaces and a terracotta action colour in light mode, with charcoal surfaces and a softer coral in dark mode. Different surface levels distinguish the page, panels and controls without putting every element inside a card. Accent colour identifies primary actions, selection and the brand; secondary navigation stays quieter. The light variant changes the same semantic variables rather than duplicating every component's styles.
 
 Manrope is the interface face: labels, navigation, controls and descriptions need a consistent reading rhythm. The final product pass uses Manrope for page headings as well; Barlow Condensed remains in decorative identity compositions. Both typefaces are bundled with their original licenses and served from the app's own public assets. Font loading uses `swap`, so text can render while the font arrives. [Font sources and licenses](../../apps/web/public/fonts/README.md) are recorded beside the binaries.
 
-The screen mark combines a play shape with two overlapping frames. The same line artwork appears in channel covers, the sign-in composition and compact creator cards. These are code-native vectors: their shapes remain sharp across sizes and do not depend on an image-generation service. The artwork is default branding, not an uploaded creator banner.
+The PeerShare mark combines a play shape with an incoming sharing stroke. Desktop navigation becomes a fixed side rail, while smaller screens keep a compact top navigation. Creator artwork remains the main visual content. These are code-native vectors: their shapes remain sharp across sizes and do not depend on an image-generation service. The artwork is default branding, not an uploaded creator banner.
 
 Explore gives the actual published video the largest visual area. Its creator, duration, publication date and available qualities come from the API. There are no invented videos, views, followers, popularity rankings or disabled publishing buttons dressed up as working actions. The generated fixture retains its explicit title and provenance in its metadata; it stays out of the normal public catalogue.
 
@@ -28,7 +28,7 @@ A variable represents a semantic role such as background, foreground, separator 
 }
 ```
 
-Changing the surface token updates every consumer. The full palette lives at the top of `apps/web/app/globals.css`; component rules and responsive breakpoints follow it. Fixed dark artwork has its own bounded palette, so it stays coherent in both themes. Focus outlines use the accent and remain visible around keyboard-operated controls.
+Changing the surface token updates every consumer. The foundational component rules live in `apps/web/app/globals.css`. The current product palette, layout and shared surface refinements live in `apps/web/app/product-shell.css`, imported after that foundation. Fixed dark artwork has its own bounded palette, so it stays coherent in both themes. Focus outlines use the accent and remain visible around keyboard-operated controls.
 
 The major layouts use Grid for columns and Flexbox for aligned groups. `minmax(0, 1fr)` and `min-width: 0` allow a column to shrink without forcing the entire page wider. Long names and metadata wrap where appropriate. At narrower widths, multi-column screens stack, navigation gains a second row and less essential side content moves below the primary task. Mobile text-entry fields use 16px type. Reduced-motion preferences disable decorative animations/transitions.
 
@@ -49,7 +49,7 @@ The account preview responds to the draft title/handle as the user types. It pre
 
 ## Theme state and browser storage
 
-React state updates the icon and accessible button name. An effect reads the saved preference after the component mounts, because `localStorage` exists in the browser rather than during static export. The toggle writes only `peerscreen-theme` and changes `document.documentElement.dataset.theme`; CSS selects the corresponding tokens. Storage failures are caught so browsing still works when persistence is unavailable.
+React state updates the icon and accessible button name. An effect reads the saved preference after the component mounts, because `localStorage` exists in the browser rather than during static export. The toggle writes `peershare-theme` (and reads an existing `peerscreen-theme` preference during migration) and changes `document.documentElement.dataset.theme`; CSS selects the corresponding tokens. Storage failures are caught so browsing still works when persistence is unavailable.
 
 This storage value is an appearance preference. Authentication continues to use the HttpOnly cookie and PostgreSQL session lookup; no session token or password was added to browser storage. A persisted light preference is applied after hydration, so this implementation does not claim a completely flash-free theme initialization.
 
@@ -74,3 +74,15 @@ The existing account, ownership, conflict, HTTP playback, integrity and real pee
 Change a semantic colour in one place and list the components affected. Explain why an avatar can be rendered on both server and client, while theme persistence needs a client component. Follow an unsaved channel title from the input into the preview and then through the save request. Use a keyboard to move from Videos to About and back. Finally, inspect why the account settings link and the Go ownership check are separate responsibilities.
 
 See the [Phase 6 product pass](phase-6/01-product-finish.md) for the current layout and upload controls.
+
+## Current product components
+
+`Navigation` adapts between the desktop side rail and mobile top navigation. Its account menu exposes settings and the operator workspace only when the current server-provided role allows it. A hidden link is convenience; the Go endpoints independently authorize every operator request.
+
+`VideoList` uses debounced server search and cursor pagination. Topic controls use real tags from the initial returned catalogue; they do not invent popularity or engagement. `WatchSidebar` loads published videos from the current channel for the next-watch list. Public channel data and private playlist data use separate requests and ownership boundaries.
+
+Studio now requests a page from the full server-filtered collection. Its publication totals come from SQL, rather than counting the current 30 rows. Stable creation-time/UUID cursors keep older videos reachable. The editor stays separate from periodically refreshed list metadata, preserving unsaved work. Completing a new upload opens Drafts on the first page with search cleared.
+
+`Operator` shows actual processing jobs, queue states and reserved storage. The existing persisted `operator` user role controls access. Retry and cancel use the same Go job mutation code as creator actions; an audit row with actor, action and note commits in that transaction. A native dialog supplies keyboard focus containment and Escape behavior for confirmations. The screen refreshes every five seconds and retains its last successful result while a refresh is in flight.
+
+The design pass uses semantic CSS tokens across buttons, forms, cards, playlists, settings, creator analytics and playback. Artwork is updated through the same revision-checked image API used by creators. Legacy storage/session identifiers stay compatible with existing users and videos.

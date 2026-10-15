@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/auth"
 	"github.com/google/uuid"
 )
 

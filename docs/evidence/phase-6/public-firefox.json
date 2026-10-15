@@ -1,0 +1,38 @@
+{
+  "checkedAt": "2026-10-15T06:17:01.874Z",
+  "deployedRelease": "8609048604e91080555878845866dda61f262226",
+  "scope": "Actual public AWS HTTPS and WSS; browsers on one workstation. Not two-network evidence.",
+  "origin": "https://peerscreen.darshpatel.dev",
+  "browser": "firefox",
+  "browserVersion": "157.0",
+  "tlsValidation": true,
+  "checks": {
+    "publicRoutes": true,
+    "privateMetricsAndFixture": true,
+    "anonymousAccountProtected": true,
+    "googleConfigured": true,
+    "correctGoogleCallbackAndPKCE": true,
+    "secureOAuthCookie": true,
+    "invalidCallbackHandled": true,
+    "originalMediaReadable": true,
+    "httpPlaybackAndIntegrity": true,
+    "customPlayPauseSeekMute": true,
+    "mobileNoOverflow": true
+  },
+  "originalMediaSHA256": {
+    "manifest": "bafe5396e47f35079661c77c6a29046944451e4e10bd9b57853cf8679372b225",
+    "integrity": "c3e738e746db89bee55d2a091f40754e3851b813294732f2f76f7cd1ef3dd989"
+  },
+  "http": {
+    "http-bytes": 8657964,
+    "peer-bytes": 0,
+    "uploaded-bytes": 0,
+    "verified-segments": 44,
+    "rejected-segments": 0,
+    "peer-count": 0
+  },
+  "peer": null,
+  "pageErrors": 0,
+  "liveGoogleAuthentication": false,
+  "crossNetworkMediaVerified": false
+}

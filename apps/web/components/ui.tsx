@@ -175,11 +175,16 @@ export function BrandMark() {
       aria-hidden="true"
     >
       <path
-        d="M5 6h20a5 5 0 0 1 5 5v14H10a5 5 0 0 1-5-5V6Z"
+        d="M5 8a3 3 0 0 1 4.5-2.6L30 17.2a2.1 2.1 0 0 1 0 3.6L9.5 32.6A3 3 0 0 1 5 30V8Z"
         fill="currentColor"
       />
-      <path d="m15 12 9 6-9 6Z" fill="var(--accent-ink)" />
-      <path d="M10 30h20V10" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="m14 12 10 6-10 6M4 20h9"
+        stroke="var(--accent-ink)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

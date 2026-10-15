@@ -135,7 +135,7 @@ func (s *Store) LinkGoogle(ctx context.Context, user, issuer, subject, email str
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		return err
 	}
-	// One Google account per PeerScreen user. Replacing it is not an implicit side effect of linking.
+	// One Google account per PeerShare user. Replacing it is not an implicit side effect of linking.
 	var previous string
 	err = tx.QueryRow(ctx, "SELECT subject FROM catalog.external_identities WHERE user_id=$1 AND issuer=$2", user, issuer).Scan(&previous)
 	if err == nil && previous != subject {

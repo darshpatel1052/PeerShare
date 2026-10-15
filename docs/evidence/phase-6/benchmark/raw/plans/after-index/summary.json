@@ -1,0 +1,86 @@
+{
+  "label": "after-index",
+  "sourceSHA256": "44248ffb02a3981a73ac42da9eaefddb38fc21b41fe419e3d1e08cbcce9df82b",
+  "records": [
+    {
+      "name": "old-search-absent",
+      "planMode": "force_custom_plan",
+      "executionMS": 1131.663,
+      "planningMS": 14.278,
+      "hitBlocks": 299972,
+      "readBlocks": 17582
+    },
+    {
+      "name": "old-search-absent",
+      "planMode": "force_generic_plan",
+      "executionMS": 511.275,
+      "planningMS": 1.749,
+      "hitBlocks": 300001,
+      "readBlocks": 17569
+    },
+    {
+      "name": "new-search-absent",
+      "planMode": "force_custom_plan",
+      "executionMS": 2.977,
+      "planningMS": 1.62,
+      "hitBlocks": 41,
+      "readBlocks": 5
+    },
+    {
+      "name": "new-search-absent",
+      "planMode": "force_generic_plan",
+      "executionMS": 2.107,
+      "planningMS": 1.746,
+      "hitBlocks": 89,
+      "readBlocks": 0
+    },
+    {
+      "name": "old-search-common",
+      "planMode": "force_custom_plan",
+      "executionMS": 0.405,
+      "planningMS": 1.238,
+      "hitBlocks": 192,
+      "readBlocks": 15
+    },
+    {
+      "name": "old-search-common",
+      "planMode": "force_generic_plan",
+      "executionMS": 0.471,
+      "planningMS": 1.044,
+      "hitBlocks": 223,
+      "readBlocks": 0
+    },
+    {
+      "name": "new-search-common",
+      "planMode": "force_custom_plan",
+      "executionMS": 18.895,
+      "planningMS": 1.305,
+      "hitBlocks": 366,
+      "readBlocks": 130
+    },
+    {
+      "name": "new-search-common",
+      "planMode": "force_generic_plan",
+      "executionMS": 30.841,
+      "planningMS": 1.193,
+      "hitBlocks": 7802,
+      "readBlocks": 975
+    },
+    {
+      "name": "analytics-scope",
+      "planMode": "force_custom_plan",
+      "executionMS": 2.104,
+      "planningMS": 0.736,
+      "hitBlocks": 3,
+      "readBlocks": 21
+    },
+    {
+      "name": "analytics-scope",
+      "planMode": "force_generic_plan",
+      "executionMS": 0.556,
+      "planningMS": 0.79,
+      "hitBlocks": 24,
+      "readBlocks": 0
+    }
+  ]
+}

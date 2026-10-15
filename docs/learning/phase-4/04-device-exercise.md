@@ -2,7 +2,7 @@
 
 The user can provide two devices on different networks. Automated browser results on this machine do not establish cross-network reachability. This exercise remains manual until device results are collected; it does not delay using Following, playlists or Analytics locally.
 
-Use an existing private SSH/VPN route to the PeerScreen host if available. An SSH client can forward local ports 3000 and 8000 to the host's corresponding loopback ports, so the remote browser still opens `http://localhost:3000` and contacts `ws://localhost:8000`. Replace the host/user placeholder with a real privately reachable machine:
+Use an existing private SSH/VPN route to the PeerShare host if available. An SSH client can forward local ports 3000 and 8000 to the host's corresponding loopback ports, so the remote browser still opens `http://localhost:3000` and contacts `ws://localhost:8000`. Replace the host/user placeholder with a real privately reachable machine:
 
 ```sh
 ssh -N -L 3000:127.0.0.1:3000 -L 8000:127.0.0.1:8000 user@private-host

@@ -1,5 +1,5 @@
 {
-  "name": "peerscreen",
+  "name": "peershare",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "node scripts/dev.mjs",
-    "web-build": "npm run build --workspace=@peerscreen/web",
+    "web-build": "npm run build --workspace=@peershare/web",
     "typecheck": "tsc --noEmit -p apps/web/tsconfig.json",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

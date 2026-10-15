@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/ratelimit"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/auth"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/mediasvc"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/ratelimit"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/store"
 	"github.com/jackc/pgx/v5"
 	"github.com/twmb/franz-go/pkg/kgo"
 )

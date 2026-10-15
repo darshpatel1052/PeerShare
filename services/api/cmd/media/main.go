@@ -10,10 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/telemetry"
+	pb "github.com/darshpatel1052/PeerShare/services/api/gen/peerscreen/media/v1"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/mediasvc"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/objectstore"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/telemetry"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

@@ -31,7 +31,7 @@ if ((process.argv[2] || "up") === "up") {
   );
   await startContainerApp(options);
   console.log(
-    "PeerScreen: http://localhost:3000. Grafana: http://localhost:3301. Jaeger: http://localhost:16686. Operator username: admin; password remains in .local/operations.env.",
+    "PeerShare: http://localhost:3000. Grafana: http://localhost:3301. Jaeger: http://localhost:16686. Operator username: admin; password remains in .local/operations.env.",
   );
 } else if (process.argv[2] === "stop") {
   await compose(["stop", "prometheus", "grafana", "jaeger"], options);

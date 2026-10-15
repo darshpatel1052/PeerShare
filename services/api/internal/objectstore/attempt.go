@@ -12,7 +12,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/encoder"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/encoder"
 )
 
 func attemptBase(j encoder.Job) string {

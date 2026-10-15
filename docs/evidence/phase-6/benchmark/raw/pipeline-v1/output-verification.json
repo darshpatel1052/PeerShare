@@ -1,0 +1,266 @@
+{
+  "checkedAt": "2026-10-15T07:22:29.693Z",
+  "sourcePipelineReportSHA256": "f113b6ffbc939640a0746c4068040c43a8e6e88e6ab23302237fcafb3e2243f7",
+  "scope": "Read-back verification after pipeline timing; two real renditions and first/last segment hashes for each upload",
+  "verified": [
+    {
+      "videoID": "3468e6da-260f-4cd2-a34c-38c78c251476",
+      "durationSeconds": 30,
+      "qualities": [
+        480,
+        720
+      ],
+      "segmentCount": 16,
+      "sampledSegments": [
+        {
+          "path": "480p/segment-000.ts",
+          "bytes": 320916,
+          "sha256": "726a15bccefa097f8d69bc5d4e1bed63d979cef4101a10979abbecf5f969611b",
+          "verified": true
+        },
+        {
+          "path": "480p/segment-007.ts",
+          "bytes": 175968,
+          "sha256": "4d363ec6f11e5c42f5ca7a4429e044063ab6177c8cb1bbf4d70aa8f564debf70",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-000.ts",
+          "bytes": 1107696,
+          "sha256": "d5f2de82a29b7539bc8adc27a29acfce0fbbc0c318eee7bdc744c3139a4433ba",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-007.ts",
+          "bytes": 467556,
+          "sha256": "713e95ad2cbb84a4fcb899f8c4e0d8817af8c46eef87f430553f0965b3beb1dc",
+          "verified": true
+        }
+      ],
+      "processingState": "ready",
+      "publicationState": "draft"
+    },
+    {
+      "videoID": "a40d5354-3f18-4912-addd-9940a1dae265",
+      "durationSeconds": 60,
+      "qualities": [
+        480,
+        720
+      ],
+      "segmentCount": 30,
+      "sampledSegments": [
+        {
+          "path": "480p/segment-000.ts",
+          "bytes": 230864,
+          "sha256": "6ef7922886f1d90918c347425f598b4344086275c8d8998ca1979af9ad04be79",
+          "verified": true
+        },
+        {
+          "path": "480p/segment-014.ts",
+          "bytes": 230112,
+          "sha256": "a707ce3458041ac54ffa316c16f76259d5e03161c684c650c0de8092adc87b98",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-000.ts",
+          "bytes": 570204,
+          "sha256": "725f7b4a5e6fb8eb312c8f66ded7e686c402e9fd99bf30fcfb678bc612704978",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-014.ts",
+          "bytes": 564188,
+          "sha256": "2a798436b69ecc343c93d9c527037a8b2f1c77fd3695320760f4854c2850169c",
+          "verified": true
+        }
+      ],
+      "processingState": "ready",
+      "publicationState": "draft"
+    },
+    {
+      "videoID": "989b2b91-644c-48fe-80c6-3c043ebf89a5",
+      "durationSeconds": 120,
+      "qualities": [
+        480,
+        720
+      ],
+      "segmentCount": 60,
+      "sampledSegments": [
+        {
+          "path": "480p/segment-000.ts",
+          "bytes": 230300,
+          "sha256": "0b8716a7165b9d3e1f005ad547ddafd0d965f9c5074f9fd8211cf03c4a56b128",
+          "verified": true
+        },
+        {
+          "path": "480p/segment-029.ts",
+          "bytes": 227668,
+          "sha256": "46915aa42d6d0139c19dab6e859e2e7a739b5da1e4140e164f42ac8324e6b0ed",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-000.ts",
+          "bytes": 568700,
+          "sha256": "b98f9c777469f2abec1e14de17549566fc1863c13133d809308ff4ec8d9f249c",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-029.ts",
+          "bytes": 565880,
+          "sha256": "e2359cdb0d2d69c650ac3b2705c644f0db815310261d166825578052bdb81f6d",
+          "verified": true
+        }
+      ],
+      "processingState": "ready",
+      "publicationState": "draft"
+    },
+    {
+      "videoID": "80bd7612-d1e4-4238-a9f5-09c20e61476b",
+      "durationSeconds": 30,
+      "qualities": [
+        480,
+        720
+      ],
+      "segmentCount": 16,
+      "sampledSegments": [
+        {
+          "path": "480p/segment-000.ts",
+          "bytes": 320916,
+          "sha256": "0cbbc9a27db4370c9534aa98c7cd1d2e27d347db3f87189bb5c59bd522b36d53",
+          "verified": true
+        },
+        {
+          "path": "480p/segment-007.ts",
+          "bytes": 175968,
+          "sha256": "4d363ec6f11e5c42f5ca7a4429e044063ab6177c8cb1bbf4d70aa8f564debf70",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-000.ts",
+          "bytes": 1108072,
+          "sha256": "ea40beb15175a3cbddf418cbc6dfc41792cf8e19866cfb51a505a82ab04c9e8a",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-007.ts",
+          "bytes": 474136,
+          "sha256": "ce16654edce1fa6ee52b345cb5d79be31c5fad498b5d2eca3e995c4f28d7034c",
+          "verified": true
+        }
+      ],
+      "processingState": "ready",
+      "publicationState": "draft"
+    },
+    {
+      "videoID": "6ac2ee49-5451-44dc-83f9-4df76b644bc6",
+      "durationSeconds": 30,
+      "qualities": [
+        480,
+        720
+      ],
+      "segmentCount": 16,
+      "sampledSegments": [
+        {
+          "path": "480p/segment-000.ts",
+          "bytes": 320916,
+          "sha256": "1ec339669be061d36a444506979c50eb996d1863eb031d2797196bbdfe057cea",
+          "verified": true
+        },
+        {
+          "path": "480p/segment-007.ts",
+          "bytes": 175968,
+          "sha256": "4d363ec6f11e5c42f5ca7a4429e044063ab6177c8cb1bbf4d70aa8f564debf70",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-000.ts",
+          "bytes": 1105440,
+          "sha256": "5b4508d2b1a9932ee977583e8bb92fae3f6a79031b97158b986cc3ce9c137cf2",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-007.ts",
+          "bytes": 470752,
+          "sha256": "ee8923f478dcac04f7983143fbc3d2dc1214adf242c7472059f27ddc5f8202be",
+          "verified": true
+        }
+      ],
+      "processingState": "ready",
+      "publicationState": "draft"
+    },
+    {
+      "videoID": "a2003d75-8ca2-4198-aead-fd33e5933ff6",
+      "durationSeconds": 30,
+      "qualities": [
+        480,
+        720
+      ],
+      "segmentCount": 16,
+      "sampledSegments": [
+        {
+          "path": "480p/segment-000.ts",
+          "bytes": 321104,
+          "sha256": "9c4ce3771d830954da1248114a755451005b1b1208bdbd166827415c902d3459",
+          "verified": true
+        },
+        {
+          "path": "480p/segment-007.ts",
+          "bytes": 175968,
+          "sha256": "ec320608cc29d3e8e3bd461a19e9b9ca4dffc8625b75f272c3f895a1e37c5adc",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-000.ts",
+          "bytes": 1107884,
+          "sha256": "0535215ba5e9486a8008a97a6f9061e297cafc47bedf303e4f99636397d6e974",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-007.ts",
+          "bytes": 472256,
+          "sha256": "21587fcc9e3143f8d1f7e2348ce9dd5e08e3b9352dd30c90b1a6e141d216e101",
+          "verified": true
+        }
+      ],
+      "processingState": "ready",
+      "publicationState": "draft"
+    },
+    {
+      "videoID": "b7e9a86a-f680-46dc-b8d2-b73c33617e15",
+      "durationSeconds": 30,
+      "qualities": [
+        480,
+        720
+      ],
+      "segmentCount": 16,
+      "sampledSegments": [
+        {
+          "path": "480p/segment-000.ts",
+          "bytes": 321292,
+          "sha256": "ae66923d007c623c1871609c20b26bd03f48808b789921f06b9081bff2ebbf59",
+          "verified": true
+        },
+        {
+          "path": "480p/segment-007.ts",
+          "bytes": 175968,
+          "sha256": "65f4d8c218fcbbab2481b3df2e9d9351384e2bb66f3d187bfcc71d358a194d76",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-000.ts",
+          "bytes": 1105816,
+          "sha256": "5061a653ff00887f17c5b2d270e05e9518a881effb961b14c91bfd42c2b5e200",
+          "verified": true
+        },
+        {
+          "path": "720p/segment-007.ts",
+          "bytes": 468496,
+          "sha256": "f226c95cf28229d6df79fd46d2bece33ab315d4c7b71b601d7181b7b6558a6ed",
+          "verified": true
+        }
+      ],
+      "processingState": "ready",
+      "publicationState": "draft"
+    }
+  ]
+}

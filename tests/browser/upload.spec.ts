@@ -513,7 +513,7 @@ test("failed source stays private and studio metadata edits and deletion work", 
     .click();
   await expect(
     page.getByRole("heading", {
-      name: "Your next video starts here",
+      name: "No drafts",
       exact: true,
     }),
   ).toBeVisible();

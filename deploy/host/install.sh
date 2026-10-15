@@ -19,7 +19,7 @@ mkdir -p /srv/peerscreen/roles
 chmod 755 /srv/peerscreen/roles
 cat >/etc/systemd/system/peerscreen-roles.service <<'UNIT'
 [Unit]
-Description=Refresh isolated PeerScreen AWS runtime roles
+Description=Refresh isolated PeerShare AWS runtime roles
 After=network-online.target
 Wants=network-online.target
 [Service]
@@ -29,7 +29,7 @@ UMask=0077
 UNIT
 cat >/etc/systemd/system/peerscreen-roles.timer <<'UNIT'
 [Unit]
-Description=Refresh PeerScreen credentials before their one-hour expiry
+Description=Refresh PeerShare credentials before their one-hour expiry
 [Timer]
 OnBootSec=30s
 OnUnitActiveSec=15min

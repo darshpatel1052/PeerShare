@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { createPlayer } from "@peerscreen/player";
+import { createPlayer } from "@peershare/player";
 import { api, type VideoPreview } from "../lib/api";
 import VideoPlayer from "./video-player";
 

@@ -14,12 +14,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/config"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/ratelimit"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/auth"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/config"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/mediasvc"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/objectstore"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/ratelimit"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/store"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"go.opentelemetry.io/otel"
@@ -137,6 +137,7 @@ func (a *App) Handler() http.Handler {
 	a.registerImages(mux)
 	a.registerGoogle(mux)
 	a.registerLibrary(mux)
+	a.registerOperator(mux)
 	a.registerPlayback(mux)
 	for path, allowed := range map[string]string{"/api/v1/auth/register": "POST", "/api/v1/auth/login": "POST", "/api/v1/auth/logout": "POST", "/api/v1/auth/logout-all": "POST", "/api/v1/me": "GET, HEAD", "/api/v1/channels": "POST", "/api/v1/channels/{id}": "GET, HEAD, PATCH", "/api/v1/videos": "GET, HEAD", "/api/v1/videos/{id}": "GET, HEAD, PATCH, DELETE"} {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {

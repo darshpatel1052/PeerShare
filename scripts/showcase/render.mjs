@@ -72,14 +72,14 @@ function art(channel, chapter = 0) {
 }
 function frame(channel, video, chapter, cover = false) {
   const part = video.chapters[chapter];
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><defs><radialGradient id="glow"><stop stop-color="${channel.accent}" stop-opacity=".15"/><stop offset="1" stop-color="${channel.shade}" stop-opacity="0"/></radialGradient></defs><rect width="1280" height="720" fill="#10151c"/><rect x="695" width="585" height="720" fill="${channel.shade}"/><circle cx="1050" cy="360" r="400" fill="url(#glow)"/><g font-family="DejaVu Sans, sans-serif">${text(channel.title.toUpperCase(), 64, 65, 17, channel.accent, 60, 600)}<rect x="64" y="105" width="44" height="4" rx="2" fill="${channel.accent}"/>${text(cover ? video.title : part[0], 64, 185, cover ? 53 : 43, "#f4f4ef", cover ? 22 : 25, 600)}${cover ? text(video.tag + " / VISUAL NOTES", 64, 540, 17, "#a5afbe", 50) : text(part[1], 64, 385, 23, "#c6ccd5", 43) + text(part[2], 64, 485, 23, "#8995a5", 43)}${art(channel, chapter)}<path d="M64 632 H1216" stroke="#ffffff18"/>${text(cover ? "ORIGINAL SERIES" : `${String(chapter + 1).padStart(2, "0")} / 04`, 64, 676, 15, "#8995a5", 50)}${text(cover ? "PEERSCREEN" : "VISUAL EXPLANATION · NO AUDIO", 860, 676, 13, "#8995a5", 50)}</g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><defs><radialGradient id="glow"><stop stop-color="${channel.accent}" stop-opacity=".15"/><stop offset="1" stop-color="${channel.shade}" stop-opacity="0"/></radialGradient></defs><rect width="1280" height="720" fill="#10151c"/><rect x="695" width="585" height="720" fill="${channel.shade}"/><circle cx="1050" cy="360" r="400" fill="url(#glow)"/><g font-family="DejaVu Sans, sans-serif">${text(channel.title.toUpperCase(), 64, 65, 17, channel.accent, 60, 600)}<rect x="64" y="105" width="44" height="4" rx="2" fill="${channel.accent}"/>${text(cover ? video.title : part[0], 64, 185, cover ? 53 : 43, "#f4f4ef", cover ? 22 : 25, 600)}${cover ? text(video.tag + " / VISUAL NOTES", 64, 540, 17, "#a5afbe", 50) : text(part[1], 64, 385, 23, "#c6ccd5", 43) + text(part[2], 64, 485, 23, "#8995a5", 43)}${art(channel, chapter)}<path d="M64 632 H1216" stroke="#ffffff18"/>${text(cover ? "ORIGINAL SERIES" : `${String(chapter + 1).padStart(2, "0")} / 04`, 64, 676, 15, "#8995a5", 50)}${text(cover ? "PEERSHARE" : "VISUAL EXPLANATION · NO AUDIO", 860, 676, 13, "#8995a5", 50)}</g></svg>`;
 }
 await mkdir(root, { recursive: true, mode: 0o700 });
 const manifest = [];
 for (const channel of series) {
   const directory = join(root, channel.slug);
   await mkdir(directory, { recursive: true });
-  const banner = `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="400"><rect width="1600" height="400" fill="${channel.shade}"/><circle cx="1370" cy="40" r="330" fill="${channel.accent}" opacity=".1"/><circle cx="1370" cy="40" r="230" stroke="${channel.accent}" stroke-width="2" fill="none" opacity=".4"/><circle cx="1370" cy="40" r="130" stroke="${channel.accent}" fill="none" opacity=".5"/><g font-family="DejaVu Sans, sans-serif">${text(channel.title, 80, 177, 67, "#f4f4ef", 50, 600)}${text("IDEAS, MADE VISIBLE.", 84, 240, 19, channel.accent, 80)}${text("A PEERSCREEN SHOWCASE SERIES", 84, 334, 13, "#b7bdc9", 80)}</g></svg>`;
+  const banner = `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="400"><rect width="1600" height="400" fill="${channel.shade}"/><circle cx="1370" cy="40" r="330" fill="${channel.accent}" opacity=".1"/><circle cx="1370" cy="40" r="230" stroke="${channel.accent}" stroke-width="2" fill="none" opacity=".4"/><circle cx="1370" cy="40" r="130" stroke="${channel.accent}" fill="none" opacity=".5"/><g font-family="DejaVu Sans, sans-serif">${text(channel.title, 80, 177, 67, "#f4f4ef", 50, 600)}${text("IDEAS, MADE VISIBLE.", 84, 240, 19, channel.accent, 80)}${text("A PEERSHARE SHOWCASE SERIES", 84, 334, 13, "#b7bdc9", 80)}</g></svg>`;
   await sharp(Buffer.from(banner)).png().toFile(join(directory, "banner.png"));
   for (const [index, video] of channel.videos.entries()) {
     const folder = join(directory, video.slug);
@@ -150,7 +150,7 @@ for (const channel of series) {
               `${String(i * 8).padStart(2, "0")}s — ${part[0]}\n${part[1]} ${part[2]}`,
           )
           .join("\n\n") +
-        "\n\nAn original, silent PeerScreen visual explainer. This is an editorial showcase account, not a customer identity. Artwork and video are generated from the open project source.",
+        "\n\nAn original, silent PeerShare visual explainer. This is an editorial showcase account, not a customer identity. Artwork and video are generated from the open project source.",
       tags: [video.tag, "visual-notes", "showcase"],
     });
     console.log(

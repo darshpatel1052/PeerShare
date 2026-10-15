@@ -13,11 +13,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/auth"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/config"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/httpapi"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/telemetry"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/auth"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/config"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/httpapi"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/store"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/telemetry"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
@@ -80,7 +80,7 @@ func run() error {
 		}
 		id, err := uuid.Parse(os.Args[3])
 		if err != nil || id.String() != os.Args[3] {
-			return errors.New("use a canonical PeerScreen user ID")
+			return errors.New("use a canonical PeerShare user ID")
 		}
 		if os.Args[2] == "revoke" && len(os.Args) == 4 {
 			return db.RevokeCreator(ctx, id.String())

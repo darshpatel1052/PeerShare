@@ -7,10 +7,12 @@ const Context = createContext<{
   setTheme: (theme: Theme) => void;
 } | null>(null);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, update] = useState<Theme>("dark");
+  const [theme, update] = useState<Theme>("light");
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("peerscreen-theme");
+      const saved =
+        localStorage.getItem("peershare-theme") ??
+        localStorage.getItem("peerscreen-theme");
       if (saved === "light" || saved === "dark") update(saved);
     } catch {}
   }, []);
@@ -20,7 +22,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   function setTheme(value: Theme) {
     update(value);
     try {
-      localStorage.setItem("peerscreen-theme", value);
+      localStorage.setItem("peershare-theme", value);
     } catch {}
   }
   return (

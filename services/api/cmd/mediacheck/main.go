@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
-	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/mediasvc"
+	pb "github.com/darshpatel1052/PeerShare/services/api/gen/peerscreen/media/v1"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/mediasvc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

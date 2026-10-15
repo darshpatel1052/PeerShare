@@ -68,7 +68,7 @@ resource "aws_iam_role" "build" {
     Effect = "Allow", Action = "sts:AssumeRoleWithWebIdentity", Principal = { Federated = aws_iam_openid_connect_provider.github.arn },
     # This repository uses GitHub's immutable subject format. IDs are verified
     # through its OIDC customization endpoint; name-only subjects are rejected.
-    Condition = { StringEquals = { "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com", "token.actions.githubusercontent.com:sub" = "repo:darshpatel1052@147577241/Peer-Screen@1416673812:ref:refs/heads/main" } }
+    Condition = { StringEquals = { "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com", "token.actions.githubusercontent.com:sub" = ["repo:darshpatel1052@147577241/Peer-Screen@1416673812:ref:refs/heads/main", "repo:darshpatel1052@147577241/PeerShare@1416673812:ref:refs/heads/main"] } }
   }] })
 }
 resource "aws_iam_role_policy" "build" {

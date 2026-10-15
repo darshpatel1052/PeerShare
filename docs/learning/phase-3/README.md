@@ -1,14 +1,14 @@
-# Phase 3: distributed media processing and recovery
+# Phase 3: Go media services, adaptive video and event streaming
 
-This phase separates the catalogue, coordinator and encoder into independently running services. The UI keeps its upload and publication workflow; the backend now has explicit protocols and recovery decisions between processes. Read [ADR 0004](../../adr/0004-media-services-and-durable-events.md) for the decisions and current verification boundaries.
+Publishing a video now runs through three Go services: the catalogue accepts the upload, the coordinator assigns processing work, and the encoder creates adaptive HLS. Kafka carries notifications; typed gRPC connects the service APIs. This separation lets the product process videos independently of catalogue and viewer requests. Read [ADR 0004](../../adr/0004-media-services-and-durable-events.md) for the decisions and current verification boundaries.
 
 Start with these chapters:
 
 1. [Architecture and service ownership](01-architecture-and-ownership.md): what runs where, why the boundaries exist, and what "distributed" means in this local environment.
 2. [Data model, transactions and outboxes](02-data-and-transactions.md): catalogue/media tables, stable identifiers, transaction boundaries, snapshots and deduplication.
 3. [Go, protobuf and gRPC](03-go-and-grpc.md): generated contracts, interfaces, contexts, authentication, status codes and claim replay.
-4. [Kafka, worker leases and recovery](04-kafka-and-recovery.md): offsets, notifications, the reaper, epochs, retry and cancellation.
-5. [Adaptive media and acceptance](05-adaptive-media.md): quality selection, actual FFmpeg output, descriptors, verification and storage cleanup.
+4. [Adaptive media and acceptance](05-adaptive-media.md): quality selection, actual FFmpeg output, descriptors, verification and storage cleanup.
+5. [Kafka, worker leases and recovery](04-kafka-and-recovery.md): offsets, notifications, the reaper, epochs, retry and cancellation.
 6. [Verification lab](06-verification-lab.md): reproducible checks, their expected observations, and the difference between integration and process-crash evidence.
 
 ```mermaid

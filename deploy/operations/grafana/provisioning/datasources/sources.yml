@@ -1,6 +1,6 @@
 apiVersion: 1
 datasources:
-  - name: PeerScreen metrics
+  - name: PeerShare metrics
     uid: peerscreen-prometheus
     type: prometheus
     access: proxy

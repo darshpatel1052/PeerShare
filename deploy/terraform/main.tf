@@ -43,13 +43,13 @@ resource "aws_vpc_security_group_ingress_rule" "https" {
   to_port           = 443
 }
 resource "aws_vpc_security_group_ingress_rule" "direct_https" {
-  count             = var.enable_cloudfront ? 0 : 1
+  count             = var.enable_cloudfront && !var.keep_direct_https ? 0 : 1
   security_group_id = aws_security_group.app.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "tcp"
   from_port         = 443
   to_port           = 443
-  description       = "Public HTTPS while CloudFront account approval is pending."
+  description       = "Direct HTTPS retained during the CloudFront transition."
 }
 data "aws_ec2_managed_prefix_list" "cloudfront" { name = "com.amazonaws.global.cloudfront.origin-facing" }
 resource "aws_key_pair" "admin" {

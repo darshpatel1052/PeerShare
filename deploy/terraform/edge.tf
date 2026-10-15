@@ -64,10 +64,30 @@ resource "aws_cloudfront_function" "static_routes" {
   }
   JS
 }
+resource "aws_cloudfront_response_headers_policy" "security" {
+  name = "${var.name}-frontend-security"
+  security_headers_config {
+    content_type_options { override = true }
+    frame_options {
+      frame_option = "DENY"
+      override     = true
+    }
+    referrer_policy {
+      referrer_policy = "strict-origin-when-cross-origin"
+      override        = true
+    }
+    strict_transport_security {
+      access_control_max_age_sec = 86400
+      include_subdomains         = false
+      preload                    = false
+      override                   = true
+    }
+  }
+}
 resource "aws_cloudfront_distribution" "frontend" {
   count               = var.enable_cloudfront ? 1 : 0
   enabled             = true
-  comment             = "PeerScreen bounded showcase: static CDN and uncached authorized media/API"
+  comment             = "PeerShare bounded showcase: static CDN and uncached authorized media/API"
   aliases             = [var.app_domain]
   price_class         = "PriceClass_All"
   is_ipv6_enabled     = true
@@ -85,7 +105,7 @@ resource "aws_cloudfront_distribution" "frontend" {
     origin_access_control_id = aws_cloudfront_origin_access_control.frontend.id
   }
   origin {
-    domain_name = "origin-${var.app_domain}"
+    domain_name = coalesce(var.origin_domain, "origin-${var.app_domain}")
     origin_id   = "application"
     custom_header {
       name  = "X-PeerScreen-Origin"
@@ -101,37 +121,40 @@ resource "aws_cloudfront_distribution" "frontend" {
     }
   }
   default_cache_behavior {
-    target_origin_id       = "frontend"
-    viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cached_methods         = ["GET", "HEAD"]
-    cache_policy_id        = aws_cloudfront_cache_policy.static.id
-    compress               = true
+    target_origin_id           = "frontend"
+    viewer_protocol_policy     = "redirect-to-https"
+    allowed_methods            = ["GET", "HEAD", "OPTIONS"]
+    cached_methods             = ["GET", "HEAD"]
+    cache_policy_id            = aws_cloudfront_cache_policy.static.id
+    compress                   = true
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
     function_association {
       event_type   = "viewer-request"
       function_arn = aws_cloudfront_function.static_routes.arn
     }
   }
   ordered_cache_behavior {
-    path_pattern           = "/_next/*"
-    target_origin_id       = "assets"
-    viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cached_methods         = ["GET", "HEAD"]
-    cache_policy_id        = aws_cloudfront_cache_policy.static.id
-    compress               = true
+    path_pattern               = "/_next/*"
+    target_origin_id           = "assets"
+    viewer_protocol_policy     = "redirect-to-https"
+    allowed_methods            = ["GET", "HEAD", "OPTIONS"]
+    cached_methods             = ["GET", "HEAD"]
+    cache_policy_id            = aws_cloudfront_cache_policy.static.id
+    compress                   = true
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
   }
   dynamic "ordered_cache_behavior" {
     for_each = ["/api/*", "/media/*", "/tracker*", "/health/*"]
     content {
-      path_pattern             = ordered_cache_behavior.value
-      target_origin_id         = "application"
-      viewer_protocol_policy   = "https-only"
-      allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-      cached_methods           = ["GET", "HEAD"]
-      cache_policy_id          = aws_cloudfront_cache_policy.dynamic.id
-      origin_request_policy_id = aws_cloudfront_origin_request_policy.application.id
-      compress                 = false
+      path_pattern               = ordered_cache_behavior.value
+      target_origin_id           = "application"
+      viewer_protocol_policy     = "https-only"
+      allowed_methods            = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+      cached_methods             = ["GET", "HEAD"]
+      cache_policy_id            = aws_cloudfront_cache_policy.dynamic.id
+      origin_request_policy_id   = aws_cloudfront_origin_request_policy.application.id
+      compress                   = false
+      response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
     }
   }
   restrictions {

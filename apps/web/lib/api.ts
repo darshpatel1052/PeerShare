@@ -1,4 +1,6 @@
-import type { components } from "@peerscreen/contracts";
+import type { components } from "@peershare/contracts";
+export type OperatorJob = components["schemas"]["OperatorJob"];
+export type OperatorPage = components["schemas"]["OperatorPage"];
 export type AuthOptions = components["schemas"]["AuthOptions"];
 export type AuthMethods = components["schemas"]["AuthMethods"];
 export type OAuthRedirect = components["schemas"]["OAuthRedirect"];

@@ -4,7 +4,7 @@ const config: NextConfig = {
   output: process.env.PEERSCREEN_DEV_PROXY === "true" ? undefined : "export",
   trailingSlash: process.env.PEERSCREEN_DEV_PROXY !== "true",
   images: { unoptimized: true },
-  transpilePackages: ["@peerscreen/player"],
+  transpilePackages: ["@peershare/player"],
   poweredByHeader: false,
 };
 if (process.env.PEERSCREEN_DEV_PROXY === "true") {

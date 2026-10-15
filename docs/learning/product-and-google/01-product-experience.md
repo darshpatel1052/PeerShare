@@ -5,10 +5,10 @@ Prepared 14 October 2026. This change continues the completed local Phase 2 foun
 ## What you can now do
 
 - Open **Workspace → Settings → Appearance** to choose Dark or Light. The choice belongs to this device and survives a reload.
-- Open **Workspace → Channel & account** to upload a JPG/PNG channel banner or restore the default. The default contains no PeerScreen lettering.
+- Open **Workspace → Channel & account** to upload a JPG/PNG channel banner or restore the default. The default contains no PeerShare lettering.
 - Open **Studio → Edit details** on a video to choose its thumbnail. Save the image separately from the title, description, and tags. **Use video frame** restores the frame generated from the video.
 - Use **All videos**, **Drafts**, **Published**, and **Unpublished** to organize the library. **Delete draft** removes an unwanted draft after confirmation.
-- Play videos with PeerScreen's own controls. Space/K plays or pauses when the player frame has focus; left/right seeks five seconds; M mutes; F opens fullscreen. The sliders and buttons also work with keyboard focus and pointer/touch input.
+- Play videos with PeerShare's own controls. Space/K plays or pauses when the player frame has focus; left/right seeks five seconds; M mutes; F opens fullscreen. The sliders and buttons also work with keyboard focus and pointer/touch input.
 
 Unpublishing hides a video from viewers and moves it to **Unpublished**. It does not erase your source. Deleting is the explicit action that removes it from Studio and schedules storage cleanup. This is deliberately separate because creators often take a video offline and publish it again later.
 
@@ -27,7 +27,7 @@ Migration `0004_creator_images.sql` therefore adds:
 | Record                      | Meaning                                        |
 | --------------------------- | ---------------------------------------------- |
 | `creator_images.id`         | Random UUID for one immutable normalized JPEG  |
-| `owner_id`                  | PeerScreen user who uploaded it                |
+| `owner_id`                  | PeerShare user who uploaded it                 |
 | `byte_length`               | Exact stored size used for the artwork budget  |
 | `created_at`                | Used when safely removing retired artwork      |
 | `channels.banner_image_id`  | Nullable foreign key to the selected banner    |
@@ -84,7 +84,7 @@ Reconciliation removes unreferenced images after the same ten-minute grace perio
 
 The HTML `<video>` element still performs decoding, timing, buffering, and audio playback. Its native `controls` attribute is removed; the new controls call `play()`, `pause()`, set `currentTime`, `volume`, and `muted`, and use the browser fullscreen API. The UI listens to media events rather than guessing playback state from button clicks.
 
-The underlying `@peerscreen/player` package still loads HLS, verifies segment hashes, provides quality selection, collects delivery counters, and cleans up peer connections. Peer sharing still requires the viewer's opt-in. Draft previews remain authenticated and do not share with peers. A prettier control surface does not justify weakening those behaviors.
+The underlying `@peershare/player` package still loads HLS, verifies segment hashes, provides quality selection, collects delivery counters, and cleans up peer connections. Peer sharing still requires the viewer's opt-in. Draft previews remain authenticated and do not share with peers. A prettier control surface does not justify weakening those behaviors.
 
 ## Evidence and limits
 

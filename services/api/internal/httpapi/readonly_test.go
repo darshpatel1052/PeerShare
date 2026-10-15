@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/config"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/config"
 )
 
 func TestReadOnlyDeploymentRejectsWritesAndCountsResponseBytes(t *testing.T) {

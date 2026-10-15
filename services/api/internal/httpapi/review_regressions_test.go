@@ -12,9 +12,9 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	pb "github.com/darshpatel1052/Peer-Screen/services/api/gen/peerscreen/media/v1"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/objectstore"
-	"github.com/darshpatel1052/Peer-Screen/services/api/internal/store"
+	pb "github.com/darshpatel1052/PeerShare/services/api/gen/peerscreen/media/v1"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/objectstore"
+	"github.com/darshpatel1052/PeerShare/services/api/internal/store"
 	"github.com/google/uuid"
 )
 
@@ -237,5 +237,50 @@ func TestIntegrationRemoteSweepMustFinishBeforeQuotaSettlement(t *testing.T) {
 	}
 	if deletes != 2 {
 		t.Fatal("failed deletion was skipped or successful page repeated", deletes)
+	}
+}
+
+func TestIntegrationOperatorWorkspacePermissionsAndAuditedActions(t *testing.T) {
+	f := setup(t)
+	ctx := context.Background()
+	owner := client()
+	u, _ := newUpload(t, f, owner, []byte("operator-source"))
+	operator := client()
+	me, _, _ := registerUser(t, f, operator)
+	mustExec(t, f, "UPDATE catalog.users SET role='operator' WHERE id=$1", me.User.ID)
+	job := uuid.NewString()
+	mustExec(t, f, `INSERT INTO catalog.processing_jobs(id,video_id,state,attempt) VALUES($1,$2,'failed',1)`, job, u.VideoID)
+	for _, check := range []struct {
+		c    *http.Client
+		want int
+	}{{client(), 401}, {owner, 403}, {operator, 200}} {
+		status, _, _ := request(t, check.c, f.Server.URL, "GET", "/api/v1/operator/jobs", nil, nil)
+		if status != check.want {
+			t.Fatal("operator authorization", status, check.want)
+		}
+	}
+	status, _, _ := request(t, operator, f.Server.URL, "GET", "/api/v1/uploads/"+u.ID, nil, nil)
+	if status != 404 {
+		t.Fatal("operator role bypassed private owner upload access")
+	}
+	for _, action := range []string{"retry", "cancel"} {
+		status, data, _ := request(t, operator, f.Server.URL, "POST", "/api/v1/operator/jobs/"+job+"/"+action, map[string]string{"note": "Maintainer requested " + action}, nil)
+		if status != 200 {
+			t.Fatalf("operator %s: %d %s", action, status, data)
+		}
+	}
+	var audits int
+	if err := f.DB.Pool.QueryRow(ctx, "SELECT count(*) FROM catalog.operator_actions WHERE job_id=$1 AND actor_id=$2", job, me.User.ID).Scan(&audits); err != nil || audits != 2 {
+		t.Fatal("operator actions were not audited", audits, err)
+	}
+	mustExec(t, f, "UPDATE catalog.processing_jobs SET state='failed',attempt=3 WHERE id=$1", job)
+	status, _, _ = request(t, operator, f.Server.URL, "POST", "/api/v1/operator/jobs/"+job+"/retry", map[string]string{"note": "Check exhausted budget"}, nil)
+	if status != 409 {
+		t.Fatal("operator bypassed attempt budget", status)
+	}
+	mustExec(t, f, "UPDATE catalog.users SET role='member' WHERE id=$1", me.User.ID)
+	status, _, _ = request(t, operator, f.Server.URL, "GET", "/api/v1/operator/jobs", nil, nil)
+	if status != 403 {
+		t.Fatal("revoked role retained operator access")
 	}
 }

@@ -28,7 +28,9 @@ function request(path, headers = {}) {
       (res) => {
         let body = "";
         res.on("data", (chunk) => (body += chunk));
-        res.on("end", () => accept({ status: res.statusCode, body }));
+        res.on("end", () =>
+          accept({ status: res.statusCode, body, headers: res.headers }),
+        );
       },
     );
     req.on("error", reject);
@@ -39,7 +41,8 @@ try {
   await writeFile(
     resolve(directory, "envoy.json"),
     JSON.stringify(
-      gatewayConfig("https://peerscreen.example.test", {
+      gatewayConfig("https://peershare.example.test", {
+        legacyRedirectHost: "peerscreen.example.test",
         originHost: host,
         originSecret: secret,
       }),
@@ -135,6 +138,23 @@ try {
     JSON.parse(response.body).client,
     headers["CloudFront-Viewer-Address"],
   );
+  const secondViewer = await request("/api/v1/me", {
+    ...headers,
+    "CloudFront-Viewer-Address": "198.51.100.8:43211",
+  });
+  assert.equal(JSON.parse(secondViewer.body).client, "198.51.100.8:43211");
+  assert.notEqual(
+    JSON.parse(secondViewer.body).client,
+    JSON.parse(response.body).client,
+  );
+  const legacy = await request("/watch/?v=example", {
+    Host: "peerscreen.example.test",
+  });
+  assert.equal(legacy.status, 308);
+  assert.equal(
+    legacy.headers.location,
+    "https://peershare.example.test/watch/?v=example",
+  );
   assert.equal((await request("/api/v1/me")).status, 403);
   assert.equal(
     (await request("/api/v1/me", { "X-PeerScreen-Origin": "wrong" })).status,
@@ -173,6 +193,8 @@ try {
     wrongSecret403: true,
     acceptedSecret200: true,
     trustedViewerAddressOverwritesSpoof: true,
+    distinctViewerAddressesPreserved: true,
+    distinctLegacyHostnameRedirect308: true,
     mediaPathRewrite: true,
     privateMetrics404: true,
     websocketUpgrade: true,

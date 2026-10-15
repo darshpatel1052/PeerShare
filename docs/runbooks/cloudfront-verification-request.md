@@ -6,11 +6,11 @@ Case type: **Account and billing**. Service/category: **Account → Other Accoun
 
 Account/billing support is free; this request does not need a paid technical-support plan. [AWS guidance](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-get-answers.html).
 
-Subject: **CloudFront account verification for PeerScreen**
+Subject: **CloudFront account verification for PeerShare**
 
 Submitted message:
 
-> I am deploying a small personal video project, PeerScreen, at peerscreen.darshpatel.dev. Creating a pay-as-you-go CloudFront distribution with CreateDistributionWithTags returns HTTP 403 AccessDenied: “Your account must be verified before you can add new CloudFront resources.”
+> I am deploying a small personal video project, PeerShare, at peerscreen.darshpatel.dev. Creating a pay-as-you-go CloudFront distribution with CreateDistributionWithTags returns HTTP 403 AccessDenied: “Your account must be verified before you can add new CloudFront resources.”
 >
 > Failed request ID: b2f426de-fa44-4727-b2fd-ef813db70327. Observed 14 October 2026 UTC. The ACM certificate for this domain is issued; private S3 storage and the Mumbai EC2 origin are already prepared.
 >

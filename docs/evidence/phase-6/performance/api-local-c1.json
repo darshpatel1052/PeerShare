@@ -1,0 +1,86 @@
+{
+  "checkedAt": "2026-10-15T05:57:12.006Z",
+  "commit": "692f7c29ad67bbc505257692bdcca9cb0ffd38cc",
+  "workingTreeChanged": true,
+  "scope": "Closed-loop catalogue metadata GET requests, full response body consumed and JSON contract checked, warm HTTP connections; separate from video/WebRTC measurement. Client and server share this host for localhost runs.",
+  "label": "api-local-c1",
+  "latencyDefinition": "Wall time through response consumption and JSON validation; successful responses only. Failures and status codes are reported separately.",
+  "throughputDefinition": "Successful requests / entire round wall time; bounded concurrency, not a sustained open-loop capacity test.",
+  "base": "http://localhost:3000",
+  "node": "v22.23.3",
+  "host": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+    "availableCPUs": 24,
+    "ramBytes": 16466096128
+  },
+  "dataset": {
+    "pageItems": 1,
+    "morePages": false
+  },
+  "warmupRequests": 10,
+  "requests": 300,
+  "concurrency": 1,
+  "repeats": 3,
+  "rounds": [
+    {
+      "repeat": 1,
+      "attempted": 300,
+      "successful": 300,
+      "failures": 0,
+      "statuses": {
+        "200": 300
+      },
+      "errors": {},
+      "stoppedByDeadline": false,
+      "elapsedSeconds": 1.138,
+      "successfulRequestsPerSecond": 263.68,
+      "successLatencyMS": {
+        "p50": 3.688,
+        "p95": 6.596,
+        "p99": 7.089
+      },
+      "metadataPayloadBytes": 191700,
+      "distinctReplicaHeaders": 0
+    },
+    {
+      "repeat": 2,
+      "attempted": 300,
+      "successful": 300,
+      "failures": 0,
+      "statuses": {
+        "200": 300
+      },
+      "errors": {},
+      "stoppedByDeadline": false,
+      "elapsedSeconds": 0.911,
+      "successfulRequestsPerSecond": 329.37,
+      "successLatencyMS": {
+        "p50": 2.068,
+        "p95": 5.889,
+        "p99": 6.211
+      },
+      "metadataPayloadBytes": 191700,
+      "distinctReplicaHeaders": 0
+    },
+    {
+      "repeat": 3,
+      "attempted": 300,
+      "successful": 300,
+      "failures": 0,
+      "statuses": {
+        "200": 300
+      },
+      "errors": {},
+      "stoppedByDeadline": false,
+      "elapsedSeconds": 0.773,
+      "successfulRequestsPerSecond": 388.08,
+      "successLatencyMS": {
+        "p50": 1.997,
+        "p95": 5.651,
+        "p99": 5.946
+      },
+      "metadataPayloadBytes": 191700,
+      "distinctReplicaHeaders": 0
+    }
+  ]
+}

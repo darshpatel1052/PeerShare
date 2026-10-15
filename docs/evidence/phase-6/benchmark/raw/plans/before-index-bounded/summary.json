@@ -1,0 +1,86 @@
+{
+  "label": "before-index-bounded",
+  "sourceSHA256": "44248ffb02a3981a73ac42da9eaefddb38fc21b41fe419e3d1e08cbcce9df82b",
+  "records": [
+    {
+      "name": "old-search-absent",
+      "planMode": "force_custom_plan",
+      "executionMS": 207.955,
+      "planningMS": 1.459,
+      "hitBlocks": 310060,
+      "readBlocks": 7494
+    },
+    {
+      "name": "old-search-absent",
+      "planMode": "force_generic_plan",
+      "executionMS": 882.266,
+      "planningMS": 1.507,
+      "hitBlocks": 307798,
+      "readBlocks": 9772
+    },
+    {
+      "name": "new-search-absent",
+      "planMode": "force_custom_plan",
+      "executionMS": 0.538,
+      "planningMS": 1.34,
+      "hitBlocks": 43,
+      "readBlocks": 3
+    },
+    {
+      "name": "new-search-absent",
+      "planMode": "force_generic_plan",
+      "executionMS": 0.818,
+      "planningMS": 1.047,
+      "hitBlocks": 62,
+      "readBlocks": 0
+    },
+    {
+      "name": "old-search-common",
+      "planMode": "force_custom_plan",
+      "executionMS": 0.226,
+      "planningMS": 0.976,
+      "hitBlocks": 207,
+      "readBlocks": 0
+    },
+    {
+      "name": "old-search-common",
+      "planMode": "force_generic_plan",
+      "executionMS": 0.487,
+      "planningMS": 0.975,
+      "hitBlocks": 223,
+      "readBlocks": 0
+    },
+    {
+      "name": "new-search-common",
+      "planMode": "force_custom_plan",
+      "executionMS": 66.979,
+      "planningMS": 1.256,
+      "hitBlocks": 1196,
+      "readBlocks": 385
+    },
+    {
+      "name": "new-search-common",
+      "planMode": "force_generic_plan",
+      "executionMS": 52.197,
+      "planningMS": 1.564,
+      "hitBlocks": 8263,
+      "readBlocks": 1647
+    },
+    {
+      "name": "analytics-scope",
+      "planMode": "force_custom_plan",
+      "executionMS": 59.98,
+      "planningMS": 1.006,
+      "hitBlocks": 14981,
+      "readBlocks": 1689
+    },
+    {
+      "name": "analytics-scope",
+      "planMode": "force_generic_plan",
+      "executionMS": 56.874,
+      "planningMS": 0.691,
+      "hitBlocks": 15077,
+      "readBlocks": 1593
+    }
+  ]
+}

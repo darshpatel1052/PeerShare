@@ -1,0 +1,7 @@
+{
+  "checkedAt": "2026-10-15T07:43:40.453Z",
+  "writeProbeStatus": 503,
+  "stopped": true,
+  "databaseRetained": true,
+  "scope": "Only the isolated benchmark APIs/gateway removed; normal product and synthetic database preserved"
+}

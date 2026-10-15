@@ -26,7 +26,7 @@ Every RPC takes `context.Context`. The client applies a five-second timeout, and
 
 An interceptor runs around each RPC. The client adds a private bearer credential as metadata. The server uses constant-time comparison and checks the role against the requested method. Catalogue credentials allow submit/get/retry/cancel. Worker credentials allow claim/get/heartbeat/complete/fail. A worker cannot authorize itself to create a product video or submit arbitrary catalogue-owned work.
 
-These credentials are independent of Google OAuth and PeerScreen browser sessions. They stay in ignored local configuration and scoped server environments. The worker receives no database credential or Google secret. The current transport is private and local; a public/cross-host deployment needs its separate TLS and broker-access configuration.
+These credentials are independent of Google OAuth and PeerShare browser sessions. They stay in ignored local configuration and scoped server environments. The worker receives no database credential or Google secret. The current transport is private and local; a public/cross-host deployment needs its separate TLS and broker-access configuration.
 
 ## Status codes are part of the contract
 

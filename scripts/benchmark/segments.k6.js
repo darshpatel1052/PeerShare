@@ -20,6 +20,9 @@ const stream = fixture.streams.find((s) => s.quality === 480),
   loaded = new Counter("verified_segments"),
   latency = new Trend("verified_segment_ms", true);
 export const options = {
+  hosts: __ENV.BENCHMARK_DNS_OVERRIDE
+    ? { "peerscreen.darshpatel.dev": __ENV.BENCHMARK_DNS_OVERRIDE }
+    : {},
   scenarios: {
     segments: {
       executor: "constant-vus",
@@ -75,6 +78,9 @@ export function handleSummary(data) {
     [__ENV.SUMMARY]: JSON.stringify(
       {
         metadata: {
+          dnsResolution: __ENV.BENCHMARK_DNS_OVERRIDE
+            ? "Explicit configured EIP; TLS/SNI hostname verification unchanged"
+            : "Public DNS",
           scope:
             (fixture.temporaryPublic
               ? "Anonymous public"

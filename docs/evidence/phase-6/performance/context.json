@@ -1,0 +1,26 @@
+{
+  "scope": "Measured on 15 October 2026; local and actual AWS public HTTPS results are separate",
+  "local": {
+    "serverRelease": "692f7c29ad67bbc505257692bdcca9cb0ffd38cc",
+    "apiReplicas": 1,
+    "serverAndClientShareWorkstation": true,
+    "operatorProfileRunning": true
+  },
+  "aws": {
+    "serverRelease": "8609048604e91080555878845866dda61f262226",
+    "apiReplicas": 2,
+    "instanceType": "m7i-flex.large",
+    "vCPUs": 2,
+    "ramGiB": 8,
+    "region": "ap-south-1",
+    "delivery": "direct-https",
+    "operatorProfileRunning": false
+  },
+  "dataset": {
+    "publishedVideos": 1,
+    "destructiveDataSeeding": false
+  },
+  "interpretation": "Closed-loop finite metadata workload, JSON contract validated. Short local bursts are not capacity, concurrency is not arrival rate, payload bytes are not wire or AWS-billed bytes.",
+  "measurementScriptSHA256": "212b39106d41756047aae8b5d806480fb3ef64976ea60daf0aaa90350c7530c7",
+  "crossNetworkDeviceEvidence": false
+}

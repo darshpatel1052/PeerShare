@@ -2468,7 +2468,7 @@ html[data-theme="light"] .cover-orbit {
 .studio-empty h3 {
   font-size: 18px;
 }
-/* Controls are scoped to PeerScreen's video frame, independent of the page theme. */
+/* Controls are scoped to PeerShare's video frame, independent of the page theme. */
 .product-player {
   --player-ink: #f5f7fa;
   --player-muted: #b4bbc6;

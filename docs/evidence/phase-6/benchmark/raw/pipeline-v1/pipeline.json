@@ -1,0 +1,276 @@
+{
+  "checkedAt": "2026-10-15T07:20:16.844Z",
+  "release": "8bbe7042b58c47a1fe2ced8560ff1a9ba233a4c2",
+  "scriptSHA256": "d566af1c4a74d1911a40a9befb0252fc690be9f26e42cae5e6e0d62cee1c760e",
+  "hardware": "Existing AWS m7i-flex.large, 2 vCPU / 8 GiB; normal services share this host",
+  "scope": "Actual production uploads/transcodes of owned synthetic moving sources; unpublished",
+  "results": [
+    {
+      "condition": "sequential",
+      "profile": "720p-30s",
+      "sourceBytes": 9671247,
+      "sourceSHA256": "1e929b01ad5b8a619ffcc161fdcfde813b5c8e407540d60e044ea9ed9675dc9b",
+      "inputWidth": 1280,
+      "inputHeight": 720,
+      "inputFPS": 30,
+      "inputSeconds": 30,
+      "uploadID": "7fb2e99e-ca75-4e73-8b9d-9e7afbcdb9b4",
+      "videoID": "3468e6da-260f-4cd2-a34c-38c78c251476",
+      "startedAt": "2026-10-15T07:15:59.258Z",
+      "stages": [
+        {
+          "state": "pending/queued",
+          "sinceCompleteMS": 43
+        },
+        {
+          "state": "processing/encoding",
+          "sinceCompleteMS": 1675
+        },
+        {
+          "state": "processing/indexing",
+          "sinceCompleteMS": 17902
+        },
+        {
+          "state": "ready/ready",
+          "sinceCompleteMS": 19519
+        }
+      ],
+      "uploadMS": 1619,
+      "processingWaitMS": 19749,
+      "totalMS": 21368,
+      "readyAt": "2026-10-15T07:16:20.626Z",
+      "publicationState": "draft",
+      "ready": true
+    },
+    {
+      "condition": "sequential",
+      "profile": "1080p-60s",
+      "sourceBytes": 37858235,
+      "sourceSHA256": "846c777efc4e97b1c93570c03bccc905d9e81d20f0160270ca8521aa9d0a9970",
+      "inputWidth": 1920,
+      "inputHeight": 1080,
+      "inputFPS": 30,
+      "inputSeconds": 60,
+      "uploadID": "be89965b-2edb-4023-b7d0-ea5a9f32ab85",
+      "videoID": "a40d5354-3f18-4912-addd-9940a1dae265",
+      "startedAt": "2026-10-15T07:16:20.758Z",
+      "stages": [
+        {
+          "state": "pending/queued",
+          "sinceCompleteMS": 39
+        },
+        {
+          "state": "processing/validating",
+          "sinceCompleteMS": 1116
+        },
+        {
+          "state": "processing/encoding",
+          "sinceCompleteMS": 2198
+        },
+        {
+          "state": "processing/indexing",
+          "sinceCompleteMS": 44948
+        },
+        {
+          "state": "ready/ready",
+          "sinceCompleteMS": 48188
+        }
+      ],
+      "uploadMS": 4945,
+      "processingWaitMS": 48325,
+      "totalMS": 53270,
+      "readyAt": "2026-10-15T07:17:14.028Z",
+      "publicationState": "draft",
+      "ready": true
+    },
+    {
+      "condition": "sequential",
+      "profile": "1080p-120s",
+      "sourceBytes": 75466088,
+      "sourceSHA256": "4d75e5d4d2535d86099f9b065235b0988d84b76f6077460a882c84f6077f69f8",
+      "inputWidth": 1920,
+      "inputHeight": 1080,
+      "inputFPS": 30,
+      "inputSeconds": 120,
+      "uploadID": "52002879-e918-4d32-82e1-16b759ac15c4",
+      "videoID": "989b2b91-644c-48fe-80c6-3c043ebf89a5",
+      "startedAt": "2026-10-15T07:17:14.231Z",
+      "stages": [
+        {
+          "state": "pending/queued",
+          "sinceCompleteMS": 39
+        },
+        {
+          "state": "processing/encoding",
+          "sinceCompleteMS": 1667
+        },
+        {
+          "state": "processing/indexing",
+          "sinceCompleteMS": 90046
+        },
+        {
+          "state": "ready/ready",
+          "sinceCompleteMS": 93822
+        }
+      ],
+      "uploadMS": 10603,
+      "processingWaitMS": 94069,
+      "totalMS": 104672,
+      "readyAt": "2026-10-15T07:18:58.903Z",
+      "publicationState": "draft",
+      "ready": true
+    },
+    {
+      "condition": "four-upload-burst",
+      "profile": "720p-30s",
+      "sourceBytes": 9671247,
+      "sourceSHA256": "1e929b01ad5b8a619ffcc161fdcfde813b5c8e407540d60e044ea9ed9675dc9b",
+      "inputWidth": 1280,
+      "inputHeight": 720,
+      "inputFPS": 30,
+      "inputSeconds": 30,
+      "uploadID": "d3d2e099-f14f-422a-b786-e28651707546",
+      "videoID": "80bd7612-d1e4-4238-a9f5-09c20e61476b",
+      "startedAt": "2026-10-15T07:18:58.978Z",
+      "stages": [
+        {
+          "state": "pending/queued",
+          "sinceCompleteMS": 39
+        },
+        {
+          "state": "processing/encoding",
+          "sinceCompleteMS": 20233
+        },
+        {
+          "state": "processing/indexing",
+          "sinceCompleteMS": 36627
+        },
+        {
+          "state": "ready/ready",
+          "sinceCompleteMS": 37705
+        }
+      ],
+      "uploadMS": 1803,
+      "processingWaitMS": 37835,
+      "totalMS": 39638,
+      "readyAt": "2026-10-15T07:19:38.616Z",
+      "publicationState": "draft",
+      "ready": true
+    },
+    {
+      "condition": "four-upload-burst",
+      "profile": "720p-30s",
+      "sourceBytes": 9671247,
+      "sourceSHA256": "1e929b01ad5b8a619ffcc161fdcfde813b5c8e407540d60e044ea9ed9675dc9b",
+      "inputWidth": 1280,
+      "inputHeight": 720,
+      "inputFPS": 30,
+      "inputSeconds": 30,
+      "uploadID": "865a5432-c7ad-405e-8b70-282b5df85155",
+      "videoID": "6ac2ee49-5451-44dc-83f9-4df76b644bc6",
+      "startedAt": "2026-10-15T07:18:59.181Z",
+      "stages": [
+        {
+          "state": "pending/queued",
+          "sinceCompleteMS": 38
+        },
+        {
+          "state": "processing/validating",
+          "sinceCompleteMS": 37989
+        },
+        {
+          "state": "processing/encoding",
+          "sinceCompleteMS": 38531
+        },
+        {
+          "state": "processing/indexing",
+          "sinceCompleteMS": 54750
+        },
+        {
+          "state": "ready/ready",
+          "sinceCompleteMS": 56911
+        }
+      ],
+      "uploadMS": 1662,
+      "processingWaitMS": 57143,
+      "totalMS": 58805,
+      "readyAt": "2026-10-15T07:19:57.986Z",
+      "publicationState": "draft",
+      "ready": true
+    },
+    {
+      "condition": "four-upload-burst",
+      "profile": "720p-30s",
+      "sourceBytes": 9671247,
+      "sourceSHA256": "1e929b01ad5b8a619ffcc161fdcfde813b5c8e407540d60e044ea9ed9675dc9b",
+      "inputWidth": 1280,
+      "inputHeight": 720,
+      "inputFPS": 30,
+      "inputSeconds": 30,
+      "uploadID": "09880a34-b48a-4b25-b554-f31b01240a84",
+      "videoID": "a2003d75-8ca2-4198-aead-fd33e5933ff6",
+      "startedAt": "2026-10-15T07:18:59.202Z",
+      "stages": [
+        {
+          "state": "pending/queued",
+          "sinceCompleteMS": 40
+        },
+        {
+          "state": "processing/encoding",
+          "sinceCompleteMS": 56290
+        },
+        {
+          "state": "processing/indexing",
+          "sinceCompleteMS": 73063
+        },
+        {
+          "state": "ready/ready",
+          "sinceCompleteMS": 75218
+        }
+      ],
+      "uploadMS": 2124,
+      "processingWaitMS": 75518,
+      "totalMS": 77642,
+      "readyAt": "2026-10-15T07:20:16.844Z",
+      "publicationState": "draft",
+      "ready": true
+    },
+    {
+      "condition": "four-upload-burst",
+      "profile": "720p-30s",
+      "sourceBytes": 9671247,
+      "sourceSHA256": "1e929b01ad5b8a619ffcc161fdcfde813b5c8e407540d60e044ea9ed9675dc9b",
+      "inputWidth": 1280,
+      "inputHeight": 720,
+      "inputFPS": 30,
+      "inputSeconds": 30,
+      "uploadID": "396d1d89-493c-4e4e-8456-d4d7eee2724c",
+      "videoID": "b7e9a86a-f680-46dc-b8d2-b73c33617e15",
+      "startedAt": "2026-10-15T07:18:58.957Z",
+      "stages": [
+        {
+          "state": "pending/queued",
+          "sinceCompleteMS": 40
+        },
+        {
+          "state": "processing/encoding",
+          "sinceCompleteMS": 1665
+        },
+        {
+          "state": "processing/indexing",
+          "sinceCompleteMS": 17900
+        },
+        {
+          "state": "ready/ready",
+          "sinceCompleteMS": 20067
+        }
+      ],
+      "uploadMS": 1766,
+      "processingWaitMS": 20109,
+      "totalMS": 21875,
+      "readyAt": "2026-10-15T07:19:20.832Z",
+      "publicationState": "draft",
+      "ready": true
+    }
+  ]
+}
