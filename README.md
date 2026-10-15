@@ -4,7 +4,7 @@ A video platform for publishing films, following creators and building playlists
 
 Creators upload an MP4, choose artwork, preview it and publish a watch link. Viewers search the catalogue, follow channels, save private or public playlists and play them in order. Creators can see watch time, qualified plays and HTTP/peer delivery in Analytics. Google sign-in and email accounts use the same owned channel and workspace.
 
-The app runs locally with persistent data, and an immutable release is running behind the private AWS origin. New supported uploads produce 480p/720p HLS; the production storage adapter uses private S3. Public CloudFront delivery awaits AWS account verification. Real two-network peer validation remains pending.
+The app runs locally with persistent data, and an initial immutable release has been deployed and verified at the private AWS origin. Its host has a fixed stop deadline. New supported uploads produce 480p/720p HLS; the production storage adapter uses private S3. Public CloudFront delivery awaits AWS account verification. Real two-network peer validation remains pending.
 
 | Build a feature                       | Learn the concepts behind it                                      |
 | ------------------------------------- | ----------------------------------------------------------------- |
@@ -105,7 +105,7 @@ See [the UI learning notes](docs/learning/ui-design.md) for design tokens, compo
 
 Phase 5 has started with STUN discovery, an HTTPS/WSS Envoy gateway rehearsal, two catalogue replicas, private operational metrics and smaller runtime images. The AWS deployment targets **peerscreen.darshpatel.dev** in Mumbai. Its private origin is provisioned and restored; public delivery awaits CloudFront account verification. Read the [Phase 5 learning and deployment guide](docs/learning/phase-5/README.md) for the resource model, current cost example and remaining deployment work. The local gateway rehearsal is available through `npm run test:gateway`; `npm run test:operations` includes real monitoring and worker/coordinator tracing. Intentional public STUN discovery uses `npm run check:stun`. Read the [deployment runbook](docs/runbooks/aws-deployment.md) and [cost plan](docs/runbooks/aws-cost-plan.md).
 
-Run `npm run operations` for the normal app plus private Grafana (`localhost:3301`), Jaeger (`localhost:16686`) and Prometheus (`localhost:19091`). Grafana uses username `admin`; its generated password stays in ignored `.local/operations.env`. [Learn what each signal means](docs/learning/phase-5/06-observability.md).
+Run `npm run operations` for the normal app plus private Grafana (`localhost:3301`), Jaeger (`localhost:16686`) and Prometheus (`localhost:19095`). Grafana uses username `admin`; its generated password stays in ignored `.local/operations.env`. [Learn what each signal means](docs/learning/phase-5/06-observability.md).
 
 ## Creator settings and Google sign-in
 
@@ -114,3 +114,9 @@ Open **Workspace → Settings** for Appearance and connected sign-in methods. Ch
 Google sign-in uses the existing PeerScreen sessions and ownership checks. It becomes available after a Google OAuth Web client is configured in ignored `.local/google.env` or `.local/local.env`. Existing password accounts connect Google explicitly from Settings. See the [Google setup and implementation guide](docs/learning/product-and-google/02-google-sign-in.md).
 
 For the data model, image APIs, custom player components and detailed validation, read the [product learning guide](docs/learning/product-and-google/README.md) and [evidence report](docs/evidence/product-and-google/README.md).
+
+## Finish and demonstrate the project
+
+The [Phase 6 guide](docs/learning/phase-6/README.md) explains the product finish and the real local Helm/kind deployment. Use `npm run kube -- up` for a separate port-3400 lab; `npm run test:kubernetes` performs the disposable upload/processing/scaling exercise. Pinned local tool downloads are checksum verified. No EKS resources are created.
+
+Follow the [product/demo handoff](docs/runbooks/demo-and-handoff.md) for a creator-to-viewer walkthrough, private operator tools and the post-approval AWS steps. The metadata benchmark harness is prepared through `npm run benchmark:api -- --help`; deployment benchmarking and the final external review remain in the requested post-release sequence. Public Google authentication and actual two-network peer playback still need their public-device checks.

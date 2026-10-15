@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: {name: postgres}
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector: {matchLabels: {component: postgres}}
+  template:
+    metadata: {labels: {component: postgres}}
+    spec:
+      enableServiceLinks: false
+      automountServiceAccountToken: false
+      securityContext: {runAsUser: 999, runAsGroup: 999, fsGroup: 999}
+      containers:
+        - name: postgres
+          image: {{ .Values.images.postgres | quote }}
+          envFrom: [{secretRef: {name: peerscreen-database}}]
+          env:
+            - {name: POSTGRES_DB, value: peerscreen}
+            - {name: POSTGRES_USER, value: peerscreen_admin}
+          ports: [{containerPort: 5432}]
+          securityContext: {allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+          readinessProbe: {exec: {command: [pg_isready, -U, peerscreen_admin, -d, peerscreen]}, periodSeconds: 3}
+          livenessProbe: {exec: {command: [pg_isready, -U, peerscreen_admin, -d, peerscreen]}, initialDelaySeconds: 30, periodSeconds: 10}
+          resources: {requests: {cpu: 100m, memory: 128Mi}, limits: {cpu: "1", memory: 384Mi}}
+          volumeMounts:
+            - {name: data, mountPath: /var/lib/postgresql}
+            - {name: bootstrap, mountPath: /docker-entrypoint-initdb.d/10-catalog.sh, subPath: init-catalog.sh}
+            - {name: bootstrap, mountPath: /docker-entrypoint-initdb.d/20-media.sh, subPath: bootstrap-media.sh}
+      volumes:
+        - {name: data, persistentVolumeClaim: {claimName: peerscreen-database}}
+        - {name: bootstrap, configMap: {name: peerscreen-bootstrap}}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: {name: kafka}
+spec:
+  serviceName: kafka
+  replicas: 1
+  selector: {matchLabels: {component: kafka}}
+  template:
+    metadata: {labels: {component: kafka}}
+    spec:
+      enableServiceLinks: false
+      automountServiceAccountToken: false
+      securityContext: {runAsUser: 1000, runAsGroup: 1000, fsGroup: 1000}
+      containers:
+        - name: kafka
+          image: {{ .Values.images.kafka | quote }}
+          env:
+            - {name: CLUSTER_ID, value: MkU3OEVBNTcwNTJENDM2Qk}
+            - {name: KAFKA_NODE_ID, value: "1"}
+            - {name: KAFKA_PROCESS_ROLES, value: "broker,controller"}
+            - {name: KAFKA_LISTENERS, value: "INTERNAL://:9092,CONTROLLER://:9093"}
+            - {name: KAFKA_ADVERTISED_LISTENERS, value: "INTERNAL://kafka:9092"}
+            - {name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP, value: "INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"}
+            - {name: KAFKA_CONTROLLER_LISTENER_NAMES, value: CONTROLLER}
+            - {name: KAFKA_INTER_BROKER_LISTENER_NAME, value: INTERNAL}
+            - {name: KAFKA_CONTROLLER_QUORUM_VOTERS, value: "1@localhost:9093"}
+            - {name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR, value: "1"}
+            - {name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR, value: "1"}
+            - {name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR, value: "1"}
+            - {name: KAFKA_AUTO_CREATE_TOPICS_ENABLE, value: "false"}
+            - {name: KAFKA_LOG_DIRS, value: /var/lib/kafka/data}
+            - {name: KAFKA_LOG_RETENTION_HOURS, value: "24"}
+            - {name: KAFKA_LOG_RETENTION_BYTES, value: "67108864"}
+            - {name: KAFKA_HEAP_OPTS, value: "-Xms128m -Xmx384m"}
+          ports: [{containerPort: 9092}]
+          securityContext: {allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+          startupProbe: {tcpSocket: {port: 9092}, periodSeconds: 3, failureThreshold: 60}
+          readinessProbe: {tcpSocket: {port: 9092}, periodSeconds: 3}
+          resources: {requests: {cpu: 100m, memory: 384Mi}, limits: {cpu: "1", memory: 768Mi}}
+          volumeMounts: [{name: data, mountPath: /var/lib/kafka/data}]
+      volumes: [{name: data, persistentVolumeClaim: {claimName: peerscreen-broker}}]
+{{- range $name, $memory := dict "redis" "64mb" "redis-cache" "32mb" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: {{ $name }}}
+spec:
+  replicas: 1
+  selector: {matchLabels: {component: {{ $name }}}}
+  template:
+    metadata: {labels: {component: {{ $name }}}}
+    spec:
+      enableServiceLinks: false
+      automountServiceAccountToken: false
+      securityContext: {runAsUser: 999, runAsGroup: 999}
+      containers:
+        - name: redis
+          image: {{ $.Values.images.redis | quote }}
+          command: [/bin/sh, -c]
+          args: ['exec redis-server --requirepass "$REDIS_PASSWORD" --maxmemory {{ $memory }} --maxmemory-policy {{ if eq $name "redis" }}noeviction{{ else }}allkeys-lru{{ end }} --save "" --appendonly no']
+          envFrom: [{secretRef: {name: peerscreen-redis}}]
+          ports: [{containerPort: 6379}]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          readinessProbe: {exec: {command: [/bin/sh, -c, 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping']}, periodSeconds: 3}
+          resources: {requests: {cpu: 25m, memory: 32Mi}, limits: {cpu: 500m, memory: 96Mi}}
+{{- end }}
+{{- range $name, $port := dict "postgres" 5432 "kafka" 9092 "redis" 6379 "redis-cache" 6379 }}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: {{ $name }}}
+spec:
+  selector: {component: {{ $name }}}
+  ports: [{port: {{ $port }}, targetPort: {{ $port }}}]
+{{- end }}

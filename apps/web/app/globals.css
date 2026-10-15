@@ -1484,6 +1484,8 @@ video {
   font-size: 16px;
 }
 .state-pill {
+  flex-shrink: 0;
+  white-space: nowrap;
   border-radius: 999px;
   padding: 4px 9px;
   background: var(--raised);

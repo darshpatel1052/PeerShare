@@ -1,6 +1,6 @@
 # Phase 5: deploy and operate the product
 
-Target hostname: **peerscreen.darshpatel.dev**, selected by the user on 14 October 2026. Account preflight confirmed the active Free plan and USD 100 remaining plan credits. The edge certificate is issued after the user's DNS validation; private storage, scoped roles and image repositories are provisioned. No plan upgrade or paid subscription was enabled. The private AWS origin is running with preserved data; public CloudFront delivery awaits AWS account verification.
+Target hostname: **peerscreen.darshpatel.dev**, selected by the user on 14 October 2026. Account preflight confirmed the active Free plan and USD 100 remaining plan credits. The edge certificate is issued after the user's DNS validation; private storage, scoped roles and image repositories are provisioned. No plan upgrade or paid subscription was enabled. The private AWS origin was deployed and verified with preserved data; public CloudFront delivery awaits AWS account verification.
 
 This first checkpoint connects real peer discovery to a deployment foundation: STUN enabled after opt-in, a WebSocket-only tracker, one HTTPS/WSS gateway, two catalogue replicas, shared sessions and private operational measurements. The Terraform starter prepares a bounded Mumbai host, disks, private storage and image repositories. It is infrastructure preparation, not a finished public deployment.
 
@@ -8,8 +8,8 @@ This first checkpoint connects real peer discovery to a deployment foundation: S
 2. [AWS resources and costs](02-aws-and-costs.md) explains Terraform, the selected resources, the 24-hour cost example and safe deployment/teardown.
 3. [Operating the local rehearsal](03-operations.md) explains readiness, Prometheus measurements, diagnosis and what remains before AWS provisioning.
 4. [Redis caching and creator access](04-redis-and-creator-access.md) follows dashboard reads through shared caching, explains separate eviction policies, and shows production creator grants.
-5. [Metrics, dashboards and traces](06-observability.md) explains the optional operator profile, histogram queries, sampling and worker/coordinator traces.
-6. [Private storage and releases](05-storage-and-release.md) follows S3 uploads/playback, Go's storage adapter, scoped AWS roles, credential refresh, certificates, immutable images and the verified full-data backup.
+5. [Private storage and releases](05-storage-and-release.md) follows S3 uploads/playback, Go's storage adapter, scoped AWS roles, credential refresh, certificates, immutable images and the verified full-data backup.
+6. [Metrics, dashboards and traces](06-observability.md) explains the optional operator profile, histogram queries, sampling and worker/coordinator traces.
 
 ```mermaid
 flowchart LR

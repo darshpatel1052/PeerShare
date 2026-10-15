@@ -66,3 +66,26 @@ jobs:
       - run: terraform -chdir=deploy/terraform fmt -check
       - run: terraform -chdir=deploy/terraform init -backend=false
       - run: terraform -chdir=deploy/terraform validate
+
+  kubernetes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --include=optional
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: npm run fixture
+      - run: npm run test:kubernetes
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        if: always()
+        with:
+          name: kubernetes-evidence
+          path: .local/evidence/phase-6-kubernetes.json
+          include-hidden-files: true
+          retention-days: 7

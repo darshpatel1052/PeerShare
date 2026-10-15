@@ -7,3 +7,5 @@ out
 test-results
 playwright-report
 .terraform
+# Helm's Go templates are validated by helm lint/template, not a YAML formatter.
+deploy/helm/peerscreen/templates/

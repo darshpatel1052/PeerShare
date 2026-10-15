@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["origin", "apiReplicas", "images", "storage"],
+  "properties": {
+    "origin": {
+      "const": "http://localhost:3400"
+    },
+    "apiReplicas": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "images": {
+      "type": "object",
+      "required": ["api", "web", "postgres", "redis", "kafka", "envoy"],
+      "additionalProperties": false,
+      "properties": {
+        "api": {
+          "type": "string",
+          "minLength": 3
+        },
+        "web": {
+          "type": "string",
+          "minLength": 3
+        },
+        "postgres": {
+          "type": "string",
+          "minLength": 3
+        },
+        "redis": {
+          "type": "string",
+          "minLength": 3
+        },
+        "kafka": {
+          "type": "string",
+          "minLength": 3
+        },
+        "envoy": {
+          "type": "string",
+          "minLength": 3
+        }
+      }
+    },
+    "storage": {
+      "type": "object",
+      "required": ["application", "database", "broker"],
+      "additionalProperties": false,
+      "properties": {
+        "application": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*(Mi|Gi)$"
+        },
+        "database": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*(Mi|Gi)$"
+        },
+        "broker": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*(Mi|Gi)$"
+        }
+      }
+    }
+  }
+}

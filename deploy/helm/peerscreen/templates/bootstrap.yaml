@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata: {name: peerscreen-bootstrap-{{ .Release.Revision }}}
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 240
+  template:
+    spec:
+      restartPolicy: Never
+      enableServiceLinks: false
+      automountServiceAccountToken: false
+      securityContext: {runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001}
+      initContainers:
+        - name: database-ready
+          image: {{ .Values.images.postgres | quote }}
+          command: [/bin/sh, -ec]
+          args: ['until pg_isready -h postgres -U peerscreen_admin -d peerscreen; do sleep 2; done']
+          resources: {requests: {cpu: 10m, memory: 16Mi}, limits: {cpu: 100m, memory: 64Mi}}
+        - name: storage
+          image: {{ .Values.images.api | quote }}
+          command: [/bin/sh, -ec]
+          args: ['mkdir -p /storage/uploads /storage/media/fixture; cp -a /fixture/. /storage/media/fixture/']
+          volumeMounts:
+            - {name: application, mountPath: /storage}
+            - {name: fixture, mountPath: /fixture, readOnly: true}
+        - name: catalogue-migrations
+          image: {{ .Values.images.api | quote }}
+          command: [/peerscreen, migrate]
+          envFrom: [{configMapRef: {name: peerscreen-config}}, {secretRef: {name: peerscreen-catalogue}}]
+        - name: media-migrations
+          image: {{ .Values.images.api | quote }}
+          command: [/peerscreen-media, migrate]
+          envFrom: [{configMapRef: {name: peerscreen-config}}, {secretRef: {name: peerscreen-coordinator}}]
+        - name: topics
+          image: {{ .Values.images.kafka | quote }}
+          command: [/bin/sh, -ec]
+          args:
+            - 'for topic in peerscreen.media.dispatch.v1 peerscreen.media.lifecycle.v1 peerscreen.playback.telemetry.v1 peerscreen.events.dlq.v1; do /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic "$topic" --partitions 3 --replication-factor 1 --config retention.ms=86400000 --config retention.bytes=67108864; done'
+          env: [{name: KAFKA_HEAP_OPTS, value: "-Xms32m -Xmx96m"}]
+      containers:
+        - name: seed
+          image: {{ .Values.images.api | quote }}
+          command: [/bin/sh, -ec]
+          args: ['/peerscreen seed-fixture /fixture/fixture.json; touch /storage/ready-{{ .Release.Revision }}']
+          envFrom: [{configMapRef: {name: peerscreen-config}}, {secretRef: {name: peerscreen-catalogue}}]
+          volumeMounts:
+            - {name: fixture, mountPath: /fixture, readOnly: true}
+            - {name: application, mountPath: /storage}
+      volumes:
+        - {name: application, persistentVolumeClaim: {claimName: peerscreen-application}}
+        - {name: fixture, hostPath: {path: /peerscreen-fixture, type: Directory}}

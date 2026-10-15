@@ -1,0 +1,14 @@
+# Local exercise only. The runner creates scoped Secrets; no credentials belong here.
+origin: http://localhost:3400
+apiReplicas: 2
+images:
+  api: peerscreen-api:local
+  web: peerscreen-web:local
+  postgres: postgres:18-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c
+  redis: redis:8-bookworm@sha256:47670742d7924adbcdb404d1288b6327815b23141969c0939b8e5d61f78c2634
+  kafka: apache/kafka:4.2.2@sha256:1213eb3943d551e5ed1fca7a4e109001cee35770b66a02a0c37a8964efe09b69
+  envoy: envoyproxy/envoy:v1.39.4@sha256:74bd4eb5629708d3fadca1a5e6b85d208f338d7bb54e06b69565905c5294cc01
+storage:
+  application: 5Gi
+  database: 1Gi
+  broker: 1Gi

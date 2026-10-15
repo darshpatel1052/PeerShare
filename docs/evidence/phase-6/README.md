@@ -1,0 +1,21 @@
+# Local completion evidence — 15 October 2026 IST
+
+| Capability                 | Observed result                                                                                                                                                 | Record                                                                                    |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Product browser journeys   | Initial suite 24/25; duplicate summary/filter names corrected; publishing journey passed afterward and passed again with final notice/mobile refinements        | [Product](product.json), [Studio desktop](studio-desktop.png), [phone](studio-mobile.png) |
+| Normal user data           | Original channel/video present; original manifest, integrity, thumbnail and banner hashes matched; Google remains enabled                                       | [Final normal runtime](final-local-runtime.json)                                          |
+| Normal private operators   | One normal API scraped and eight authenticated provisioned Grafana panels loaded                                                                                | [Final normal runtime](final-local-runtime.json)                                          |
+| Packaged HTTPS + operators | Two APIs scraped, eight panels, a real linked worker/coordinator trace, actual peer bytes, secure shared sessions and healthy routing after an API stopped      | [Operations](../phase-5/operations.json)                                                  |
+| Real local Kubernetes app  | Actual upload, 480p/720p processing, publication and manifest read; session through two APIs; three ready endpoints and three responding replicas after scaling | [Kubernetes](kubernetes.json)                                                             |
+| Kubernetes cleanup         | Runner removed only its disposable exercise cluster; normal app remains                                                                                         | [Runner](../../../scripts/kubernetes.mjs)                                                 |
+| Source identity            | Base revision plus hashes of the final relevant app, runner, chart and workflow files                                                                           | [Source hashes](source-fingerprints.json)                                                 |
+
+The Kubernetes `verificationElapsedSeconds` starts after Helm readiness; it excludes cluster creation, downloads and image builds. `gatewayDiscoveryMS` records the bounded observation after ready endpoints existed, not a universal failover guarantee. Its runtime is single-node Linux kind with an HTTP localhost gateway. The packaged operator rehearsal is a separate Docker HTTPS/WSS environment. These are different measurements.
+
+The browser cases also exercised real uploaded peer media, integrity enforcement, player controls, playlists, subscriptions and analytics. The earlier complete Go integration run passed 57 top-level cases / 82 including subcases with race detection. No Go implementation changed after that run; later changes are local orchestration, product presentation and the Helm exercise.
+
+The benchmark harness passed a ten-request functional check against the normal public catalogue API. Its timing is not presented as a capacity benchmark. Full deployment measurements and external review remain in the requested post-release sequence. The operations checkpoint's GitHub compatibility and image-publication runs succeeded; the final checkpoint has its own CI result and must be assessed separately.
+
+Desktop Explore/watch captures use the normal user's original published video. Studio and mobile fixture captures use the isolated synthetic creator/source, never imported into normal data. Public CloudFront delivery, production Google sign-in and actual two-network media validation remain pending AWS approval/routing and device participation.
+
+[Learn the changes](../../learning/phase-6/README.md) · [Demo and handoff](../../runbooks/demo-and-handoff.md)

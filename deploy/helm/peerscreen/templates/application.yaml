@@ -1,0 +1,151 @@
+{{- range $name, $binary := dict "api" "/peerscreen" "media" "/peerscreen-media" "worker" "/peerscreen-worker" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: {{ $name }}}
+spec:
+  replicas: {{ if eq $name "api" }}{{ $.Values.apiReplicas }}{{ else }}1{{ end }}
+  strategy: {type: RollingUpdate, rollingUpdate: {maxUnavailable: 0, maxSurge: 1}}
+  selector: {matchLabels: {component: {{ $name }}}}
+  template:
+    metadata: {labels: {component: {{ $name }}}}
+    spec:
+      enableServiceLinks: false
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 120
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001}
+      initContainers:
+        - name: wait-for-migrations
+          image: {{ $.Values.images.api | quote }}
+          command: [/bin/sh, -ec]
+          args: ['until [ -f /storage/ready-{{ $.Release.Revision }} ]; do sleep 2; done']
+          volumeMounts: [{name: application, mountPath: /storage, readOnly: true}]
+          resources: {requests: {cpu: 10m, memory: 16Mi}, limits: {cpu: 100m, memory: 64Mi}}
+      containers:
+        - name: {{ $name }}
+          image: {{ $.Values.images.api | quote }}
+          imagePullPolicy: IfNotPresent
+          command: [{{ $binary }}]
+          {{- if ne $name "worker" }}
+          args: [serve]
+          {{- end }}
+          envFrom:
+            - configMapRef: {name: peerscreen-config}
+            - secretRef: {name: {{ if eq $name "api" }}peerscreen-catalogue{{ else if eq $name "media" }}peerscreen-coordinator{{ else }}peerscreen-worker{{ end }}}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          {{- if eq $name "api" }}
+          ports: [{containerPort: 8080}]
+          startupProbe: {httpGet: {path: /health/live, port: 8080}, periodSeconds: 3, failureThreshold: 60}
+          readinessProbe: {httpGet: {path: /health/ready, port: 8080}, periodSeconds: 3, timeoutSeconds: 3}
+          livenessProbe: {httpGet: {path: /health/live, port: 8080}, periodSeconds: 10}
+          {{- else if eq $name "media" }}
+          ports: [{containerPort: 9090}]
+          startupProbe: {exec: {command: [/peerscreen-media, healthcheck]}, periodSeconds: 3, timeoutSeconds: 5, failureThreshold: 60}
+          readinessProbe: {exec: {command: [/peerscreen-media, healthcheck]}, periodSeconds: 5, timeoutSeconds: 5}
+          {{- else }}
+          livenessProbe: {exec: {command: [/bin/sh, -c, "kill -0 1"]}, periodSeconds: 10}
+          {{- end }}
+          resources:
+            requests: {cpu: 50m, memory: {{ if eq $name "worker" }}128Mi{{ else }}64Mi{{ end }}}
+            limits: {cpu: {{ if eq $name "worker" }}"2"{{ else }}"1"{{ end }}, memory: {{ if eq $name "worker" }}768Mi{{ else if eq $name "api" }}384Mi{{ else }}128Mi{{ end }}}
+          volumeMounts:
+            - {name: application, mountPath: /app/.local/uploads, subPath: uploads, readOnly: {{ if eq $name "api" }}false{{ else }}true{{ end }}}
+            - {name: application, mountPath: /app/.local/media, subPath: media, readOnly: {{ if eq $name "media" }}true{{ else }}false{{ end }}}
+            - {name: scratch, mountPath: /tmp}
+      volumes:
+        - {name: application, persistentVolumeClaim: {claimName: peerscreen-application}}
+        - {name: scratch, emptyDir: {sizeLimit: 512Mi}}
+{{- end }}
+{{- range $name, $port := dict "api" 8080 "media" 9090 }}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: {{ $name }}}
+spec:
+  {{- if eq $name "api" }}
+  clusterIP: None
+  {{- end }}
+  selector: {component: {{ $name }}}
+  ports: [{port: {{ $port }}, targetPort: {{ $port }}}]
+{{- end }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: catalogue}
+spec:
+  minAvailable: 1
+  selector: {matchLabels: {component: api}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: web}
+spec:
+  replicas: 1
+  selector: {matchLabels: {component: web}}
+  template:
+    metadata: {labels: {component: web}}
+    spec:
+      enableServiceLinks: false
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 1000, runAsGroup: 1000, fsGroup: 10001}
+      initContainers:
+        - name: wait-for-fixture
+          image: {{ .Values.images.api | quote }}
+          command: [/bin/sh, -ec]
+          args: ['until [ -f /storage/ready-{{ .Release.Revision }} ]; do sleep 2; done']
+          volumeMounts: [{name: application, mountPath: /storage, readOnly: true}]
+      containers:
+        - name: web
+          image: {{ .Values.images.web | quote }}
+          imagePullPolicy: IfNotPresent
+          envFrom: [{configMapRef: {name: peerscreen-config}}]
+          env:
+            - {name: API_TARGET, value: "http://api:8080"}
+            - {name: DEMO_BIND_HOST, value: "0.0.0.0"}
+          ports: [{containerPort: 3000}, {containerPort: 8000}]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          readinessProbe: {httpGet: {path: /health/live, port: 3000}, periodSeconds: 3}
+          livenessProbe: {httpGet: {path: /health/live, port: 3000}, periodSeconds: 10}
+          resources: {requests: {cpu: 50m, memory: 64Mi}, limits: {cpu: "1", memory: 192Mi}}
+          volumeMounts: [{name: application, mountPath: /app/.local/media, subPath: media, readOnly: true}]
+      volumes: [{name: application, persistentVolumeClaim: {claimName: peerscreen-application}}]
+---
+apiVersion: v1
+kind: Service
+metadata: {name: web}
+spec:
+  selector: {component: web}
+  ports:
+    - {name: http, port: 3000, targetPort: 3000}
+    - {name: tracker, port: 8000, targetPort: 8000}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: gateway}
+spec:
+  replicas: 1
+  selector: {matchLabels: {component: gateway}}
+  template:
+    metadata: {labels: {component: gateway}}
+    spec:
+      enableServiceLinks: false
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 101, runAsGroup: 101}
+      containers:
+        - name: envoy
+          image: {{ .Values.images.envoy | quote }}
+          args: [-c, /etc/envoy/envoy.json]
+          ports: [{containerPort: 8080}]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          readinessProbe: {httpGet: {path: /health/ready, port: 8080, httpHeaders: [{name: Host, value: "localhost:3400"}]}, periodSeconds: 3, timeoutSeconds: 3}
+          resources: {requests: {cpu: 50m, memory: 64Mi}, limits: {cpu: "1", memory: 192Mi}}
+          volumeMounts: [{name: config, mountPath: /etc/envoy, readOnly: true}]
+      volumes: [{name: config, configMap: {name: peerscreen-gateway}}]
+---
+apiVersion: v1
+kind: Service
+metadata: {name: gateway}
+spec:
+  type: NodePort
+  selector: {component: gateway}
+  ports: [{port: 8080, targetPort: 8080, nodePort: 30080}]

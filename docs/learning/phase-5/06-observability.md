@@ -48,7 +48,7 @@ Jaeger's own UI lets you inspect the actual attempt duration and child coordinat
 
 ## Run and learn locally
 
-`npm run operations` starts the normal app with the optional operator overlay and preserves its existing volumes. Open Grafana at `http://localhost:3301` with username **admin**; its generated password stays in `.local/operations.env`. Jaeger is at `http://localhost:16686`; Prometheus is at `http://localhost:19091`. The normal local app has one API replica; the isolated HTTPS rehearsal has two.
+`npm run operations` starts the normal app with the optional operator overlay and preserves its existing volumes. Open Grafana at `http://localhost:3301` with username **admin**; its generated password stays in `.local/operations.env`. Jaeger is at `http://localhost:16686`; Prometheus is at `http://localhost:19095`. The normal local app has one API replica; the isolated HTTPS rehearsal has two.
 
 Browse/watch a video and refresh its Analytics to produce ordinary requests. A new upload produces a worker attempt trace. Select `peerscreen-worker` in Jaeger and inspect `process_video_attempt`; its child completion RPC appears under `peerscreen-coordinator`. `npm run operations -- stop` stops only the operator services, retaining their data. If tracing remains enabled in the app, an unavailable collector only defers/drops observations; bring the profile back or restart the ordinary app without the overlay to disable it.
 
@@ -57,3 +57,5 @@ Compose profiles must be explicitly enabled in both startup and teardown. An exp
 The gateway's fixed trusted address is now `.250` in the rehearsal subnet, away from dynamic initial service allocation. The added Redis/cache/operator containers exposed the earlier low-address collision. AWS's currently deployed initial source still uses its earlier consistent `.10` pair; the next source rollout changes both gateway address and API trust together. No broad container-network trust is introduced.
 
 Sources: [OpenTelemetry Go instrumentation](https://opentelemetry.io/docs/languages/go/instrumentation/), [Prometheus DNS discovery](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#dns_sd_config), [Jaeger 2.22 deployment](https://www.jaegertracing.io/docs/2.22/deployment/). Releases and immutable image digests were checked against the official projects on 15 October 2026 India time.
+
+The normal operator ports are Prometheus 19095, Grafana 3301 and Jaeger 16686. The disposable operations rehearsal uses 19096, 3302 and 16687. Native test coordinator RPC uses 19091; it must not share a listener with Prometheus. Native startup now uses the existing authenticated coordinator healthcheck, so an unrelated listening port cannot masquerade as media readiness.

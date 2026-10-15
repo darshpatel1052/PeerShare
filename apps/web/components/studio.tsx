@@ -38,6 +38,7 @@ export default function Studio() {
   const [busyID, setBusyID] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [submittedID, setSubmittedID] = useState("");
   const [bytesSent, setBytesSent] = useState(0);
 
   const refresh = useCallback(async () => {
@@ -63,6 +64,17 @@ export default function Studio() {
       window.clearInterval(timer);
     };
   }, [auth.me, refresh]);
+
+  useEffect(() => {
+    const submitted = uploads.find((upload) => upload.id === submittedID);
+    if (submitted?.processing_state === "ready") {
+      setNotice("Your video is ready to preview and publish.");
+      setSubmittedID("");
+    } else if (submitted?.processing_state === "failed") {
+      setNotice("");
+      setSubmittedID("");
+    }
+  }, [uploads, submittedID]);
 
   function selectFile(chosen: File | null) {
     if (busyID) return;
@@ -183,6 +195,7 @@ export default function Studio() {
     setNotice(
       "Upload complete. Your video is being prepared and stays private until you publish.",
     );
+    setSubmittedID(upload.id);
     setFile(null);
     if (fileInput.current) fileInput.current.value = "";
     setTitle("");
@@ -577,7 +590,9 @@ export default function Studio() {
               <h2>Video library</h2>
               <p>Keep track of what’s live and what’s next.</p>
             </div>
-            <span className="eyebrow">{uploads.length} VIDEOS</span>
+            <span className="eyebrow">
+              {uploads.length} {uploads.length === 1 ? "video" : "videos"}
+            </span>
           </div>
           <div
             className="library-filters"

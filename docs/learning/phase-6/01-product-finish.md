@@ -36,3 +36,5 @@ The in-app-browser walkthrough also opened the normal user's original video and 
 - `apps/web/components/video-player.tsx`: inspect the existing media-element events behind Play, Pause, Seek, Volume and Fullscreen. Styling does not replace the video element's state.
 
 Try the interface with a keyboard, then with a narrow viewport. Compare a request's loading state, an empty response and a failed response: those represent different facts and need different actions.
+
+The final visual pass also keeps the processing-state badge on one line on phones, uses the correct singular/plural video label, and updates the completion notice when the submitted video becomes ready. A successful transfer and a prepared video are different states; the notice now reflects that distinction. The publishing journey passed again with the normal operator profile running after its Prometheus/test-RPC port collision was corrected.

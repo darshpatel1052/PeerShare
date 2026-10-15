@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-14T21:09:20.425Z",
+  "checkedAt": "2026-10-15T04:51:20.578Z",
   "scope": "actual Docker images, self-signed localhost HTTPS/WSS, two replicas, owned upload; STUN offline in rehearsal",
   "apiReplicasObserved": 2,
   "sharedSession": true,

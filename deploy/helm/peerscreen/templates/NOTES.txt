@@ -1,0 +1,5 @@
+PeerScreen local exercise: {{ .Values.origin }}
+This chart uses one kind node, local shared storage and disposable credentials.
+It does not replace the production AWS/TLS/S3 deployment.
+Inspect readiness with the workspace's private kind kubeconfig.
+Scale API with: kubectl -n peerscreen scale deployment api --replicas=3

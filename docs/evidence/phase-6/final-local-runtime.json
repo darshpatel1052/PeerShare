@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-15T05:10:40.500Z",
+  "originalVideo": true,
+  "originalChannel": true,
+  "mediaAndArtworkHashesMatched": true,
+  "signInAvailabilityPreserved": true,
+  "googleEnabled": true,
+  "normalScrapedReplicas": 1,
+  "grafanaPanels": 8,
+  "publicDeployment": false
+}

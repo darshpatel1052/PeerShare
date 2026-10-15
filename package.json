@@ -45,7 +45,10 @@
     "operations": "node scripts/operations.mjs",
     "check:stun": "node scripts/stun-check.mjs",
     "compose:demo": "node scripts/compose-demo.mjs",
-    "check": "npm run format:check && npm run typecheck && npm test"
+    "check": "npm run format:check && npm run typecheck && npm test",
+    "kube": "node scripts/kubernetes.mjs",
+    "test:kubernetes": "node scripts/kubernetes.mjs test",
+    "benchmark:api": "node scripts/benchmark-api.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",

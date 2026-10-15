@@ -2,7 +2,6 @@ import { spawn } from "node:child_process";
 import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { tmpdir } from "node:os";
-import { createConnection } from "node:net";
 import { compose } from "./dependencies.mjs";
 import { localEnvironment } from "./local-environment.mjs";
 import { runGo } from "./go.mjs";
@@ -47,26 +46,20 @@ function managedProcess(binary, env) {
     },
   };
 }
-async function waitForMedia(port, process) {
+async function waitForMedia(binary, environment, runtime) {
   const deadline = Date.now() + 15_000;
-  while (Date.now() < deadline && !process.exited) {
-    const listening = await new Promise((accept) => {
-      const socket = createConnection({ host: "127.0.0.1", port });
-      socket.setTimeout(500);
-      socket.once("connect", () => {
-        socket.destroy();
-        accept(true);
+  while (Date.now() < deadline && !runtime.exited) {
+    // A listening TCP port could belong to an unrelated local service. Use the
+    // coordinator's existing authenticated RPC healthcheck before proceeding.
+    const healthy = await new Promise((accept) => {
+      const child = spawn(binary, ["healthcheck"], {
+        env: environment,
+        stdio: "ignore",
       });
-      socket.once("error", () => {
-        socket.destroy();
-        accept(false);
-      });
-      socket.once("timeout", () => {
-        socket.destroy();
-        accept(false);
-      });
+      child.once("error", () => accept(false));
+      child.once("exit", (code) => accept(code === 0));
     });
-    if (listening) return;
+    if (healthy && !runtime.exited) return;
     await new Promise((accept) => setTimeout(accept, 100));
   }
   throw new Error("The media coordinator did not become ready");
@@ -152,7 +145,7 @@ export async function startBackend({
     await command(mediaBinary, ["migrate"], mediaEnv);
     coordinator = managedProcess(mediaBinary, mediaEnv);
     try {
-      await waitForMedia(mediaPort, coordinator);
+      await waitForMedia(mediaBinary, mediaEnv, coordinator);
     } catch (error) {
       await coordinator.stop();
       throw error;
@@ -224,7 +217,7 @@ export async function startBackend({
     restartCoordinator: async () => {
       await coordinator?.stop();
       coordinator = managedProcess(mediaBinary, mediaEnv);
-      await waitForMedia(mediaPort, coordinator);
+      await waitForMedia(mediaBinary, mediaEnv, coordinator);
     },
     close: async () => {
       await stopProcess();

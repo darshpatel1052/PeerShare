@@ -1,0 +1,12 @@
+{{- range $name, $size := dict "application" .Values.storage.application "database" .Values.storage.database "broker" .Values.storage.broker }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: peerscreen-{{ $name }}
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: {{ $size }}
+{{- end }}

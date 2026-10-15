@@ -1,0 +1,28 @@
+{
+  "baseCommit": "519100037e43711659357ca488f3a75efa10ff7b",
+  "workingTreeChanged": true,
+  "sha256": {
+    ".github/workflows/ci.yml": "f1360a18dfa7e62564efdfbc2090f67a7084614a44350897e63e2d5db868334c",
+    "apps/web/app/globals.css": "1c0bc33f5b2d3ad517a04a227b15a6de36e45c79f06071a374832f326786b273",
+    "apps/web/components/studio.tsx": "9297ad35ac31b60034791a52533945026f0432a6a3c8456e6e428127416b7767",
+    "apps/web/components/video-list.tsx": "c171f61acfdf9eb3a2afbd42f2c283f48e71e2ac941028a77a3699cb0de4d808",
+    "deploy/compose/operations.yml": "50714db4023c607bf6819127c5df7935769e2717b6677e7ae3e6791a6db321e1",
+    "deploy/helm/peerscreen/Chart.yaml": "d1f3af346a6eb373aebfbd09af8c5512244151e3c9639064e79ba01e861bd565",
+    "deploy/helm/peerscreen/files/bootstrap-media.sh": "172072b5ffc8fe4fcf7cd721a76ab0cee16a294d8865417d6f742f4a73a66c84",
+    "deploy/helm/peerscreen/files/envoy.json": "c968d9d1d46899501797389f10911ee06036f784308e64cb9c54a929e3b206e9",
+    "deploy/helm/peerscreen/files/init-catalog.sh": "f77f2e0f92523906ce4309cde7d18c3962a835dd079c8dbfcfebdf792d14632c",
+    "deploy/helm/peerscreen/templates/NOTES.txt": "5116f7cea17a54822921d686b5d174409baf38d1aeadbaab6e5992a1148e7688",
+    "deploy/helm/peerscreen/templates/application.yaml": "1aab1cbed64e42f872ce175e5a9ef9f52572fffa18690160ede7aba84e573e93",
+    "deploy/helm/peerscreen/templates/bootstrap.yaml": "fe736dfbf2722ca576dcae0f20d73e3cb032b9951de1e164af56459b7eff3522",
+    "deploy/helm/peerscreen/templates/config.yaml": "cce2c52e76e2865f64c6d329e9f5b053492a3bf0871eca8932b9ed3c9618ea8f",
+    "deploy/helm/peerscreen/templates/dependencies.yaml": "4e3f728bde766f5c790786f79e52f7bfdf81aed26bee057980d1a764712bf08a",
+    "deploy/helm/peerscreen/templates/storage.yaml": "be45274ba168e9b19499a379a417f34e4fe14e7bf109575a0aae2e6928b65663",
+    "deploy/helm/peerscreen/values.schema.json": "b9e8ddd19c2b05fbfda786db7dbf8775d031a453d96dd95afa9ee1e137270c59",
+    "deploy/helm/peerscreen/values.yaml": "333913302b141f4949b802c155d353acde678d5ebb4d79eb10da065dffa9c92a",
+    "scripts/backend.mjs": "e8e07a82fd13fe9f10bf0a974cfe9273fbc31e6d37c333a32ec3dc22c0fb0ddb",
+    "scripts/benchmark-api.mjs": "4f0c7a73ca763b53cd258f43ffd47041f99a10eb452a07f5c091f44ccfdd3ce2",
+    "scripts/gateway-smoke.mjs": "dc6f9902cceac652302b5fbe0f66e7c8361abca447f631379d36bcbdfe8d3e9b",
+    "scripts/kubernetes-tools.mjs": "62b4629f3672caa2b604a817b846965b76eebef72ba253de5f40437a97166349",
+    "scripts/kubernetes.mjs": "b030cdb367cb491c729d07064cb65ac260daac39a6a0699c266e7dbbe94f9d59"
+  }
+}

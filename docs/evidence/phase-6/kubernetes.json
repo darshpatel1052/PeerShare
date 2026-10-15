@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-10-15T04:48:46.619Z",
+  "scope": "Disposable single-node local kind cluster, real Helm chart and images; no AWS Kubernetes resources",
+  "versions": {
+    "kind": "0.33.0",
+    "helm": "4.3.0",
+    "kubectl": "1.37.1",
+    "node": "kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5"
+  },
+  "realUpload": true,
+  "realTranscode": true,
+  "renditions": [480, 720],
+  "publicManifestRead": true,
+  "sharedSession": true,
+  "apiReplicasObserved": 2,
+  "scaledReadyEndpoints": 3,
+  "scaledReplicasObserved": 3,
+  "gatewayDiscoveryMS": 1460,
+  "privateMetrics": true,
+  "multiNodeAvailability": false,
+  "crossNetworkPeerValidation": false,
+  "verificationElapsedSeconds": 10.836,
+  "verificationTimerIncludesClusterSetup": false
+}

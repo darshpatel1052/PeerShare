@@ -12,5 +12,8 @@
   "changeAfterInitialRun": "Distinct accessible names for summary/filter buttons",
   "normalInAppBrowserPlayback": true,
   "normalInAppBrowserPlaybackSeconds": 5.6,
-  "publicDeployment": false
+  "publicDeployment": false,
+  "finalPublishingJourneyPassed": true,
+  "finalStudioNoticeTracksProcessing": true,
+  "normalOperatorsUseSeparatePortsFromNativeTestRPC": true
 }

@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: peerscreen-config
+data:
+  APP_ENV: development
+  APP_ORIGIN: {{ .Values.origin | quote }}
+  MEDIA_BASE_URL: {{ printf "%s/media/" .Values.origin | quote }}
+  TRACKER_URL: {{ printf "%s/tracker" (.Values.origin | replace "http://" "ws://") | quote }}
+  API_LISTEN_ADDR: 0.0.0.0:8080
+  MEDIA_GRPC_ADDR: media:9090
+  MEDIA_LISTEN_ADDR: 0.0.0.0:9090
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  UPLOAD_DIR: /app/.local/uploads
+  MEDIA_DIR: /app/.local/media
+  API_REPLICA_DIAGNOSTICS: "true"
+  PEER_STUN_URLS: "off"
+  EXPOSE_OPERATOR_FIXTURE: "false"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: peerscreen-bootstrap
+data:
+  init-catalog.sh: |
+{{ .Files.Get "files/init-catalog.sh" | indent 4 }}
+  bootstrap-media.sh: |
+{{ .Files.Get "files/bootstrap-media.sh" | indent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: peerscreen-gateway
+data:
+  envoy.json: |
+{{ .Files.Get "files/envoy.json" | indent 4 }}

@@ -17,6 +17,9 @@ const run = promisify(execFile),
   origin = "https://localhost:3443";
 const operations = process.env.PEERSCREEN_OPERATIONS_REHEARSAL === "true";
 if (operations) {
+  process.env.PEERSCREEN_PROMETHEUS_PORT = "19096";
+  process.env.PEERSCREEN_GRAFANA_PORT = "3302";
+  process.env.PEERSCREEN_JAEGER_PORT = "16687";
   process.env.GRAFANA_ADMIN_PASSWORD = randomBytes(24).toString("hex");
   process.env.OTEL_SAMPLE_RATIO = "1";
   process.env.COMPOSE_PROFILES = "app,ops";
@@ -300,7 +303,7 @@ try {
     await until(
       async () => {
         const response = await fetch(
-          "http://localhost:19091/api/v1/query?query=" +
+          "http://localhost:19096/api/v1/query?query=" +
             encodeURIComponent('sum(up{job="catalogue"})'),
         );
         const result = await response.json();
@@ -319,7 +322,7 @@ try {
     await until(
       async () => {
         const response = await fetch(
-          "http://localhost:3301/api/dashboards/uid/peerscreen-operations",
+          "http://localhost:3302/api/dashboards/uid/peerscreen-operations",
           { headers: { Authorization: authorization } },
         );
         const result = await response.json();
@@ -341,7 +344,7 @@ try {
           "query.searchDepth": "10",
         });
         const response = await fetch(
-          `http://localhost:16686/api/v3/traces?${query}`,
+          `http://localhost:16687/api/v3/traces?${query}`,
         );
         const result = await response.json();
         traces = result.result?.resourceSpans || [];
