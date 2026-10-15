@@ -4,10 +4,49 @@ import json
 import os
 from pathlib import Path
 import re
+import secrets
+import stat
 import subprocess
 import sys
 
 ROOT = Path('/srv/peerscreen')
+
+
+def prepare_operations(directory, root=ROOT):
+    """Keep the cloud Grafana credential across releases and label its dashboard."""
+    settings = root / 'operations.env'
+    try:
+        descriptor = os.open(settings, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError:
+        pass
+    else:
+        with os.fdopen(descriptor, 'w') as stream:
+            stream.write('GRAFANA_ADMIN_PASSWORD=' + secrets.token_hex(24) + '\n')
+    mode = settings.lstat().st_mode
+    if not stat.S_ISREG(mode) or mode & 0o077:
+        raise RuntimeError('Cloud monitoring settings must be a private regular file')
+    if not re.fullmatch(r'GRAFANA_ADMIN_PASSWORD=[a-f0-9]{48}\n?', settings.read_text()):
+        raise RuntimeError('Invalid cloud monitoring settings')
+    dashboards = root / 'operations' / 'grafana' / 'dashboards'
+    dashboards.mkdir(parents=True, exist_ok=True)
+    dashboard = json.loads((directory / 'deploy/operations/grafana/dashboards/peerscreen.json').read_text())
+    dashboard.update(title='PeerShare · AWS EC2', tags=['peershare', 'aws', 'production'],
+                     description='Live metrics from the deployed AWS services, accessed through the private SSH tunnel.')
+    destination = dashboards / 'peerscreen.json'
+    destination.write_text(json.dumps(dashboard, indent=2) + '\n')
+    os.chmod(destination, 0o644)
+    return settings
+
+
+def production_compose_command(release, operations, root=ROOT):
+    return ['docker', 'compose', '-p', 'peerscreen',
+            '--env-file', str(root / 'runtime.env'), '--env-file', str(release),
+            '--env-file', str(operations),
+            '-f', 'deploy/compose/local.yml', '-f', 'deploy/compose/gateway.yml',
+            '-f', 'deploy/compose/production.yml', '-f', 'deploy/compose/operations.yml',
+            '-f', 'deploy/compose/operations-network.yml',
+            '-f', 'deploy/compose/operations-production.yml',
+            '--profile', 'app', '--profile', 'ops']
 
 
 def update_public_origins(runtime, domain):
@@ -38,6 +77,7 @@ def rollout(sha):
     if not (directory / 'deploy/compose/production.yml').is_file():
         raise RuntimeError('The exact release source must be staged first')
     settings = json.loads((ROOT / 'host.json').read_text())
+    operations = prepare_operations(directory)
     log_path = ROOT / 'operations.log'
     descriptor = os.open(log_path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
     with os.fdopen(descriptor, 'a') as log:
@@ -63,10 +103,7 @@ def rollout(sha):
             previous = ROOT / 'previous-release.env'
             previous.write_text(old)
             os.chmod(previous, 0o600)
-        command = ['docker', 'compose', '-p', 'peerscreen',
-                   '--env-file', str(ROOT / 'runtime.env'), '--env-file', str(release),
-                   '-f', 'deploy/compose/local.yml', '-f', 'deploy/compose/gateway.yml',
-                   '-f', 'deploy/compose/production.yml', '--profile', 'app']
+        command = production_compose_command(release, operations)
         run(command + ['pull', 'api', 'web'], timeout=600)
         previous_web = subprocess.run(['docker', 'inspect', '-f', '{{.Config.Image}}', 'peerscreen-web-1'], capture_output=True, text=True, timeout=15)
         if previous_web.returncode == 0 and previous_web.stdout.strip().startswith(settings['repositories']['web'] + ':'):
@@ -75,6 +112,8 @@ def rollout(sha):
         update_public_origins(ROOT / 'runtime.env', settings['domain'])
         run(command + ['up', '-d', '--no-build', '--wait', '--wait-timeout', '120',
                        'postgres', 'redis', 'redis-cache', 'kafka'])
+        run(command + ['up', '-d', '--no-build', '--wait', '--wait-timeout', '120',
+                       'prometheus', 'grafana', 'jaeger'])
         # This one-host showcase accepts a brief maintenance window. Stop the
         # writers before migrations; keep their database and file volumes.
         run(command + ['stop', 'api', 'worker', 'media', 'web', 'gateway'])

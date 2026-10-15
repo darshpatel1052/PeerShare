@@ -1,0 +1,19 @@
+# Private cloud monitoring on the existing EC2 host. No public listener or
+# security-group change is needed; dashboard access uses SSH port forwarding.
+x-monitoring-logs: &monitoring-logs
+  driver: local
+  options:
+    max-size: 2m
+    max-file: "2"
+
+services:
+  prometheus:
+    volumes:
+      - ../operations/prometheus-production.yml:/etc/prometheus/prometheus.yml:ro
+    logging: *monitoring-logs
+  grafana:
+    volumes:
+      - /srv/peerscreen/operations/grafana/dashboards:/etc/grafana/dashboards:ro
+    logging: *monitoring-logs
+  jaeger:
+    logging: *monitoring-logs

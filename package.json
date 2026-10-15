@@ -44,6 +44,7 @@
     "test:operations": "PEERSCREEN_OPERATIONS_REHEARSAL=true node scripts/gateway-smoke.mjs",
     "backup:local": "node scripts/backup-local.mjs",
     "operations": "node scripts/operations.mjs",
+    "operations:cloud": "node scripts/cloud-operations.mjs",
     "check:stun": "node scripts/stun-check.mjs",
     "compose:demo": "node scripts/compose-demo.mjs",
     "check": "npm run format:check && npm run typecheck && npm test",

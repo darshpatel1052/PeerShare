@@ -208,7 +208,7 @@ npm run test:browser
 
 Dependency-based suites share a disposable test project and run sequentially. The normal app's data is retained. The [review resolution](docs/reviews/2026-10-15-review-resolution.md) records the latest product fixes.
 
-- `npm run dev:observed` (also `npm run operations`) starts the development app with private Grafana, Prometheus and Jaeger collecting real application metrics and traces. This profile is not enabled on the hosted EC2 deployment. [Observability guide](docs/learning/phase-5/06-observability.md).
+- `npm run dev:observed` (also `npm run operations`) starts the development app with private Grafana, Prometheus and Jaeger collecting real application metrics and traces. The hosted EC2 deployment also runs its own monitoring stack. Use `npm run operations:cloud` to access its dashboards through a private SSH tunnel; those localhost links show AWS data, not the development app. [Observability guide](docs/learning/phase-5/06-observability.md).
 - `npm run kube -- up` starts the separate local Helm/kind exercise. It does not provision EKS. [Kubernetes guide](docs/learning/phase-6/02-kubernetes.md).
 - The [media, gateway and recovery runbooks](docs/runbooks) explain the supporting checks.
 

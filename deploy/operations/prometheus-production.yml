@@ -1,0 +1,24 @@
+global:
+  scrape_interval: 5s
+  scrape_timeout: 3s
+scrape_configs:
+  - job_name: catalogue
+    dns_sd_configs:
+      - names: [api]
+        type: A
+        port: 8080
+        refresh_interval: 5s
+    relabel_configs:
+      - target_label: deployment
+        replacement: aws-ec2
+  - job_name: tracker
+    static_configs: [{ targets: ["web:8000"] }]
+    relabel_configs:
+      - target_label: deployment
+        replacement: aws-ec2
+  - job_name: gateway
+    metrics_path: /stats/prometheus
+    static_configs: [{ targets: ["gateway:9901"] }]
+    relabel_configs:
+      - target_label: deployment
+        replacement: aws-ec2

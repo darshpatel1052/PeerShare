@@ -54,6 +54,22 @@ Run the staged `deploy/host/release.py FULL_COMMIT_SHA` as root. It prepares dep
 
 For the current renamed deployment, use the PeerShare cutover records above. Keep the existing Google callbacks alongside the new PeerShare callback. Verify the public static routes, API, original video/artwork, secure session, S3-backed publishing and WSS. Have the user test actual Google sign-in and the two-network peer flow; do not equate redirect configuration with successful authentication.
 
+## Private monitoring for the deployed application
+
+Every current host release includes Prometheus, Grafana and Jaeger on the existing EC2 instance. Prometheus discovers both API replicas, the tracker and Envoy; targets carry `deployment="aws-ec2"`. The API and coordinator export sampled OpenTelemetry spans, while worker processing attempts are fully sampled and propagate context into internal gRPC calls. The asynchronous Kafka boundary still starts a separate processing trace.
+
+The release helper creates `/srv/peerscreen/operations.env` with mode 0600 once and retains it across releases. Grafana uses its saved database and provisioned **PeerShare · AWS EC2** dashboard. The production overlay keeps all operator ports on host loopback, uses fixed private container addresses away from the trusted gateway address, and bounds container memory, CPU, metrics retention and log rotation. No extra instance, managed monitoring service or public monitoring security-group rule is created. Prometheus retains a bounded 24-hour window; Jaeger's recent 1,000 traces are in memory and reset on restart.
+
+From the project root, run:
+
+```sh
+npm run operations:cloud
+```
+
+This opens SSH forwards to the cloud services: Grafana at `http://localhost:3301/d/peerscreen-operations`, Prometheus at `http://localhost:19095`, and Jaeger at `http://localhost:16686`. The localhost addresses are private entrances to **AWS data**. They do not start the local application or local monitoring containers. The helper copies only the cloud Grafana credential into ignored `.local/aws/operations.env` with mode 0600. Sign in as `admin` with that file's password; it differs from the development password in `.local/operations.env`.
+
+`npm run operations:cloud -- status` checks this tunnel. `npm run operations:cloud -- close` closes only its dedicated SSH connection; cloud monitoring continues. Other SSH sessions and local projects are not affected.
+
 ## Compatible rollback and teardown
 
 For an application rollback, stage an already-published compatible source/images commit, run its host release procedure and select its frontend prefix in Terraform. Retained hashed assets support old open tabs. This preserves volumes and runs the selected migration code; it does not reverse an incompatible SQL migration. Database rollback requires restoring a verified snapshot deliberately, with writer processes stopped.
