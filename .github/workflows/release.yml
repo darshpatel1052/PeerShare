@@ -11,10 +11,6 @@ permissions:
   contents: read
   id-token: write
 
-concurrency:
-  group: aws-release
-  cancel-in-progress: false
-
 jobs:
   publish:
     if: >-
@@ -22,7 +18,10 @@ jobs:
       (github.event_name == 'workflow_dispatch' ||
        (github.event.workflow_run.conclusion == 'success' &&
         github.event.workflow_run.event == 'push' &&
-        github.event.workflow_run.head_repository.full_name == github.repository))
+       github.event.workflow_run.head_repository.full_name == github.repository))
+    concurrency:
+      group: aws-release
+      cancel-in-progress: false
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:

@@ -9,3 +9,5 @@ playwright-report
 .terraform
 # Helm's Go templates are validated by helm lint/template, not a YAML formatter.
 deploy/helm/peerscreen/templates/
+# Benchmark raw files retain exact bytes; manifest.json records their SHA-256.
+docs/evidence/phase-6/benchmark/raw/

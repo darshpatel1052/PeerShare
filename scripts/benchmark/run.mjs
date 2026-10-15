@@ -4,6 +4,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { createHash } from "node:crypto";
 import { ensureK6 } from "./tools.mjs";
+import { snapshot } from "./metrics.mjs";
 import {
   execute,
   sshOptions,
@@ -44,6 +45,8 @@ async function profile(label, rate, seconds = 60, mode = "mixed") {
     BYTE_BUDGET: String(maxBytes - bytes),
   };
   const log = createWriteStream(join(directory, "runner.log"), { mode: 0o600 });
+  const before = await snapshot();
+  const startedAt = new Date().toISOString();
   const status = await new Promise((accept, reject) => {
     const child = spawn(
       "/usr/bin/time",
@@ -72,6 +75,13 @@ async function profile(label, rate, seconds = 60, mode = "mixed") {
     throw Error(
       "Load generator did not finish normally; inspect its private log",
     );
+  const finishedAt = new Date().toISOString();
+  const after = await snapshot();
+  await writeFile(
+    join(directory, "server-counters.json"),
+    JSON.stringify({ before, after }, null, 2) + "\n",
+    { mode: 0o600 },
+  );
   const report = JSON.parse(
       await readFile(join(directory, "summary.json"), "utf8"),
     ),
@@ -80,6 +90,8 @@ async function profile(label, rate, seconds = 60, mode = "mixed") {
   const durationMS = report.state.testRunDurationMs;
   const result = {
     label,
+    startedAt,
+    finishedAt,
     mode,
     rate,
     requestedDurationSeconds: seconds,

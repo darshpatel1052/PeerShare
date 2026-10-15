@@ -3,8 +3,11 @@
 import json
 from pathlib import Path
 import subprocess
+import sys
 import time
 names=['peerscreen-benchmark-bench-api-1','peerscreen-benchmark-bench-api-2','peerscreen-benchmark-bench-gateway-1','peerscreen-postgres-1','peerscreen-redis-1','peerscreen-redis-cache-1']
+if len(sys.argv)>1 and sys.argv[1]=='all':
+ names=[n for n in subprocess.check_output(['docker','ps','--format','{{.Names}}'],text=True).splitlines() if n.startswith('peerscreen-')]
 containers=[]
 for name in names:
  try:

@@ -29,23 +29,24 @@ import (
 )
 
 type App struct {
-	Objects       *objectstore.Remote
-	mediaSlots    chan struct{}
-	objectSweepAt time.Time
-	objectCursors [2]*string
-	Media         *mediasvc.Client
-	Google        *googleAuth
-	Config        config.Config
-	Store         *store.Store
-	Redis         *redis.Client
-	Hasher        *auth.Hasher
-	Limiter       *ratelimit.Limiter
-	Logger        *slog.Logger
-	metrics       requestMetrics
-	analytics     *analyticsCache
-	dummyHash     string
-	partSlots     chan struct{}
-	imageSlots    chan struct{}
+	Objects        *objectstore.Remote
+	mediaSlots     chan struct{}
+	mediaAdmission chan struct{}
+	objectSweepAt  time.Time
+	objectCursors  [2]*string
+	Media          *mediasvc.Client
+	Google         *googleAuth
+	Config         config.Config
+	Store          *store.Store
+	Redis          *redis.Client
+	Hasher         *auth.Hasher
+	Limiter        *ratelimit.Limiter
+	Logger         *slog.Logger
+	metrics        requestMetrics
+	analytics      *analyticsCache
+	dummyHash      string
+	partSlots      chan struct{}
+	imageSlots     chan struct{}
 }
 type requestIDKey struct{}
 type identityKey struct{}
@@ -102,7 +103,7 @@ func New(ctx context.Context, cfg config.Config, db *store.Store, cache *redis.C
 		}
 		return nil, err
 	}
-	return &App{Objects: objects, mediaSlots: make(chan struct{}, 4), analytics: analytics, Media: media, Google: newGoogleAuth(cfg), Config: cfg, Store: db, Redis: cache, Hasher: hasher, Logger: logger, dummyHash: dummy, partSlots: make(chan struct{}, 12), imageSlots: make(chan struct{}, 1), Limiter: &ratelimit.Limiter{Client: cache, Prefix: cfg.RatePrefix, Limit: cfg.AuthLimit, Window: time.Minute}}, nil
+	return &App{Objects: objects, mediaSlots: make(chan struct{}, 4), mediaAdmission: make(chan struct{}, 36), analytics: analytics, Media: media, Google: newGoogleAuth(cfg), Config: cfg, Store: db, Redis: cache, Hasher: hasher, Logger: logger, dummyHash: dummy, partSlots: make(chan struct{}, 12), imageSlots: make(chan struct{}, 1), Limiter: &ratelimit.Limiter{Client: cache, Prefix: cfg.RatePrefix, Limit: cfg.AuthLimit, Window: time.Minute}}, nil
 }
 
 func (a *App) Close() {

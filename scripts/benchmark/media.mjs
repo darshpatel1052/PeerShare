@@ -1,9 +1,10 @@
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
+import { createWriteStream } from "node:fs";
 import { promisify } from "node:util";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
-import { privateError } from "./host.mjs";
+import { privateError, execute, sshOptions, hostTarget } from "./host.mjs";
 const exec = promisify(execFile),
   root = resolve(".local/benchmark/media");
 const profiles = [
@@ -24,6 +25,10 @@ const profiles = [
   },
 ];
 await mkdir(root, { recursive: true, mode: 0o700 });
+let sampler;
+const scriptSHA256 = createHash("sha256")
+  .update(await readFile(new URL(import.meta.url)))
+  .digest("hex");
 try {
   if (process.argv[2] === "prepare") {
     const sources = [];
@@ -106,6 +111,24 @@ try {
       throw Error("Set the actual deployed MEDIA_SOURCE_RELEASE");
     const directory = join(root, label);
     await mkdir(directory, { mode: 0o700 });
+    const target = await hostTarget();
+    await execute("scp", [
+      ...sshOptions,
+      "scripts/benchmark/sample-host.py",
+      target + ":/home/ubuntu/peerscreen-benchmark/sample-host.py",
+    ]);
+    sampler = spawn(
+      "ssh",
+      [
+        ...sshOptions,
+        target,
+        "sudo timeout 1800 python3 /home/ubuntu/peerscreen-benchmark/sample-host.py all",
+      ],
+      { stdio: ["ignore", "pipe", "ignore"] },
+    );
+    sampler.stdout.pipe(
+      createWriteStream(join(directory, "resources.jsonl"), { mode: 0o600 }),
+    );
     const sources = JSON.parse(
       await readFile(join(root, "sources.json"), "utf8"),
     );
@@ -161,6 +184,7 @@ try {
           {
             checkedAt: new Date().toISOString(),
             release,
+            scriptSHA256,
             hardware:
               "Existing AWS m7i-flex.large, 2 vCPU / 8 GiB; normal services share this host",
             scope:
@@ -243,8 +267,8 @@ try {
           record.processingWaitMS = Date.now() - uploadedAt;
           record.totalMS = Date.now() - started;
           record.readyAt = new Date().toISOString();
-          record.durationSeconds = preview.duration_seconds;
-          record.qualities = preview.qualities;
+          record.outputVerification =
+            "Run verify-media.mjs after timing to verify actual renditions and hashes";
           record.publicationState = state.publication_state;
           record.ready = true;
           await save();
@@ -254,7 +278,6 @@ try {
               profile: source.name,
               uploadMS: record.uploadMS,
               processingWaitMS: record.processingWaitMS,
-              qualities: record.qualities,
             }),
           );
           return;
@@ -275,15 +298,21 @@ try {
     }
     for (let i = 0; i < sources.length; i++)
       await upload(sources[i], members[i], "sequential");
-    await Promise.all(
+    const burst = await Promise.allSettled(
       Array.from({ length: 4 }, (_, i) =>
         upload(sources[0], members[i], "four-upload-burst"),
       ),
     );
+    if (burst.some((r) => r.status === "rejected"))
+      throw Error(
+        "At least one burst upload failed; all outcomes are retained",
+      );
     console.log(
       "Actual media pipeline measurement complete. All seven benchmark uploads remain private.",
     );
   }
 } catch (e) {
   await privateError("media-error.txt", e);
+} finally {
+  sampler?.kill("SIGTERM");
 }

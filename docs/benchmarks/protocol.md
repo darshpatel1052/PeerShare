@@ -47,3 +47,23 @@ node scripts/benchmark/run.mjs baseline
 The setup deliberately requires the configured private AWS checkout, SSH key and published ECR image. Sessions and database credentials remain under ignored `.local/benchmark`; never commit them. Publish sanitized evidence with checksums, hardware, source revisions and limitations. Keep each campaign directory unique so later tests cannot overwrite earlier raw results.
 
 Protocol references: [k6 constant arrival rate](https://grafana.com/docs/k6/latest/using-k6/scenarios/executors/constant-arrival-rate/), [open versus closed workloads](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/), [dropped iterations](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/dropped-iterations/), [thresholds](https://grafana.com/docs/k6/latest/using-k6/thresholds/).
+
+## Concrete media profiles
+
+The moving inputs are FFmpeg `testsrc2`, H.264/yuv420p, 30 fps: 1280×720 for 30 seconds at 2.5 Mb/s, and 1920×1080 for 60 and 120 seconds at 5 Mb/s. Run these sequentially, then submit four copies of the 720p source through four showcase identities together. The worker's configured processing concurrency remains unchanged. Record observed queue/encoding/indexing states, upload-completion-to-ready time and total time; these include polling and remote storage and are not isolated encoder FPS. Verify both output renditions and first/last segment SHA-256 hashes afterward. Preserve private uploads.
+
+For delivery only, temporarily publish the known Frame by Frame burst upload. `delivery-fixture.mjs` obtains its actual manifest and descriptor. Unpublish this exact video when experiments finish; do not remove the owner's media or showcase catalogue.
+
+The segment workload runs one client for a ten-second fixture check, then 25, 50 and 100 virtual segment clients for 30 seconds each, stopping at the first failed criterion. Each requests a 480p fragment and checks its complete length and SHA-256. Pace by that fragment's declared duration, with staggered starting fragments; a slow request can delay the next operation, so this is a client-count delivery exercise, not an open arrival-rate server-capacity claim. Pass: failures and fragment-deadline misses below 1%, verified-fragment p95 below two seconds. Combined received-traffic limit is 1 GiB. Report actual completion/error counts, timing and verified bytes; virtual clients do not decode video.
+
+The browser comparison uses eight independent cache-disabled Chromium contexts, fixed 480p rendition and **complete 30-second playback for every viewer**, not a short variable buffering window. Start the first viewer four seconds ahead in both conditions. Run three fresh HTTP-only/peer-assisted pairs. Peer consent is set through the real checkbox in a prior visit; its media setup cost is separately counted and included in a second reduction calculation. All players must reach 29.5 seconds, report verified media and zero integrity rejections. Capture actual peer/upload payload, browser frame counts and origin media-route body counters summed across the public replicas. These counters include partial writes and manifests/descriptors; they exclude transport overhead. Unrelated public media requests could inflate a window, so interpret this as a quiet-demo experiment, not invoice savings. Keep the setup cost and every failed/partial experiment. Bound aggregate measured/setup body bytes to 1 GiB. Same-workstation browser contexts establish real exchange, not independent-network performance.
+
+```sh
+node scripts/benchmark/media.mjs prepare
+MEDIA_SOURCE_RELEASE=FULL_DEPLOYED_SHA node scripts/benchmark/media.mjs pipeline-v1
+node scripts/benchmark/verify-media.mjs pipeline-v1
+node scripts/benchmark/delivery-fixture.mjs prepare
+node scripts/benchmark/segments-run.mjs segments-v1
+node scripts/benchmark/peers.mjs peers-v1
+node scripts/benchmark/delivery-fixture.mjs close
+```
