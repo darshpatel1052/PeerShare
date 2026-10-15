@@ -15,6 +15,7 @@ import (
 type Config struct {
 	TrustedProxies        []netip.Prefix
 	ReplicaDiagnostics    bool
+	ReadOnly              bool
 	STUNURLs              []string
 	MediaAddress          string
 	CatalogRPCToken       string
@@ -64,6 +65,13 @@ func Load() (Config, error) {
 		}
 	}
 	cfg.ReplicaDiagnostics = os.Getenv("API_REPLICA_DIAGNOSTICS") == "true"
+	if raw := os.Getenv("READ_ONLY_MODE"); raw != "" {
+		enabled, err := strconv.ParseBool(raw)
+		if err != nil {
+			return cfg, errors.New("READ_ONLY_MODE must be a boolean")
+		}
+		cfg.ReadOnly = enabled
+	}
 	cfg.STUNURLs = make([]string, 0)
 	raw, configured := os.LookupEnv("PEER_STUN_URLS")
 	if !configured {
@@ -91,6 +99,9 @@ func Load() (Config, error) {
 	}
 	if cfg.Environment != "development" && cfg.Environment != "production" {
 		return cfg, errors.New("APP_ENV must be development or production")
+	}
+	if cfg.ReadOnly && (cfg.MediaAddress != "" || cfg.KafkaServers != "") {
+		return cfg, errors.New("read-only catalogue must not join media RPC or Kafka consumers")
 	}
 	cfg.SecureCookies = cfg.Environment == "production"
 	cfg.RegistrationEnabled = !cfg.SecureCookies

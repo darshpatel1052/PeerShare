@@ -13,6 +13,7 @@ var latencyBounds = [...]float64{0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.
 type metricKey struct{ method, route, status string }
 type requestMetric struct {
 	count   uint64
+	bytes   uint64
 	seconds float64
 	buckets [13]uint64
 }
@@ -21,7 +22,7 @@ type requestMetrics struct {
 	items map[metricKey]*requestMetric
 }
 
-func (m *requestMetrics) observe(method, route string, status int, seconds float64) {
+func (m *requestMetrics) observe(method, route string, status int, seconds float64, bytes uint64) {
 	switch method {
 	case "GET", "HEAD", "POST", "PATCH", "PUT", "DELETE", "OPTIONS":
 	default:
@@ -42,6 +43,7 @@ func (m *requestMetrics) observe(method, route string, status int, seconds float
 		m.items[key] = item
 	}
 	item.count++
+	item.bytes += bytes
 	item.seconds += seconds
 	for index, bound := range latencyBounds {
 		if seconds <= bound {
@@ -61,8 +63,10 @@ func (a *App) operationalMetrics(w http.ResponseWriter, r *http.Request) {
 	a.metrics.Lock()
 	defer a.metrics.Unlock()
 	fmt.Fprintln(w, "# TYPE peerscreen_http_request_duration_seconds histogram")
+	fmt.Fprintln(w, "# TYPE peerscreen_http_response_body_bytes_total counter")
 	for key, item := range a.metrics.items {
 		labels := fmt.Sprintf("method=%s,route=%s,status_class=%s", strconv.Quote(key.method), strconv.Quote(key.route), strconv.Quote(key.status))
+		fmt.Fprintf(w, "peerscreen_http_response_body_bytes_total{%s} %d\n", labels, item.bytes)
 		for index, bound := range latencyBounds {
 			fmt.Fprintf(w, "peerscreen_http_request_duration_seconds_bucket{%s,le=%q} %d\n", labels, strconv.FormatFloat(bound, 'g', -1, 64), item.buckets[index])
 		}

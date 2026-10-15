@@ -211,6 +211,27 @@ async function setup() {
 }
 async function verify() {
   const started = Date.now();
+  // Helm waits for Pod readiness. The host-mapped NodePort can take a little
+  // longer to converge; wait on a read before creating any test identity.
+  const gatewayDeadline = Date.now() + 30000;
+  let gatewayReady = false;
+  while (Date.now() < gatewayDeadline) {
+    try {
+      const response = await fetch(base + "/health/ready", {
+        signal: AbortSignal.timeout(3000),
+      });
+      await response.arrayBuffer();
+      if (response.status === 200) {
+        gatewayReady = true;
+        break;
+      }
+    } catch {}
+    await new Promise((accept) => setTimeout(accept, 500));
+  }
+  assert.ok(
+    gatewayReady,
+    "Host NodePort did not become ready after the Helm rollout",
+  );
   let cookie = "";
   async function call(path, { method = "GET", body, raw, headers = {} } = {}) {
     const response = await fetch(base + path, {

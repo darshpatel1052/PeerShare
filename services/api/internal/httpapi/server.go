@@ -190,9 +190,13 @@ func (a *App) requestScope(next http.Handler) http.Handler {
 			}
 			a.Logger.Info("http_request", "request_id", id, "method", r.Method, "route", r.Pattern, "status", tracked.status, "duration_ms", time.Since(started).Milliseconds())
 			if r.URL.Path != "/metrics" {
-				a.metrics.observe(r.Method, r.Pattern, tracked.status, time.Since(started).Seconds())
+				a.metrics.observe(r.Method, r.Pattern, tracked.status, time.Since(started).Seconds(), tracked.bytes)
 			}
 		}()
+		if a.Config.ReadOnly && r.Method != "GET" && r.Method != "HEAD" && r.Method != "OPTIONS" {
+			a.error(tracked, r, 503, "read_only", "This read-only deployment does not accept changes.")
+			return
+		}
 		if r.Method != "GET" && r.Method != "HEAD" && r.Method != "OPTIONS" && r.Header.Get("Origin") != a.Config.AppOrigin {
 			a.error(tracked, r, 403, "origin_not_allowed", "The request must come from the configured application origin.")
 			return
@@ -205,6 +209,7 @@ type responseWriter struct {
 	http.ResponseWriter
 	status      int
 	wroteHeader bool
+	bytes       uint64
 }
 
 func (w *responseWriter) WriteHeader(status int) {
@@ -219,7 +224,9 @@ func (w *responseWriter) Write(body []byte) (int, error) {
 	if !w.wroteHeader {
 		w.WriteHeader(200)
 	}
-	return w.ResponseWriter.Write(body)
+	n, err := w.ResponseWriter.Write(body)
+	w.bytes += uint64(n)
+	return n, err
 }
 
 func writeJSON(w http.ResponseWriter, status int, value any) {

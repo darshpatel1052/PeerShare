@@ -158,21 +158,23 @@ func run() error {
 	defer stop()
 	workerCtx, workerCancel := context.WithCancel(signalCtx)
 	defer workerCancel()
-	workerDone := make(chan struct{})
-	go func() { defer close(workerDone); app.RunMediaWorker(workerCtx) }()
-	playbackDone := make(chan struct{})
-	go func() { defer close(playbackDone); app.RunPlaybackRelay(workerCtx) }()
-	defer func() {
-		workerCancel()
-		select {
-		case <-workerDone:
-		case <-time.After(5 * time.Second):
-		}
-		select {
-		case <-playbackDone:
-		case <-time.After(5 * time.Second):
-		}
-	}()
+	if !cfg.ReadOnly {
+		workerDone := make(chan struct{})
+		go func() { defer close(workerDone); app.RunMediaWorker(workerCtx) }()
+		playbackDone := make(chan struct{})
+		go func() { defer close(playbackDone); app.RunPlaybackRelay(workerCtx) }()
+		defer func() {
+			workerCancel()
+			select {
+			case <-workerDone:
+			case <-time.After(5 * time.Second):
+			}
+			select {
+			case <-playbackDone:
+			case <-time.After(5 * time.Second):
+			}
+		}()
+	}
 	stopped := make(chan error, 1)
 	go func() { stopped <- server.ListenAndServe() }()
 	logger.Info("api_started", "listen", cfg.ListenAddr)
