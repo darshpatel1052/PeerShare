@@ -2,9 +2,16 @@ import assert from "node:assert/strict";
 import { createHash, randomBytes } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { chmod, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  chmod,
+  mkdir,
+  readFile,
+  readdir,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { resolve, join } from "node:path";
-import { awsEnvironment } from "./aws-environment.mjs";
+import { awsEnvironment, awsRead } from "./aws-environment.mjs";
 import { localEnvironment } from "./local-environment.mjs";
 import { gatewayConfig } from "./gateway-config.mjs";
 import { restoreSnapshot } from "./restore-snapshot.mjs";
@@ -57,6 +64,19 @@ try {
       process.exit(0);
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
+    }
+    // Bootstrap is deliberately separate from application updates. A second
+    // bootstrap bundle would generate credentials that do not match live PG.
+    for (const release of await readdir(resolve(".local/aws/releases"))) {
+      if (release === sha) continue;
+      try {
+        await readFile(resolve(".local/aws/releases", release, "stage.json"));
+        throw new Error(
+          "An initial release already exists; use update-host to preserve production credentials and data",
+        );
+      } catch (error) {
+        if (error.code !== "ENOENT") throw error;
+      }
     }
     await run("git", [
       "archive",
@@ -120,6 +140,10 @@ try {
           region: inputs.region,
           origin: "origin-" + inputs.app_domain,
           domain: inputs.app_domain,
+          certificate_domain:
+            inputs.enable_cloudfront === false
+              ? inputs.app_domain
+              : "origin-" + inputs.app_domain,
           roles: outputs.runtime_roles.value,
           repositories,
           buckets,
@@ -132,8 +156,12 @@ try {
       "envoy.json",
       JSON.stringify(
         gatewayConfig("https://" + inputs.app_domain, {
-          originHost: "origin-" + inputs.app_domain,
-          originSecret: inputs.origin_secret,
+          ...(inputs.enable_cloudfront === false
+            ? {}
+            : {
+                originHost: "origin-" + inputs.app_domain,
+                originSecret: inputs.origin_secret,
+              }),
         }),
         null,
         2,
@@ -293,7 +321,11 @@ try {
     const target = "ubuntu@" + ip;
     await run(
       "ssh",
-      [...options, target, "mkdir -p -m 700 /home/ubuntu/peerscreen-bundle"],
+      [
+        ...options,
+        target,
+        "test ! -f /srv/peerscreen/data-restored && mkdir -p -m 700 /home/ubuntu/peerscreen-bundle",
+      ],
       { timeout: 30000 },
     );
     const script = `#!/bin/bash
@@ -361,7 +393,139 @@ echo 'Host roles, images and restored data prepared; origin certificate and appl
     console.log(
       "Host data restored, scoped role refresh timer running and immutable images pulled. Origin certificate/application startup still pending.",
     );
-  } else throw new Error("Use stage, verify-backup or prepare-host");
+  } else if (operation === "update-host") {
+    // Only source and non-credential host/gateway settings enter an update.
+    // runtime.env and database/media archives never enter this path.
+    const [identity, plan] = await Promise.all([
+      awsRead(["sts", "get-caller-identity"]),
+      awsRead(["freetier", "get-account-plan-state"], { region: "us-east-1" }),
+    ]);
+    assert.equal(identity.Account, config.settings.AWS_ACCOUNT_ID);
+    assert.equal(plan.accountPlanType, "FREE");
+    assert.equal(plan.accountPlanStatus, "ACTIVE");
+    assert.ok(Number(plan.accountPlanRemainingCredits?.amount) >= 10);
+    assert.match(outputs.public_ip?.value || "", /^\d{1,3}(\.\d{1,3}){3}$/);
+    for (const repository of Object.values(repositories))
+      await aws([
+        "ecr",
+        "describe-images",
+        "--repository-name",
+        repository.split("/").slice(1).join("/"),
+        "--image-ids",
+        "imageTag=" + sha,
+      ]);
+    await run("git", [
+      "archive",
+      "--format=tar",
+      "--output=" + join(directory, "source.tar"),
+      sha,
+    ]);
+    await chmod(join(directory, "source.tar"), 0o600);
+    const direct = inputs.enable_cloudfront === false;
+    await privateFile(
+      "host.json",
+      JSON.stringify(
+        {
+          region: inputs.region,
+          origin: "origin-" + inputs.app_domain,
+          domain: inputs.app_domain,
+          certificate_domain: direct
+            ? inputs.app_domain
+            : "origin-" + inputs.app_domain,
+          delivery: direct ? "direct-https" : "cloudfront",
+          roles: outputs.runtime_roles.value,
+          repositories,
+          buckets,
+        },
+        null,
+        2,
+      ) + "\n",
+    );
+    await privateFile(
+      "envoy.json",
+      JSON.stringify(
+        gatewayConfig(
+          "https://" + inputs.app_domain,
+          direct
+            ? {}
+            : {
+                originHost: "origin-" + inputs.app_domain,
+                originSecret: inputs.origin_secret,
+              },
+        ),
+        null,
+        2,
+      ) + "\n",
+    );
+    const options = [
+      "-i",
+      resolve(".local/aws/ssh/id_ed25519"),
+      "-o",
+      "StrictHostKeyChecking=yes",
+      "-o",
+      "UserKnownHostsFile=" + resolve(".local/aws/ssh/known_hosts"),
+      "-o",
+      "ConnectTimeout=10",
+      "-o",
+      "BatchMode=yes",
+    ];
+    const target = "ubuntu@" + outputs.public_ip.value;
+    await run(
+      "ssh",
+      [
+        ...options,
+        target,
+        "test -f /srv/peerscreen/data-restored && mkdir -p -m 700 /home/ubuntu/peerscreen-update",
+      ],
+      { timeout: 30000 },
+    );
+    await run(
+      "scp",
+      [
+        ...options,
+        ...["source.tar", "host.json", "envoy.json"].map((name) =>
+          join(directory, name),
+        ),
+        target + ":/home/ubuntu/peerscreen-update/",
+      ],
+      { timeout: 300000 },
+    );
+    const script = `#!/bin/bash
+set -euo pipefail
+cd /home/ubuntu/peerscreen-update
+test -f /srv/peerscreen/data-restored
+mkdir -p /srv/peerscreen/releases/${sha}
+tar -xf source.tar -C /srv/peerscreen/releases/${sha}
+install -m 600 host.json /srv/peerscreen/host.json
+install -o 10001 -g 10001 -m 600 envoy.json /srv/peerscreen/gateway/envoy.json
+install -m 700 /srv/peerscreen/releases/${sha}/deploy/host/renew-certificate.sh /etc/letsencrypt/renewal-hooks/deploy/peerscreen
+python3 /srv/peerscreen/releases/${sha}/deploy/host/release.py ${sha}
+`;
+    await privateFile("update-host.sh", script);
+    await run(
+      "scp",
+      [
+        ...options,
+        join(directory, "update-host.sh"),
+        target + ":/home/ubuntu/peerscreen-update/",
+      ],
+      { timeout: 30000 },
+    );
+    const result = await run(
+      "ssh",
+      [
+        ...options,
+        target,
+        "sudo bash /home/ubuntu/peerscreen-update/update-host.sh",
+      ],
+      { timeout: 1200000, maxBuffer: 8 * 1024 * 1024 },
+    );
+    await privateFile("host-update.log", result.stdout + result.stderr);
+    console.log(
+      "Updated the published application release. Production credentials, live database and stored media were retained.",
+    );
+  } else
+    throw new Error("Use stage, verify-backup, prepare-host or update-host");
 } catch (error) {
   await privateFile("last-error.txt", String(error.stderr || error.message));
   console.error("Release staging failed. Inspect its private diagnostic file.");

@@ -42,6 +42,15 @@ resource "aws_vpc_security_group_ingress_rule" "https" {
   from_port         = 443
   to_port           = 443
 }
+resource "aws_vpc_security_group_ingress_rule" "direct_https" {
+  count             = var.enable_cloudfront ? 0 : 1
+  security_group_id = aws_security_group.app.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
+  description       = "Public HTTPS while CloudFront account approval is pending."
+}
 data "aws_ec2_managed_prefix_list" "cloudfront" { name = "com.amazonaws.global.cloudfront.origin-facing" }
 resource "aws_key_pair" "admin" {
   key_name   = var.ssh_key_name
@@ -53,7 +62,7 @@ resource "aws_vpc_security_group_ingress_rule" "acme" {
   ip_protocol       = "tcp"
   from_port         = 80
   to_port           = 80
-  description       = "HTTP-01 certificate issuance and renewal for the origin hostname."
+  description       = "HTTP-01 certificate issuance and renewal."
 }
 resource "aws_vpc_security_group_ingress_rule" "ssh" {
   security_group_id = aws_security_group.app.id

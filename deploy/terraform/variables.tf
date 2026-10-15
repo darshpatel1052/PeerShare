@@ -14,6 +14,11 @@ variable "app_domain" {
     error_message = "Use a DNS hostname, without a scheme or path."
   }
 }
+variable "enable_cloudfront" {
+  type        = bool
+  default     = true
+  description = "Use CloudFront after account approval; false serves the same public domain directly over HTTPS."
+}
 variable "admin_cidr" {
   type = string
   validation {

@@ -13,21 +13,22 @@ ROOT = Path('/srv/peerscreen')
 settings = json.loads((ROOT / 'host.json').read_text())
 gateway = json.loads((ROOT / 'gateway/envoy.json').read_text())
 routes = gateway['static_resources']['listeners'][0]['filter_chains'][0]['filters'][0]['typed_config']['route_config']['virtual_hosts'][0]['routes']
-secret = next(header['string_match']['exact'] for route in routes
+secret = next((header['string_match']['exact'] for route in routes
               for header in route['match'].get('headers', [])
-              if header['name'] == 'x-peerscreen-origin')
+              if header['name'] == 'x-peerscreen-origin'), None)
+hostname = settings.get('certificate_domain', settings['origin'])
 
 
 class OriginConnection(http.client.HTTPSConnection):
     def connect(self):
         self.sock = self._context.wrap_socket(socket.create_connection(('127.0.0.1', 443), timeout=15),
-                                             server_hostname=settings['origin'])
+                                             server_hostname=hostname)
 
 
 def get(path, authenticated=True):
-    connection = OriginConnection(settings['origin'], context=ssl.create_default_context(), timeout=15)
-    headers = {'Host': settings['origin']}
-    if authenticated:
+    connection = OriginConnection(hostname, context=ssl.create_default_context(), timeout=15)
+    headers = {'Host': hostname}
+    if authenticated and secret:
         headers.update({'X-PeerScreen-Origin': secret, 'CloudFront-Viewer-Address': '198.51.100.7:43210'})
     connection.request('GET', path, headers=headers)
     response = connection.getresponse()
@@ -40,7 +41,7 @@ def get(path, authenticated=True):
 try:
     assert get('/health/ready')[0] == 200
     assert get('/api/v1/videos')[0] == 200
-    assert get('/api/v1/videos', False)[0] == 403
+    assert get('/api/v1/videos', False)[0] == (403 if secret else 200)
     assert get('/metrics')[0] == 404
     assert get('/')[0] == 200
     assert get('/channel/')[0] == 200
@@ -66,11 +67,11 @@ try:
     timer = subprocess.run(['systemctl', 'is-active', 'peerscreen-roles.timer'], capture_output=True, check=True).stdout.strip()
     assert timer == b'active'
     print(json.dumps({'checkedAt': datetime.now(timezone.utc).isoformat(),
-                      'scope': 'Actual AWS host via loopback TLS with private origin header; public CloudFront pending',
+                      'scope': 'Actual AWS host via loopback TLS; delivery mode ' + ('cloudfront-origin' if secret else 'direct-https'),
                       'validOriginTLS': True, 'healthReady': True, 'staticRoutes': True,
                       'originalChannel': True, 'originalVideo': True,
                       's3Manifest': True, 's3Integrity': True,
-                      'missingOriginHeader403': True, 'metricsPrivate404': True,
+                      'missingOriginHeader403': bool(secret), 'metricsPrivate404': True,
                       'roleRefreshTimer': True, 'temporaryRoleExpirations': expirations,
                       'manifestSHA256': hashlib.sha256(manifest).hexdigest(),
                       'integritySHA256': hashlib.sha256(descriptor_body).hexdigest(),

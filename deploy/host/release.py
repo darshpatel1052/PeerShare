@@ -49,6 +49,9 @@ def rollout(sha):
         run(command + ['pull', 'api', 'web'], timeout=600)
         run(command + ['up', '-d', '--no-build', '--wait', '--wait-timeout', '120',
                        'postgres', 'redis', 'redis-cache', 'kafka'])
+        # This one-host showcase accepts a brief maintenance window. Stop the
+        # writers before migrations; keep their database and file volumes.
+        run(command + ['stop', 'api', 'worker', 'media', 'web', 'gateway'])
         for service in ('media-bootstrap', 'kafka-topics', 'migrate', 'media-migrate'):
             run(command + ['run', '--rm', '--no-deps', service])
         # Change the source pointer only after migrations/setup succeed.
@@ -58,6 +61,9 @@ def rollout(sha):
         os.replace(pointer, ROOT / 'current')
         run(command + ['up', '-d', '--no-build', '--wait', '--wait-timeout', '180',
                        'api', 'media', 'worker', 'web', 'gateway'])
+        # Envoy reads its route configuration at process startup. A delivery
+        # mode change must replace it even if its image/mounts are unchanged.
+        run(command + ['up', '-d', '--no-build', '--no-deps', '--force-recreate', 'gateway'])
     print('Host services are healthy on release ' + sha + '.')
 
 

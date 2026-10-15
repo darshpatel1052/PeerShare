@@ -418,6 +418,7 @@ async function verify() {
     multiNodeAvailability: false,
     crossNetworkPeerValidation: false,
   };
+  await mkdir(".local/evidence", { recursive: true, mode: 0o700 });
   await writeFile(
     ".local/evidence/phase-6-kubernetes.json",
     JSON.stringify(evidence, null, 2) + "\n",
